@@ -10,7 +10,7 @@ namespace LydsTextAdventure
         public SceneMenu(string name, List<Command> commands = null ) : base( name, commands )
         {}
 
-        public override List<Command> LoadCommands()
+        protected override List<Command> LoadCommands()
         {
 
             return new List<Command>(){

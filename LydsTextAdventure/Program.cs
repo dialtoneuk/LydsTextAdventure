@@ -20,18 +20,23 @@ namespace LydsTextAdventure
 
         //program state
         private static State programState = State.LOADING;
+       
 
         static void Main(string[] args)
         {
 
-            SceneManager.GetScene("menuScene").Load();
-           
-            while(!programState.Equals(State.SHUTDOWN))
+            Scene scene = SceneManager.GetScene("menuScene");
+            scene.Load();
+            scene.Start();
+
+            while (!programState.Equals(State.SHUTDOWN))
             {
 
-                Program.SetState(Program.State.RUNNING);
+                //update scene
+                scene.Update();
 
-                if(Program.input.isAwaitingInput())
+                //await input
+                if (Program.input.isAwaitingInput())
                 {
 
                     Task inputTask = Task.Factory.StartNew(Input.InputTask);

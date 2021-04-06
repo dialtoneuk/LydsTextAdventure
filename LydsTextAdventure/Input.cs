@@ -9,8 +9,8 @@ namespace LydsTextAdventure
 
         private ConsoleKey breakProgram = ConsoleKey.End;
         private ConsoleKeyInfo currentKey;
-        private bool textInput = true;
-        private bool awaitingInput = true;
+        private bool textInput = false;
+        private bool awaitingInput = false;
         private Command lastCommand;
 
         //our input loop task
@@ -28,7 +28,7 @@ namespace LydsTextAdventure
                 if (input.textInput)
                     userInput = input.GetLine();
                 else
-                    userInput = input.GetReadKey();
+                    userInput = input.GetKey().Key.ToString();
 
                 Command command = Program.GetCommands().GetCommand(userInput);
 
@@ -71,13 +71,6 @@ namespace LydsTextAdventure
             this.awaitingInput = !this.awaitingInput;
         }
 
-
-        public string GetReadKey()
-        {
-
-            return (currentKey.Key.ToString());
-        }
-
         //adds the missing key along with the line and makes it lower
         private string GetLine()
         {
@@ -88,7 +81,7 @@ namespace LydsTextAdventure
         private ConsoleKeyInfo GetKey()
         {
 
-            return (Console.ReadKey());
+            return (Console.ReadKey(true));
         }
     }
 }

@@ -33,7 +33,7 @@ namespace LydsTextAdventure
         }
 
         
-        public virtual List<Command> LoadCommands()
+        protected virtual List<Command> LoadCommands()
         {
 
             return null;
@@ -63,6 +63,13 @@ namespace LydsTextAdventure
         public virtual void Start()
         {
 
+            Program.GetInput().ToggleAwaitingInput();
+            return;
+        }
+
+        public virtual void Update()
+        {
+            Console.WriteLine("updating");
             return;
         }
     }

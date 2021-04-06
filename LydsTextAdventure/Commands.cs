@@ -10,13 +10,12 @@ namespace LydsTextAdventure
         protected List<Command> commands = new List<Command>()
         {
             //exit command
-            new Command("exit", () => {
+            new Command("break", () => {
            
                  System.Environment.Exit(0);
             }),
             new Command("commands", () =>
             {
-
                 //log commands to printer here
             })
         };
