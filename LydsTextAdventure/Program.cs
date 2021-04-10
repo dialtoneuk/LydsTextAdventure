@@ -1,8 +1,10 @@
-﻿using System;
+﻿#define DEBUG
+using System;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
+
     class Program
     {
 
@@ -17,23 +19,29 @@ namespace LydsTextAdventure
         //create our classes
         private static readonly Input input = new Input();
         private static readonly Commands commands = new Commands();
+        private static ConsoleLogger logger;
 
         //program state
         private static State programState = State.LOADING;
        
-
         static void Main(string[] args)
         {
 
-            Scene scene = SceneManager.GetScene("menuScene");
-            scene.Load();
-            scene.Start();
+            //adds the remote logger
+#if DEBUG
+            Program.logger = new ConsoleLogger();
+            Program.logger.Start();
+            Program.WriteLine("connected to console log successfully");
+#endif
 
+            //load default scene here?
+
+            //game loop
             while (!programState.Equals(State.SHUTDOWN))
             {
 
-                //update scene
-                scene.Update();
+                //draw graphics here
+
 
                 //await input
                 if (Program.input.isAwaitingInput())
@@ -50,6 +58,15 @@ namespace LydsTextAdventure
                             throw new ApplicationException("must be true");
                 }
             }
+        }
+
+        public static void WriteLine(string msg, string op="general" )
+        {
+
+            if (Program.logger is null)
+                return;
+
+            Program.logger.WriteLine( string.Concat( "[", op, "] ", msg));
         }
 
         public static void SetState(State state)

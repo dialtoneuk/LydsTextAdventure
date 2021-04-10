@@ -33,7 +33,7 @@ namespace LydsTextAdventure
                 Command command = Program.GetCommands().GetCommand(userInput);
 
                 if (command == null)
-                    Console.WriteLine("command not found {0}", userInput);
+                    Program.WriteLine("command not found " + userInput, "input");
                 else
                 {
 
@@ -62,12 +62,14 @@ namespace LydsTextAdventure
         public void ToggleTextInput()
         {
 
+            Program.WriteLine("awaiting text input", "input");
             this.textInput = !this.textInput;
         }
 
         public void ToggleAwaitingInput()
         {
 
+            Program.WriteLine("awaiting input", "input");
             this.awaitingInput = !this.awaitingInput;
         }
 

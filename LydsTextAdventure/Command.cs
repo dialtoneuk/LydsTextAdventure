@@ -7,7 +7,7 @@ namespace LydsTextAdventure
     public class Command
     {
 
-        private string commandCode;
+        private readonly string commandCode;
         protected string commandName;
         protected string commandShortName = "";
         protected Action commandAction;
@@ -17,9 +17,9 @@ namespace LydsTextAdventure
 
             this.commandCode = Guid.NewGuid().ToString();
 
-            if (name.Length == 0)
+            if (name.Length < 2)
                 throw new ArgumentException();
-
+            
             this.commandName = name;
 
             if (shortname.Length != 0)
@@ -57,7 +57,7 @@ namespace LydsTextAdventure
         {
 
             if (shortname.Length == 0)
-                this.commandShortName = this.commandName.Substring(0, 1);
+                this.commandShortName = this.commandName.Substring(0, 2);
             else
                 this.commandShortName = shortname;
         }

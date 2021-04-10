@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LydsTextAdventure", "LydsTextAdventure\LydsTextAdventure.csproj", "{46F916FF-6A79-43C8-A98B-1ABCC299B29B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLogger", "Console\ConsoleLogger.csproj", "{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{46F916FF-6A79-43C8-A98B-1ABCC299B29B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46F916FF-6A79-43C8-A98B-1ABCC299B29B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46F916FF-6A79-43C8-A98B-1ABCC299B29B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
