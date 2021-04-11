@@ -7,10 +7,51 @@ namespace LydsTextAdventure
     class SceneManager
     {
 
+        private static Scene currentScene;
+
         protected static List<Scene> scenes = new List<Scene>()
         {
             new SceneMenu("menuScene")
         };
+
+        public static void StartScene(string scene)
+        {
+
+            var r = SceneManager.GetScene( scene );
+
+            if (r == null)
+                throw new ApplicationException("scene does not exist");
+
+            SceneManager.StartScene( r );
+        }
+
+        public static void StartScene(Scene scene)
+        {
+
+            if (SceneManager.currentScene != null)
+                throw new ApplicationException("scene not ended");
+
+            scene.Load();
+            scene.Start();
+
+            SceneManager.currentScene = scene;
+        }
+
+        public static bool IsSceneActive()
+        {
+
+            return (SceneManager.currentScene != null);
+        }
+
+        public static void UpdateScene()
+        {
+
+            if (SceneManager.currentScene is null)
+                throw new ApplicationException("scene not started");
+
+            SceneManager.currentScene.Update();
+            SceneManager.currentScene.Draw();
+        }
 
         public static void AddScene(Scene scene)
         {

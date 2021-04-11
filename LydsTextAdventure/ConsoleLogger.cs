@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.IO.Pipes;
 using System.Security.Principal;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -30,15 +26,29 @@ namespace LydsTextAdventure
         public void WriteLine(string msg)
         {
 
+            try
+            {
 
-            if (this.pipe is null)
+
+                if (this.pipe is null)
+                    return;
+
+                if (!this.pipe.IsConnected)
+                    this.pipe.Connect();
+
+                ServerData data = new ServerData
+                {
+                    message = msg
+                };
+
+                StreamString ss = new StreamString(this.pipe);
+                ss.WriteString(ServerData.Serialize(data));
+            }
+            catch(IOException)
+            {
+
                 return;
-
-            if (!this.pipe.IsConnected)
-                return;
-
-            var ss = new StreamString(this.pipe);
-            ss.WriteString(msg);
+            }
         }
     }
 }

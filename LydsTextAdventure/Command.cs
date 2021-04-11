@@ -66,6 +66,8 @@ namespace LydsTextAdventure
         public bool SearchTermMatches(string search_term)
         {
 
+            search_term = search_term.ToLower();
+
             if (search_term.Length == 0)
                 return false;
 

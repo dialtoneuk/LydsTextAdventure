@@ -4,10 +4,16 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <StartupObject>LydsTextAdventure.Program</StartupObject>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="debug\ConsoleLogger.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="debug\ConsoleLogger.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="executables\ConsoleLogger.deps.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -29,7 +35,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="cd executables&#xD;&#xA;powershell start-process ConsoleLogger.exe" />
+    <Exec Command="cd debug&#xD;&#xA;powershell start-process ConsoleLogger.exe" />
   </Target>
 
 </Project>

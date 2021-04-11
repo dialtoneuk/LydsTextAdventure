@@ -12,11 +12,13 @@ namespace LydsTextAdventure
         private bool textInput = false;
         private bool awaitingInput = false;
         private Command lastCommand;
+        private static bool taskRunning = false;
 
         //our input loop task
         public static void InputTask()
         {
 
+            Input.taskRunning = true;
             Input input = Program.GetInput();
 
             while ( input.awaitingInput || input.textInput || !(input.currentKey = input.GetKey()).Key.Equals(input.breakProgram))
@@ -33,21 +35,29 @@ namespace LydsTextAdventure
                 Command command = Program.GetCommands().GetCommand(userInput);
 
                 if (command == null)
-                    Program.WriteLine("command not found " + userInput, "input");
+                    Program.DebugLog("command not found " + userInput, "input");
                 else
                 {
 
                     input.lastCommand = command;
                     Program.SetState(Program.State.RUNNING);
+                    Input.taskRunning = false;
                     return;
                 }
             }
 
+            Input.taskRunning = false;
             input.lastCommand = null;
             return;
         }
 
-        public bool isAwaitingInput()
+        public static bool IsTaskRunning()
+        {
+
+            return Input.taskRunning;
+        }
+
+        public bool IsAwaitingInput()
         {
 
             return (this.awaitingInput);
@@ -59,24 +69,31 @@ namespace LydsTextAdventure
             return this.lastCommand;
         }
 
+        public void ClearCommand()
+        {
+
+            this.lastCommand = null;
+        }
+
         public void ToggleTextInput()
         {
 
-            Program.WriteLine("awaiting text input", "input");
             this.textInput = !this.textInput;
+            Program.DebugLog("toggled text input", "input");
         }
 
         public void ToggleAwaitingInput()
         {
 
-            Program.WriteLine("awaiting input", "input");
             this.awaitingInput = !this.awaitingInput;
+            Program.DebugLog("toggled input", "input");
         }
 
         //adds the missing key along with the line and makes it lower
         private string GetLine()
         {
 
+      
             return (Console.ReadLine());
         }
 

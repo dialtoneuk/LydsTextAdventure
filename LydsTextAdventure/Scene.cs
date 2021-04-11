@@ -41,6 +41,8 @@ namespace LydsTextAdventure
         public void Load()
         {
 
+            Program.DebugLog("load called");
+
             List<Command> commands = this.LoadCommands();
 
             if(commands!=null && commands.Count != 0 )
@@ -64,7 +66,14 @@ namespace LydsTextAdventure
         public virtual void Before()
         {
 
+            Program.DebugLog("scene before called");
             //load assets and stuff here
+            return;
+        }
+
+        public virtual void Draw()
+        {
+
             return;
         }
 
@@ -72,6 +81,7 @@ namespace LydsTextAdventure
         public virtual void Start()
         {
 
+            Program.DebugLog("scene start called");
             return;
         }
 

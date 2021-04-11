@@ -19,40 +19,21 @@ namespace LydsTextAdventure
 
         public string ReadString()
         {
-
-            //:v
-            try
-            {
-
-                int len = 0;
-                len = ioStream.ReadByte() * 256;
-                len += ioStream.ReadByte();
-                byte[] inBuffer = new byte[len];
-                ioStream.Read(inBuffer, 0, len);
-
-                return streamEncoding.GetString(inBuffer);
-            }
-            catch (OverflowException)
-            {
-
-                return "";
-            }
+            byte[] strSizeArr = new byte[sizeof(int)];
+            ioStream.Read(strSizeArr, 0, sizeof(int));
+            int strSize = BitConverter.ToInt32(strSizeArr, 0);
+            byte[] inBuffer = new byte[strSize];
+            ioStream.Read(inBuffer, 0, strSize);
+            return streamEncoding.GetString(inBuffer);
         }
 
         public int WriteString(string outString)
         {
             byte[] outBuffer = streamEncoding.GetBytes(outString);
-            int len = outBuffer.Length;
-            if (len > UInt16.MaxValue)
-            {
-                len = (int)UInt16.MaxValue;
-            }
-
-            ioStream.WriteByte((byte)(len / 256));
-            ioStream.WriteByte((byte)(len & 255));
-            ioStream.Write(outBuffer, 0, len);
+            byte[] strSize = BitConverter.GetBytes(outBuffer.Length);
+            ioStream.Write(strSize, 0, strSize.Length);
+            ioStream.Write(outBuffer, 0, outBuffer.Length);
             ioStream.Flush();
-
             return outBuffer.Length + 2;
         }
     }

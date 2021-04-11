@@ -1,4 +1,5 @@
 ﻿#define DEBUG
+
 using System;
 using System.Threading.Tasks;
 
@@ -30,38 +31,41 @@ namespace LydsTextAdventure
             //adds the remote logger
 #if DEBUG
             Program.logger = new ConsoleLogger();
-            Program.logger.Start();
-            Program.WriteLine("connected to console log successfully");
+            Program.DebugLog("connected to console log successfully");
 #endif
 
             //load default scene here?
+            Program.input.ToggleAwaitingInput();
+
+            //start scene
+            SceneManager.StartScene("menuScene");
 
             //game loop
             while (!programState.Equals(State.SHUTDOWN))
             {
 
-                //draw graphics here
+                Console.SetCursorPosition(0, 0);
 
+                if (SceneManager.IsSceneActive())
+                    SceneManager.UpdateScene();
+                
+                //if we are awaiting input, lets get it
+                if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning() )
+                    Task.Factory.StartNew(Input.InputTask);
 
-                //await input
-                if (Program.input.isAwaitingInput())
-                {
-
-                    Task inputTask = Task.Factory.StartNew(Input.InputTask);
-
-                    //wait until we have a valid command
-                    inputTask.Wait();
-
-                    //if it isnt null, executes
-                    if (Program.input.GetCommand() != null)
-                        if (!Program.input.GetCommand().Execute())
-                            throw new ApplicationException("must be true");
-                }
+                if (Program.input.GetCommand() != null)
+                    if (!Program.input.GetCommand().Execute())
+                        throw new ApplicationException("must be true");
+                    else
+                        Program.input.ClearCommand();
             }
         }
 
-        public static void WriteLine(string msg, string op="general" )
+        public static void DebugLog(string msg, string op="general" )
         {
+
+            if (msg.Length.Equals(0))
+                return;
 
             if (Program.logger is null)
                 return;
