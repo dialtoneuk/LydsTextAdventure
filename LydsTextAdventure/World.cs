@@ -9,7 +9,7 @@ namespace LydsTextAdventure
 
         public readonly int chunkSize = 24;
         public readonly int renderDistance = 8;
-        public Dictionary<int[], Chunk> worldData = new Dictionary<int[], Chunk>();
+        public Dictionary<string, Chunk> worldData = new Dictionary<string, Chunk>();
         
         public World()
         {
@@ -18,28 +18,19 @@ namespace LydsTextAdventure
 
         //returns true if a chunk exists
 
-        public bool ChunkExists(Position position, out Chunk chunk)
+        public bool HasChunkAtPosition(Position position, out Chunk chunk)
         {
 
            
-            int x, y;
-            if (position.x == 0)
-                x = 0;
-            else
+            int x = 0, y = 0;
+
+            if (position.x != 0)
                 x = position.x / chunkSize;
 
-            if (position.y == 0)
-                y = 0;
-            else
+            if (position.y != 0)
                 y = position.y / chunkSize;
 
-            //this is utterly retarded
-            chunk = null;
-            foreach (KeyValuePair<int[], Chunk> pair in this.worldData)
-                if(pair.Key[0] == x && pair.Key[1] == y )
-                    chunk = pair.Value;
-
-            return chunk != null;
+            return this.worldData.TryGetValue(string.Concat(x, "_", y), out chunk);
         }
 
         public static void GenerateSpawn(ref World world)
@@ -50,7 +41,7 @@ namespace LydsTextAdventure
                 {
 
                     Program.DebugLog(string.Concat("generating chunk ", x, "/" , y ));
-                    world.worldData.Add(new int[] { x, y }, new Chunk(ref world));
+                    world.worldData.Add( string.Concat(x,"_",y), new Chunk(ref world));
                 }
         }
     }

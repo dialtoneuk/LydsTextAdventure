@@ -34,10 +34,7 @@ namespace LydsTextAdventure
             Program.DebugLog("connected to console log successfully");
 #endif
 
-            //load default scene here?
-            Program.input.ToggleAwaitingInput();
-
-            //start scene
+            //start test scene
             SceneManager.StartScene("menuScene");
 
             //game loop
@@ -46,11 +43,8 @@ namespace LydsTextAdventure
 
                 Console.SetCursorPosition(0, 0);
 
-                if (SceneManager.IsSceneActive())
-                    SceneManager.UpdateScene();
-                
                 //if we are awaiting input, lets get it
-                if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning() )
+                if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning())
                     Task.Factory.StartNew(Input.InputTask);
 
                 if (Program.input.GetCommand() != null)
@@ -58,6 +52,10 @@ namespace LydsTextAdventure
                         throw new ApplicationException("must be true");
                     else
                         Program.input.ClearCommand();
+
+                //update then draw scene
+                if (SceneManager.IsSceneActive())
+                    SceneManager.UpdateScene();
             }
         }
 

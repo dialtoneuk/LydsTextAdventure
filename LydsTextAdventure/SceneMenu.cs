@@ -59,20 +59,14 @@ namespace LydsTextAdventure
         public override void Draw()
         {
 
-
-
-            Task task = Task.Factory.StartNew(() =>
-            {
-                this.camera.Render(this.world, null);
-            });
-
-            task.Wait();
+            this.camera.Render(this.world, null, 92, 30);
         }
 
 
         public override void Start()
         {
 
+            Program.GetInput().ToggleAwaitingInput();
             base.Start();
         }
     }

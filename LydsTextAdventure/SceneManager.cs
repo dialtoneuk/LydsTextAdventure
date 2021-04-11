@@ -28,10 +28,15 @@ namespace LydsTextAdventure
         public static void StartScene(Scene scene)
         {
 
+            Program.DebugLog("loading scene " + scene.sceneName, "scene_manager");
+
             if (SceneManager.currentScene != null)
                 throw new ApplicationException("scene not ended");
 
+            Program.DebugLog("calling scene load", "scene_manager");
             scene.Load();
+
+            Program.DebugLog("calling scene start", "scene_manager");
             scene.Start();
 
             SceneManager.currentScene = scene;

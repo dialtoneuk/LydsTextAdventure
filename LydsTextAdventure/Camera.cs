@@ -40,8 +40,11 @@ namespace LydsTextAdventure
                 this.cameraPosition = this.CenterOnPlayer();
         }
 
-        public void Render(World world, List<Entity> entities, int width=128, int height=42)
+        public void Render(World world, List<Entity> entities, int width=64, int height=24)
         {
+
+
+            char[][] array = new char[width * height][];
 
             if (this.isActive == false)
                 return;
@@ -51,31 +54,39 @@ namespace LydsTextAdventure
             for(int x = 0; x < height; x++ )
             {
 
+                char[] line = new char[width];
+
                 for (int y = 0; y < width; y++)
                 {
 
                     //render world
-                    Chunk chunk;
                     Position position = new Position(this.cameraPosition.x + x, this.cameraPosition.y + y);
-                    if (world.ChunkExists(position, out chunk))
-                    {
-
-                        Tile tile = chunk.GetTile(realx, realy);
-                        Console.Write(tile.texture.character);
-                    }
-
+                    if (world.HasChunkAtPosition(position, out Chunk chunk))
+                        line[y] = chunk.GetTile(realx, realy).texture.character;
+                   
                     if (realy != 0 && realy % (world.chunkSize - 1) == 0)
                         realy = 0;
                     else
                         realy++;
                 }
 
-                Console.WriteLine();
+                array[x] = line;
 
                 if (realx != 0 && realx % (world.chunkSize - 1) == 0)
                     realx = 0;
                 else
                     realx++;
+            }
+
+            //render character array here
+            foreach (char[] line in array)
+            {
+
+                if (line == null || line.Length == 0)
+                    continue;
+
+                Console.Write(line);
+                Console.Write(Environment.NewLine);
             }
         }
 
