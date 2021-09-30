@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class Texture
+    public class Texture
     {
 
         public readonly Char character;
@@ -15,6 +15,14 @@ namespace LydsTextAdventure
 
             this.character = character;
             this.color = color;
+        }
+
+        public static char RandomChar()
+        {
+            string chars = "_ -";
+            Random rand = new Random();
+            int num = rand.Next(0, chars.Length);
+            return chars[num];
         }
 
         public virtual void Update()

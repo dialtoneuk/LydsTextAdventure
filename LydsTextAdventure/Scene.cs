@@ -55,8 +55,8 @@ namespace LydsTextAdventure
             }
 
             foreach (Command command in this.sceneCommands)
-                if (Program.GetCommands().IsCommandUnique(command))
-                    Program.GetCommands().Add(command);
+                if (Program.GetCommandController().IsCommandUnique(command))
+                    Program.GetCommandController().Add(command);
 
             this.Before();
 

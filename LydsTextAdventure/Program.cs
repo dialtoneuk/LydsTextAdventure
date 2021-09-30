@@ -28,6 +28,10 @@ namespace LydsTextAdventure
         static void Main(string[] args)
         {
 
+            //setwindow size
+            Console.SetWindowSize(156, 64);
+            Console.Title = "Lyds Text Adventure";
+
             //adds the remote logger
 #if DEBUG
             Program.logger = new ConsoleLogger();
@@ -77,13 +81,13 @@ namespace LydsTextAdventure
             Program.programState = state;
         }
 
-        public static Commands GetCommands()
+        public static Commands GetCommandController()
         {
 
             return Program.commands;
         }
 
-        public static Input GetInput()
+        public static Input GetInputController()
         {
 
             return Program.input;

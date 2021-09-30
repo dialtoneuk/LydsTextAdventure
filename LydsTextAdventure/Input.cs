@@ -17,6 +17,7 @@ namespace LydsTextAdventure
         private Command lastCommand;
         private static bool taskRunning = false;
 
+        //some C++ shiz
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr GetStdHandle(int nStdHandle);
 
@@ -35,7 +36,8 @@ namespace LydsTextAdventure
             public short Y;
         }
 
-        public static char ReadCharacterAt(int x, int y)
+        //returns a character from the positions its in on the console
+        public static char GetCharacter(int x, int y)
         {
             IntPtr consoleHandle = GetStdHandle(-11);
             if (consoleHandle == IntPtr.Zero)
@@ -64,7 +66,7 @@ namespace LydsTextAdventure
         {
 
             Input.taskRunning = true;
-            Input input = Program.GetInput();
+            Input input = Program.GetInputController();
 
             while ( input.awaitingInput || input.textInput || !(input.currentKey = input.GetKey()).Key.Equals(input.breakProgram))
             {
@@ -77,7 +79,7 @@ namespace LydsTextAdventure
                 else
                     userInput = input.GetKey().Key.ToString();
 
-                Command command = Program.GetCommands().GetCommand(userInput);
+                Command command = Program.GetCommandController().GetCommand(userInput);
 
                 if (command == null)
                     Program.DebugLog("command not found " + userInput, "input");

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class Position
+    public class Position
     {
 
         public int x;
@@ -21,6 +21,11 @@ namespace LydsTextAdventure
         {
 
             return (position.x == this.x && position.y == this.y);
+        }
+
+        public override string ToString()
+        {
+            return "x/y: " + this.x + " / " + this.y;
         }
     }
 }

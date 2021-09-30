@@ -18,19 +18,12 @@ namespace LydsTextAdventure
         protected override List<Command> LoadCommands()
         {
 
-            return new List<Command>(){
-                new Command("down", () => {
-                    this.player.positon.x++;
-                }, "s"),
-                new Command("up", () => {
-                    this.player.positon.x--;
-                }, "w"),
-                new Command("left", () => {
-                    this.player.positon.y--;
-                }, "a"),
-                new Command("right", () => {
-                    this.player.positon.y++;
-                }, "d")
+            //scene commands
+            return new List<Command>()
+            {
+                new Command("camera_debug", () => {
+                    Program.DebugLog( this.camera.cameraPosition.ToString() );
+                }, "u"),
             };
         }
 
@@ -38,12 +31,19 @@ namespace LydsTextAdventure
         {
 
             this.world = new World();
-
-            //do this as a task
-            World.GenerateSpawn(ref this.world);
+            this.world.Generate();
 
             this.player = new Player();
             this.camera = new Camera(ref this.player);
+
+
+            Entity ent = new Entity();
+            ent.position.x = 10;
+            ent.position.y = 10;
+
+            Entity ent2 = new Entity();
+            ent2.position.x = 100;
+            ent2.position.y = 100;
 
             //call base
             base.Before();
@@ -59,14 +59,14 @@ namespace LydsTextAdventure
         public override void Draw()
         {
 
-            this.camera.Render(this.world, null, 92, 30);
+            this.camera.Render(this.world, EntityManager.GetVisibleEntities());
         }
 
 
         public override void Start()
         {
 
-            Program.GetInput().ToggleAwaitingInput();
+            Program.GetInputController().ToggleAwaitingInput();
             base.Start();
         }
     }

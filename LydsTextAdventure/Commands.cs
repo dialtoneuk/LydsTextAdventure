@@ -29,6 +29,15 @@ namespace LydsTextAdventure
             this.commands.Add(command);
         }
 
+        public void Register(List<Command> commands)
+        {
+
+            foreach(Command command in commands)
+            {
+                this.Add(command);
+            }
+        }
+
         //returns true if a command is unique, meaning its command name and short name are not similar
         public bool IsCommandUnique(Command command)
         {

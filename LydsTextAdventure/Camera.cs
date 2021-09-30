@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace LydsTextAdventure
@@ -9,15 +10,20 @@ namespace LydsTextAdventure
 
         public enum Perspective : int
         {
-
             DEFAULT,
             BIRDEYE_PLAYER
         }
 
         protected Player owner;
-        protected Position cameraPosition;
+        public Position cameraPosition;
         private Camera.Perspective perspective;
+
         public bool isActive = true;
+
+        public char[,] buffer;
+
+        public readonly int width = 128;
+        public readonly int height = 32;
        
         public Camera(ref Player player, Camera.Perspective perspective = Camera.Perspective.BIRDEYE_PLAYER, Position origin=null )
         {
@@ -30,6 +36,9 @@ namespace LydsTextAdventure
             else
                 this.cameraPosition = new Position(0, 0);
 
+
+            this.buffer = new char[this.width, this.height];
+
             Program.DebugLog("camera created", "camera");
         }
         
@@ -40,60 +49,91 @@ namespace LydsTextAdventure
                 this.cameraPosition = this.CenterOnPlayer();
         }
 
-        public void Render(World world, List<Entity> entities, int width=64, int height=24)
+        public void Render(World world, List<Entity> entities)
         {
 
+            char[,] worldData = world.Draw( this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
 
-            char[][] array = new char[width * height][];
-
-            if (this.isActive == false)
-                return;
-
-            int realx = 0;
-            int realy = 0;
-            for(int x = 0; x < height; x++ )
+            for(int x = 0; x < this.width; x++)
             {
 
-                char[] line = new char[width];
-
-                for (int y = 0; y < width; y++)
+                for (int y = 0; y < this.height; y++)
                 {
 
-                    //render world
-                    Position position = new Position(this.cameraPosition.x + x, this.cameraPosition.y + y);
-                    if (world.HasChunkAtPosition(position, out Chunk chunk))
-                        line[y] = chunk.GetTile(realx, realy).texture.character;
-                   
-                    if (realy != 0 && realy % (world.chunkSize - 1) == 0)
-                        realy = 0;
-                    else
-                        realy++;
+                    this.buffer[x, y] = worldData[x, y];
                 }
-
-                array[x] = line;
-
-                if (realx != 0 && realx % (world.chunkSize - 1) == 0)
-                    realx = 0;
-                else
-                    realx++;
             }
 
-            //render character array here
-            foreach (char[] line in array)
+            //prepare entities for buffer
+            foreach(Entity entity in entities)
             {
+                
+                int x = entity.position.x - this.cameraPosition.x;
+                int y = entity.position.y - this.cameraPosition.y;
 
-                if (line == null || line.Length == 0)
+                if (x < 0 || x >= width)
                     continue;
 
-                Console.Write(line);
-                Console.Write(Environment.NewLine);
+                if (y < 0 || y >= height)
+                    continue;
+
+                //draw entity texture
+                this.buffer[x,y] = entity.GetTexture().character;
+            }
+
+            this.DrawBuffer();
+
+            //draw entities stuff
+            foreach(Entity entity in entities)
+            {
+
+
+                int x = entity.position.x - this.cameraPosition.x;
+                int y = entity.position.y - this.cameraPosition.y;
+
+                if (x < 0 || x >= width)
+                    continue;
+
+                if (y < 0 || y >= height)
+                    continue;
+
+                entity.Draw(x, y);
+
+            }
+
+            System.Threading.Thread.Sleep(10);
+            this.CleanBuffer();
+        }
+
+        public void CleanBuffer()
+        {
+
+            this.buffer = new char[this.width, this.height];
+        }
+
+        public void DrawBuffer()
+        {
+
+            Console.SetCursorPosition(0, 0);
+
+            for(int y = 0; y < this.height; y++ )
+            {
+
+                char[] line = new char[this.width];
+
+                for(int x = 0; x < width; x++ )
+                {
+
+                    line[x] = this.buffer[x, y];
+                }
+
+                Console.WriteLine(line);
             }
         }
 
         public void UpdatePerspective(Camera.Perspective perspective)
         {
 
-            
             this.perspective = perspective;
             Program.DebugLog("perspective changed to " + perspective.ToString(), "camera");
         }
@@ -101,8 +141,8 @@ namespace LydsTextAdventure
         private Position CenterOnPlayer()
         {
 
-            return new Position(this.owner.positon.x + ((this.owner.positon.x + 1) / 2),
-                this.owner.positon.y + (this.owner.positon.y + 1) / 2);
+            return new Position(this.owner.position.x - (int)Math.Floor((decimal)(this.width / 2) - 1),
+                this.owner.position.y - (int)Math.Floor((decimal)(this.height / 2)) - 1);
         }
     }
 }

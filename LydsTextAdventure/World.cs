@@ -7,42 +7,86 @@ namespace LydsTextAdventure
     class World
     {
 
-        public readonly int chunkSize = 24;
-        public readonly int renderDistance = 8;
-        public Dictionary<string, Chunk> worldData = new Dictionary<string, Chunk>();
-        
-        public World()
+  
+        public Tile[,] world;
+        public readonly int width;
+        public readonly int height;
+
+        private readonly FastNoise noise = new FastNoise();
+
+        public World(int width = 1024, int height = 2014)
         {
 
+            this.world = new Tile[width, height];
+
+            this.width = width;
+            this.height = height;
+           
         }
 
         //returns true if a chunk exists
 
-        public bool HasChunkAtPosition(Position position, out Chunk chunk)
+        public bool HasChunkAtPosition()
         {
 
-           
-            int x = 0, y = 0;
 
-            if (position.x != 0)
-                x = position.x / chunkSize;
-
-            if (position.y != 0)
-                y = position.y / chunkSize;
-
-            return this.worldData.TryGetValue(string.Concat(x, "_", y), out chunk);
+            return true;
         }
 
-        public static void GenerateSpawn(ref World world)
+        public char[,] Draw( int startx, int starty, int width, int height)
         {
 
-            for(int x = 0 - world.renderDistance; x <= world.renderDistance; x++ )
-                for (int y = 0 - world.renderDistance; y <= world.renderDistance; y++)
+            char[,] result = new char[width, height];
+
+            int actualx = 0;
+            int actualy = 0;
+
+            for(int x = 0; x < width; x++)
+            {
+                actualx = x + startx;
+
+                for (int y = 0; y < height; y++)
+                {
+                    actualy = y + starty;
+
+                    if(actualy < 0 || actualx < 0 || actualy > this.height || actualx > this.width){
+                        result[x, y] = ' ';
+                    } 
+                    else
+                    {
+                        result[x, y] = this.world[actualx, actualy].texture.character;
+                    }
+                }
+            }
+           
+            return result;
+        }
+
+        public void Generate()
+        {
+
+            Texture water = new Texture('~', ConsoleColor.Blue);
+            Texture ground = new Texture(',', ConsoleColor.Gray);
+
+            for(int x = 0; x < this.width; x++ )
+            {
+
+                for(int y = 0; y < this.height; y++)
                 {
 
-                    Program.DebugLog(string.Concat("generating chunk ", x, "/" , y ));
-                    world.worldData.Add( string.Concat(x,"_",y), new Chunk(ref world));
+
+                    float noiseValue = this.noise.GetNoise(x, y);
+                    Tile tile;
+
+                    if (noiseValue < 0.1)
+                        tile = new Tile(water);
+                    else
+                        tile = new Tile(ground);
+
+                    this.world[x, y] = tile;
                 }
+            }
+
         }
     }
 }
