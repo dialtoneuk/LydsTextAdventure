@@ -38,5 +38,19 @@ namespace LydsTextAdventure
 
             return result;
         }
-   }
+
+        public static List<Entity> GetAliveEntities()
+        {
+
+            List<Entity> result = new List<Entity>();
+            foreach (Entity entity in EntityManager.entities)
+            {
+
+                if (!entity.IsDestroyed())
+                    result.Add(entity);
+            }
+
+            return result;
+        }
+    }
 }

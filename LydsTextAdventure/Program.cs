@@ -1,6 +1,6 @@
-﻿#define DEBUG
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
@@ -22,6 +22,7 @@ namespace LydsTextAdventure
         private static readonly Commands commands = new Commands();
         private static ConsoleLogger logger;
 
+        private static int tick = 0;
         //program state
         private static State programState = State.LOADING;
        
@@ -29,15 +30,15 @@ namespace LydsTextAdventure
         {
 
             //setwindow size
-            Console.SetWindowSize(156, 64);
+            Console.SetWindowSize(156, 70);
             Console.Title = "Lyds Text Adventure";
 
             //adds the remote logger
 #if DEBUG
             Program.logger = new ConsoleLogger();
             Program.DebugLog("connected to console log successfully");
+            Program.AddDebugCommands();
 #endif
-
             //start test scene
             SceneManager.StartScene("menuScene");
 
@@ -60,7 +61,24 @@ namespace LydsTextAdventure
                 //update then draw scene
                 if (SceneManager.IsSceneActive())
                     SceneManager.UpdateScene();
+
+                //forever counts
+                Program.tick++;
+
+                //fixes graphical issues
+                Thread.Sleep(2);
             }
+        }
+
+        public static void AddDebugCommands()
+        {
+
+            Program.commands.Register(new List<Command>()
+            {
+                  new Command("clean_screen", () => {
+                        Console.Clear();
+                }, "z"),
+            });
         }
 
         public static void DebugLog(string msg, string op="general" )
@@ -79,6 +97,12 @@ namespace LydsTextAdventure
         {
 
             Program.programState = state;
+        }
+
+        public static int GetTick()
+        {
+
+            return Program.tick;
         }
 
         public static Commands GetCommandController()

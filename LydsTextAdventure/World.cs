@@ -21,7 +21,6 @@ namespace LydsTextAdventure
 
             this.width = width;
             this.height = height;
-           
         }
 
         //returns true if a chunk exists
@@ -49,7 +48,7 @@ namespace LydsTextAdventure
                 {
                     actualy = y + starty;
 
-                    if(actualy < 0 || actualx < 0 || actualy > this.height || actualx > this.width){
+                    if(actualy < 0 || actualx < 0 || actualy >= this.height || actualx >= this.width){
                         result[x, y] = ' ';
                     } 
                     else
@@ -66,6 +65,7 @@ namespace LydsTextAdventure
         {
 
             Texture water = new Texture('~', ConsoleColor.Blue);
+            Texture sand = new Texture('#', ConsoleColor.Cyan);
             Texture ground = new Texture(',', ConsoleColor.Gray);
 
             for(int x = 0; x < this.width; x++ )
@@ -74,11 +74,10 @@ namespace LydsTextAdventure
                 for(int y = 0; y < this.height; y++)
                 {
 
-
                     float noiseValue = this.noise.GetNoise(x, y);
                     Tile tile;
 
-                    if (noiseValue < 0.1)
+                    if (noiseValue < 0.03)
                         tile = new Tile(water);
                     else
                         tile = new Tile(ground);

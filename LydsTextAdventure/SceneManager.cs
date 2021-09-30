@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
@@ -54,7 +55,7 @@ namespace LydsTextAdventure
             if (SceneManager.currentScene is null)
                 throw new ApplicationException("scene not started");
 
-            SceneManager.currentScene.Update();
+            Task.Factory.StartNew(SceneManager.currentScene.Update);
             SceneManager.currentScene.Draw();
         }
 

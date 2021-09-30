@@ -5,30 +5,29 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class Camera
+    class Camera : Entity
     {
 
         public enum Perspective : int
         {
             DEFAULT,
-            BIRDEYE_PLAYER
+            CENTER_ON_OWNER
         }
 
-        protected Player owner;
-        public Position cameraPosition;
-        private Camera.Perspective perspective;
+        protected Entity owner;
 
-        public bool isActive = true;
-
+        public readonly Position cameraPosition;
         public char[,] buffer;
 
-        public readonly int width = 128;
-        public readonly int height = 32;
-       
-        public Camera(ref Player player, Camera.Perspective perspective = Camera.Perspective.BIRDEYE_PLAYER, Position origin=null )
+        private int width = 128;
+        private int height = 32;
+        private Camera.Perspective perspective;
+
+        public Camera(Entity entity = null, Camera.Perspective perspective = Camera.Perspective.CENTER_ON_OWNER, Position origin=null )
         {
 
-            this.owner = player;
+            this.SetName("Default Camera");
+            this.owner = entity;
             this.perspective = perspective;
 
             if (origin != null)
@@ -36,23 +35,38 @@ namespace LydsTextAdventure
             else
                 this.cameraPosition = new Position(0, 0);
 
-
+            //creates the view buffer
             this.buffer = new char[this.width, this.height];
 
-            Program.DebugLog("camera created", "camera");
-        }
-        
-        public virtual void Update()
-        {
-
-            if (this.perspective.Equals(Camera.Perspective.BIRDEYE_PLAYER))
-                this.cameraPosition = this.CenterOnPlayer();
+            //sets the name of this camera
+ 
+            Program.DebugLog("Camera has been created", "camera");
         }
 
-        public void Render(World world, List<Entity> entities)
+        public override bool IsVisible()
         {
 
-            char[,] worldData = world.Draw( this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
+            return false;
+        }
+
+        public void SetSize(int width, int height)
+        {
+
+            this.width = width;
+            this.height = height;
+        }
+
+        public override void Update(int tick)
+        {
+
+            if (this.perspective.Equals(Camera.Perspective.CENTER_ON_OWNER) && this.owner != null)
+                this.cameraPosition.SetPosition(this.CenterOnOwner());
+        }
+
+        public virtual void Render(World world, List<Entity> entities, bool drawBorder = true)
+        {
+
+            char[,] worldData = world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
 
             for(int x = 0; x < this.width; x++)
             {
@@ -68,8 +82,8 @@ namespace LydsTextAdventure
             foreach(Entity entity in entities)
             {
                 
-                int x = entity.position.x - this.cameraPosition.x;
-                int y = entity.position.y - this.cameraPosition.y;
+                int x = entity.position.x - (this.cameraPosition.x);
+                int y = entity.position.y - (this.cameraPosition.y);
 
                 if (x < 0 || x >= width)
                     continue;
@@ -81,15 +95,15 @@ namespace LydsTextAdventure
                 this.buffer[x,y] = entity.GetTexture().character;
             }
 
-            this.DrawBuffer();
+            this.DrawBuffer(drawBorder);
 
             //draw entities stuff
             foreach(Entity entity in entities)
             {
 
 
-                int x = entity.position.x - this.cameraPosition.x;
-                int y = entity.position.y - this.cameraPosition.y;
+                int x = entity.position.x - (this.cameraPosition.x);
+                int y = entity.position.y - (this.cameraPosition.y);
 
                 if (x < 0 || x >= width)
                     continue;
@@ -97,11 +111,9 @@ namespace LydsTextAdventure
                 if (y < 0 || y >= height)
                     continue;
 
-                entity.Draw(x, y);
-
+                entity.Draw(x + this.position.x, y + this.position.y - 1);
             }
 
-            System.Threading.Thread.Sleep(10);
             this.CleanBuffer();
         }
 
@@ -111,12 +123,21 @@ namespace LydsTextAdventure
             this.buffer = new char[this.width, this.height];
         }
 
-        public void DrawBuffer()
+        public void DrawBuffer(bool drawBorder = true, bool drawName = true)
         {
 
-            Console.SetCursorPosition(0, 0);
+            int posx = position.x;
+            int posy = position.y;
 
-            for(int y = 0; y < this.height; y++ )
+            if (posx < 0)
+                posx = 0;
+
+            if (posy < 0)
+                posy = 0;
+
+            Console.SetCursorPosition(posx, posy);
+
+            for (int y = 0; y < this.height; y++ )
             {
 
                 char[] line = new char[this.width];
@@ -124,10 +145,31 @@ namespace LydsTextAdventure
                 for(int x = 0; x < width; x++ )
                 {
 
+
+                    if (drawBorder)
+                    {
+                        if (x == 0 || x == this.width - 1)
+                            line[x] = '|';
+                        else if (y == 1 || y == this.height - 1)
+                            line[x] = '-';
+                        else
+                            line[x] = this.buffer[x, y];
+
+                        continue;
+                    }
                     line[x] = this.buffer[x, y];
                 }
 
                 Console.WriteLine(line);
+
+                if(posy == position.y)
+                {
+
+                    Console.SetCursorPosition(posx + 4, posy);
+                    Console.Write("[ " + this.GetName() + " ]");
+                }
+
+                Console.SetCursorPosition(posx, posy + y);
             }
         }
 
@@ -138,8 +180,11 @@ namespace LydsTextAdventure
             Program.DebugLog("perspective changed to " + perspective.ToString(), "camera");
         }
 
-        private Position CenterOnPlayer()
+        private Position CenterOnOwner()
         {
+
+            if (this.owner == null)
+                throw new ApplicationException("invalid owner");
 
             return new Position(this.owner.position.x - (int)Math.Floor((decimal)(this.width / 2) - 1),
                 this.owner.position.y - (int)Math.Floor((decimal)(this.height / 2)) - 1);

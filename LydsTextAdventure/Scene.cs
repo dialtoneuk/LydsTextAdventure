@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
@@ -88,8 +90,11 @@ namespace LydsTextAdventure
         public virtual void Update()
         {
 
+            foreach(Entity entity in EntityManager.GetAliveEntities()){
 
-            return;
+                if(!entity.isWaiting)
+                    entity.Update(Program.GetTick());
+            }
         }
     }
 }
