@@ -52,8 +52,6 @@ namespace LydsTextAdventure
             while (!programState.Equals(State.SHUTDOWN))
             {
 
-                Console.SetCursorPosition(0, 0);
-
                 //if we are awaiting input, lets get it
                 if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning())
                     Task.Factory.StartNew(Input.InputTask);

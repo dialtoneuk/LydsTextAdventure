@@ -26,6 +26,7 @@ namespace LydsTextAdventure
         public bool hiddenOutsideView = true;
         public int sleepTime = 0;
         public int health = 0;
+        public int countPosition = -1;
 
         public Entity(string name)
         {
@@ -38,7 +39,7 @@ namespace LydsTextAdventure
             EntityManager.RegisterEntity(this);
         }
 
-        public void SetCamera(ref Camera camera)
+        public void SetCamera(Camera camera)
         {
 
             this.camera = camera;
@@ -49,6 +50,13 @@ namespace LydsTextAdventure
 
             name = this.GetType().ToString();
             EntityManager.RegisterEntity(this);
+        }
+
+        public void SetIndex(int position)
+        {
+
+            if (this.countPosition == -1 && position >= 0)
+                this.countPosition = position;
         }
 
         public virtual void RemoveEntity()
@@ -132,7 +140,7 @@ namespace LydsTextAdventure
         public override string ToString()
         {
 
-            return this.id + ":" + this.name + ":" + this.GetType().ToString();
+            return this.id + ":" + this.name + ":" + this.GetType().ToString() + "[" + this.countPosition + "]";
         }
 
         public virtual void Update(int tick)
@@ -144,30 +152,15 @@ namespace LydsTextAdventure
         public virtual void Draw(int x, int y)
         {
 
-            if (this.camera == null)
-                return;
-
 #if DEBUG
-            Console.BackgroundColor = ConsoleColor.Blue;
-
             //keeps entities inside the camera
             Surface.SetCameraContext(ref this.camera);
 
             //requires camera context to be set
-            Surface.DrawText(x, y + 1, "id: " + this.id);
-            Surface.DrawText(x, y + 2, "name: " + this.name);
-            Surface.DrawText(x, y + 3, "type: " + this.GetType().ToString());
-
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-
-            Surface.DrawText(x, y + 4, "position: " + this.position.ToString());
-            Surface.DrawText(x, y + 5, "not always visible: " + this.IsHiddenOutsideView().ToString());
-            Surface.DrawText(x, y + 6, "health: " + this.health.ToString() );
+            Surface.DrawText(x, y + 1, this.name);
 
             //must end
             Surface.EndCameraContext();
-
-            Console.BackgroundColor = ConsoleColor.Black;
 #endif
         }
 

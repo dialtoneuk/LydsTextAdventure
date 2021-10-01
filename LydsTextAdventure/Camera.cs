@@ -15,13 +15,12 @@ namespace LydsTextAdventure
         }
 
         protected Entity owner;
-        protected Camera reference;
 
         public readonly Position cameraPosition;
         private char[,] temporaryBuffer;
         private char[][] buffer;
-        public int width = 128;
-        public int height = 32;
+        public int width = 132;
+        public int height = 52;
 
         protected bool drawBorder = true;
         protected bool drawTitle = true;
@@ -36,7 +35,6 @@ namespace LydsTextAdventure
             this.SetName("Default Camera");
             this.owner = entity;
             this.perspective = perspective;
-            this.reference = this;
 
             if (origin != null)
                 this.cameraPosition = origin;
@@ -251,7 +249,7 @@ namespace LydsTextAdventure
 
    
 
-            if(this.buffer != null && Program.GetTick() % 48 == 0)
+            if(this.buffer != null && Program.GetTick() % 8 == 0)
             {
 
                 int y = 0;
@@ -298,7 +296,7 @@ namespace LydsTextAdventure
                         continue;
                     }
 
-                    entity.SetCamera(ref this.reference);
+                    entity.SetCamera(this);
                     entity.Draw(x + this.position.x, y + this.position.y);
 
                     if(this.IsMainCamera() && entity.IsHiddenOutsideView() && entity.IsOutsideView() )

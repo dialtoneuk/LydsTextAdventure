@@ -11,16 +11,21 @@ namespace LydsTextAdventure
         public Tile[,] world;
         public readonly int width;
         public readonly int height;
+        public readonly int seed;
 
-        private readonly FastNoise noise = new FastNoise();
+        private readonly FastNoise noise;
 
         public World(int width = 1024, int height = 2014)
         {
 
+            this.seed = new Random().Next(0, int.MaxValue);
+            this.noise = new FastNoise(this.seed);
             this.world = new Tile[width, height];
 
             this.width = width;
             this.height = height;
+
+            this.noise.SetFrequency(0.05f);
         }
 
         //returns true if a chunk exists

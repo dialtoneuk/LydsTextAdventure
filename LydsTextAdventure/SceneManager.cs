@@ -62,7 +62,8 @@ namespace LydsTextAdventure
             if (SceneManager.currentScene is null)
                 throw new ApplicationException("scene not started");
 
-            Task.Factory.StartNew(SceneManager.currentScene.Update);
+
+            Task.Factory.StartNew(SceneManager.currentScene.Update).Wait();
             SceneManager.currentScene.Draw();
         }
 

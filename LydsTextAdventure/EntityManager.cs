@@ -11,11 +11,18 @@ namespace LydsTextAdventure
         private static List<Entity> visibleEntities;
         private static List<Entity> aliveEntities;
 
+        private static int globalCount = 0;
+        private static int sceneCount = 0;
+
         public static void RegisterEntity(Entity entity)
         {
 
             Program.GetCommandController().Register(entity.RegisterCommands());
+            entity.SetIndex(EntityManager.sceneCount++);
             entities.Add(entity);
+
+            EntityManager.globalCount++;
+
             Program.DebugLog("entity " + entity.ToString() + " created" );
         }
 
@@ -28,6 +35,7 @@ namespace LydsTextAdventure
             }
 
             EntityManager.entities = new List<Entity>();
+            EntityManager.sceneCount = 0;
             EntityManager.visibleEntities = null;
             EntityManager.aliveEntities = null;
         }
