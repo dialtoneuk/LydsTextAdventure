@@ -68,6 +68,9 @@ namespace LydsTextAdventure
 
                 //forever counts
                 Program.tick++;
+
+                if(Program.tick > 4086)
+                    Program.tick = 0;
             }
         }
 

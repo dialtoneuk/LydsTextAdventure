@@ -8,7 +8,7 @@ namespace LydsTextAdventure
     public class Entity
     {
 
-        public const int MaxSpeed = 1024;
+        public const int MaxSpeed = 1000;
         public const int MaxHealth = 5042;
 
         public readonly Position position = new Position(0, 0);
@@ -22,8 +22,8 @@ namespace LydsTextAdventure
         public bool visible = true;
         public bool destroyed = false;
         public bool isWaiting = false;
-        public bool outsideView = false;
-        public bool hiddenOutsideView = true;
+        public bool disabled = false;
+        public bool automaticDisable = true;
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;
@@ -84,16 +84,16 @@ namespace LydsTextAdventure
             return true;
         }
 
-        public virtual bool IsHiddenOutsideView()
+        public virtual bool IsAutomaticDisabled()
         {
 
-            return this.hiddenOutsideView;
+            return this.automaticDisable;
         }
 
-        public virtual bool IsOutsideView()
+        public virtual bool IsDisabled()
         {
 
-            return this.outsideView;
+            return this.disabled;
         }
 
         public virtual string GetName()
@@ -118,17 +118,17 @@ namespace LydsTextAdventure
 
         }
 
-        public virtual void SetHiddenOutsideView(bool val)
+        public virtual void SetAutomaticDisable(bool val)
         {
 
-            this.hiddenOutsideView = val;
+            this.automaticDisable = val;
         }
         
-        public virtual void SetOutsideView(bool val)
+        public virtual void SetDisabled(bool val)
         {
 
-            this.outsideView = val;
-            Program.DebugLog("enity " + this.ToString() + " outside view: " + val.ToString());
+            this.disabled = val;
+            Program.DebugLog("entity " + this.ToString() + " is disabled: " + val.ToString());
         }
 
         public virtual void Destroy()

@@ -108,7 +108,7 @@ namespace LydsTextAdventure
         {
 
             //entities update every 8 ticks
-            if (Program.GetTick() % 8 == 0)
+            if (Program.GetTick() % 2 == 0)
             {
 
                 foreach (Entity entity in EntityManager.GetVisibleEntities())
@@ -117,7 +117,7 @@ namespace LydsTextAdventure
                     if (!entity.isWaiting)
                     {
 
-                        if (entity.IsHiddenOutsideView() && entity.IsOutsideView())
+                        if (entity.IsAutomaticDisabled() && entity.IsDisabled())
                             continue;
 
                         entity.Update(Program.GetTick());

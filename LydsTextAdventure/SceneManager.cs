@@ -31,6 +31,8 @@ namespace LydsTextAdventure
 
             SceneManager.currentScene.Destroy();
             SceneManager.currentScene = null;
+
+            Console.Clear();
         }
 
         public static void StartScene(Scene scene)

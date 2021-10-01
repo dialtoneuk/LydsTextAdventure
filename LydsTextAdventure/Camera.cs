@@ -281,8 +281,8 @@ namespace LydsTextAdventure
                     if (x < 0 || x >= this.width)
                     {
 
-                        if (this.IsMainCamera() && entity.IsHiddenOutsideView() && !entity.IsOutsideView())
-                            entity.SetOutsideView(true);
+                        if (this.IsMainCamera() && entity.IsAutomaticDisabled() && !entity.IsDisabled())
+                            entity.SetDisabled(true);
 
                         continue;
                     }
@@ -290,8 +290,8 @@ namespace LydsTextAdventure
                     if (y < 0 || y >= this.height)
                     {
 
-                        if (this.IsMainCamera() && entity.IsHiddenOutsideView() && !entity.IsOutsideView())
-                            entity.SetOutsideView(true);
+                        if (this.IsMainCamera() && entity.IsAutomaticDisabled() && !entity.IsDisabled())
+                            entity.SetDisabled(true);
 
                         continue;
                     }
@@ -299,8 +299,8 @@ namespace LydsTextAdventure
                     entity.SetCamera(this);
                     entity.Draw(x + this.position.x, y + this.position.y);
 
-                    if(this.IsMainCamera() && entity.IsHiddenOutsideView() && entity.IsOutsideView() )
-                        entity.SetOutsideView(false);
+                    if(this.IsMainCamera() && entity.IsAutomaticDisabled() && entity.IsDisabled() )
+                        entity.SetDisabled(false);
                 }
         }
 
