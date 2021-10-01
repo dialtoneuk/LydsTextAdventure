@@ -15,17 +15,43 @@ namespace LydsTextAdventure
         public readonly Texture texture = new Texture();
         public readonly string id = Guid.NewGuid().ToString();
 
-        private string name = "Entity";
+        private Camera camera;
+
+        private string name;
 
         public bool visible = true;
         public bool destroyed = false;
         public bool isWaiting = false;
         public int sleepTime = 0;
 
+        public Entity(string name)
+        {
+
+            if(name != "")
+                this.name = name;
+            else
+                this.name = this.GetType().ToString();
+
+            EntityManager.RegisterEntity(this);
+        }
+
+        public void SetCamera(ref Camera camera)
+        {
+
+            this.camera = camera;
+        }
+
         public Entity()
         {
 
+            name = this.GetType().ToString();
             EntityManager.RegisterEntity(this);
+        }
+
+        public virtual void RemoveEntity()
+        {
+
+            EntityManager.RemoveEntity(this.id);
         }
 
         public virtual void Wait(int miliseconds)
@@ -39,6 +65,12 @@ namespace LydsTextAdventure
             {
                 this.isWaiting = false;
             });
+        }
+
+        public virtual bool DrawTexture()
+        {
+
+            return true;
         }
 
         public virtual string GetName()
@@ -63,24 +95,43 @@ namespace LydsTextAdventure
 
         }
 
+        public virtual void Destroy()
+        {
+
+            Program.DebugLog("entity " + this.ToString() + " destroyed");
+        }
+
+        public override string ToString()
+        {
+
+            return this.id + ":" + this.name + ":" + this.GetType().ToString();
+        }
+
         public virtual void Update(int tick)
         {
 
+            //does nothing
         }
 
         public virtual void Draw(int x, int y)
         {
 
+            if (this.camera == null)
+                return;
+
 #if DEBUG
-            Console.SetCursorPosition(x, y + 1);
             Console.BackgroundColor = ConsoleColor.Red;
-            Console.Write("entity id: " + this.id);
-            Console.SetCursorPosition(x, y + 2);
-            Console.Write("entity name: " + this.name);
-            Console.SetCursorPosition(x, y + 3);
-            Console.Write("entity position: " + this.position.ToString());
-            Console.SetCursorPosition(x, y + 4);
-            Console.Write("entity type: " + this.GetType().ToString());
+
+            //keeps entities inside the camera
+            Surface.SetCameraContext(ref this.camera);
+
+            //requires camera context to be set
+            Surface.WriteSurface(x, y + 1, "entity id: " + this.id);
+            Surface.WriteSurface(x, y + 2, "entity name: " + this.name);
+            Surface.WriteSurface(x, y + 3, "entity position: " + this.position.ToString());
+            Surface.WriteSurface(x, y + 4, "entity type: " + this.GetType().ToString());
+            Surface.WriteSurface(x, y + 5, "entity name: " + this.GetType().ToString());
+
             Console.BackgroundColor = ConsoleColor.Black;
 #endif
         }

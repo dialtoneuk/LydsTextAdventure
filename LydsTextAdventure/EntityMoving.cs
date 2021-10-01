@@ -7,6 +7,8 @@ namespace LydsTextAdventure
     public class EntityMoving : Entity
     {
 
+        public EntityMoving(string name = "") : base(name) { }
+
         public enum MovementType
         {
             VERTICAL,
@@ -15,7 +17,10 @@ namespace LydsTextAdventure
 
         protected bool isVertical = false;
         protected bool flip = false;
+        protected bool hasGoal = false;
         private int speed = 10;
+        private int distance = 500;
+        private int goal = 0;
 
         public override void Update(int tick)
         {
@@ -30,6 +35,20 @@ namespace LydsTextAdventure
                 speed = Entity.MaxSpeed;
 
             this.Wait(Entity.MaxSpeed / speed); //will wait 1 second before updating again
+
+            base.Update(tick); //must call base
+        }
+
+        public void SetDistance(int distance)
+        {
+
+            this.distance = distance;
+        }
+
+        public int GetDistance()
+        {
+
+            return this.distance;
         }
 
         public void SetMovementType(MovementType type)
@@ -49,26 +68,48 @@ namespace LydsTextAdventure
         public void HoriziontalMovement()
         {
 
-            if (this.position.x < 500 && !flip)
+            if (!this.hasGoal)
             {
-                this.position.x++;
+
+                if (!flip)
+                    goal = this.position.x + this.distance;
+                else
+                    goal = this.position.x - this.distance;
+
+                if (goal < 0)
+                    goal = 0;
+
+                this.hasGoal = true;
+            }
+
+            if (!flip)
+            {
+
+                if (this.position.x != goal)
+                    this.position.x++;
+                else
+                {
+                    flip = true;
+                    this.hasGoal = false;
+                }
             }
             else
             {
 
-                flip = true;
-
-                if (this.position.x > 0)
+                if (this.position.x != goal)
                     this.position.x--;
                 else
+                {
                     flip = false;
+                    this.hasGoal = false;
+                }
             }
         }
 
         public void VerticalMovement()
         {
 
-            if (this.position.y < 500 && !flip)
+            if (this.position.y < this.distance && !flip)
             {
                 this.position.y++;
             }

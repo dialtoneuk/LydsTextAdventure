@@ -33,7 +33,18 @@ namespace LydsTextAdventure
                     this.sceneCommands = new List<Command>();
         }
 
-        
+        public virtual void Destroy()
+        {
+
+            EntityManager.DestroyAllEntities();
+        }
+
+        public override string ToString()
+        {
+
+            return this.sceneName;
+        }
+
         protected virtual List<Command> LoadCommands()
         {
 

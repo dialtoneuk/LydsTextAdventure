@@ -39,8 +39,11 @@ namespace LydsTextAdventure
             Program.DebugLog("connected to console log successfully");
             Program.AddDebugCommands();
 #endif
+
+            //register our scenes
+            Scenes.RegisterScenes();
             //start test scene
-            SceneManager.StartScene("menuScene");
+            SceneManager.StartScene("sceneMenu");
 
             //game loop
             while (!programState.Equals(State.SHUTDOWN))
@@ -75,9 +78,17 @@ namespace LydsTextAdventure
 
             Program.commands.Register(new List<Command>()
             {
-                  new Command("clean_screen", () => {
+                new Command("clean_screen", () => {
                         Console.Clear();
                 }, "z"),
+                new Command("delete_entities", () => {
+                    List<Entity> result = EntityManager.GetEntitiesByType(typeof(EntityMoving));
+
+                    foreach(Entity ent in result)
+                    {
+                        ent.RemoveEntity();
+                    }
+                }, "m"),
             });
         }
 

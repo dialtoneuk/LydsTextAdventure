@@ -10,10 +10,7 @@ namespace LydsTextAdventure
 
         private static Scene currentScene;
 
-        protected static List<Scene> scenes = new List<Scene>()
-        {
-            new SceneMenu("menuScene")
-        };
+        protected static List<Scene> scenes = new List<Scene>();
 
         public static void StartScene(string scene)
         {
@@ -21,9 +18,19 @@ namespace LydsTextAdventure
             var r = SceneManager.GetScene( scene );
 
             if (r == null)
-                throw new ApplicationException("scene does not exist");
+                throw new ApplicationException("scene does not exist: " + scene);
 
             SceneManager.StartScene( r );
+        }
+
+        public static void EndScene()
+        {
+
+            if (SceneManager.currentScene == null)
+                throw new ApplicationException("current scene is aready null");
+
+            SceneManager.currentScene.Destroy();
+            SceneManager.currentScene = null;
         }
 
         public static void StartScene(Scene scene)
@@ -66,6 +73,7 @@ namespace LydsTextAdventure
                 throw new ApplicationException();
 
             scenes.Add(scene);
+            Program.DebugLog("registed scene: " + scene.ToString());
         }
 
         public static void AddScenes(List<Scene> collection)

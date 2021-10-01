@@ -7,16 +7,88 @@ namespace LydsTextAdventure
    public class EntityManager
    {
 
-        private static readonly List<Entity> entities = new List<Entity>();
+        private static List<Entity> entities = new List<Entity>();
 
         public static void RegisterEntity(Entity entity)
         {
 
-            entities.Add(entity);
-            Program.DebugLog("entity " + entity.id + " has been added" );
-
             Program.GetCommandController().Register(entity.RegisterCommands());
-            Program.DebugLog("entity " + entity.id + " has commands registered" );
+            entities.Add(entity);
+            Program.DebugLog("entity " + entity.ToString() + " created" );
+        }
+
+        public static void DestroyAllEntities()
+        {
+
+            foreach (Entity entity in EntityManager.entities)
+            {
+                entity.Destroy();
+            }
+
+            EntityManager.entities = new List<Entity>();
+        }
+
+        public static List<Entity> GetEntitiesByType(Type type)
+        {
+
+            List<Entity> result = new List<Entity>();
+            foreach (Entity entity in EntityManager.entities)
+            {
+
+                if (entity.GetType() == type && !entity.IsDestroyed())
+                    result.Add(entity);
+            }
+
+            return result;
+        }
+
+        public static Camera GetMainCamera()
+        {
+
+            return (Camera)EntityManager.GetEntityByType(typeof(Camera));
+        }
+
+        public static Entity GetEntityByType(Type type)
+        {
+
+            foreach (Entity entity in EntityManager.entities)
+            {
+
+                if (entity.GetType() == type && !entity.IsDestroyed())
+                    return entity;
+            }
+
+            return null;
+        }
+
+        public static List<Entity> GetEntitiesByName(string name)
+        {
+
+            List<Entity> result = new List<Entity>();
+            foreach (Entity entity in EntityManager.entities)
+            {
+
+                if (entity.GetName() == name && !entity.IsDestroyed())
+                    result.Add(entity);
+            }
+
+            return result;
+        }
+
+
+        public static void RemoveEntity(string id)
+        {
+
+            foreach (Entity entity in EntityManager.entities)
+            {
+                if (entity.id != id)
+                    continue;
+                
+
+                entity.Destroy();
+                entities.Remove(entity);
+                break;
+            }
         }
 
         public static List<Entity> GetEntities()

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class Tile
+    public class Tile
     {
 
         public readonly Texture texture;

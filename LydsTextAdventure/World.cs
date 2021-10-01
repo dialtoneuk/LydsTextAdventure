@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class World
+    public class World
     {
 
   

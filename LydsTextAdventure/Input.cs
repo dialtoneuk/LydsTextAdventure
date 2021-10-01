@@ -129,6 +129,18 @@ namespace LydsTextAdventure
             Program.DebugLog("toggled text input", "input");
         }
 
+        public void SetTextInput(bool input)
+        {
+
+            this.textInput = input;
+        }
+
+        public void SetAwaitingInput(bool input)
+        {
+
+            this.awaitingInput = input;
+        }
+
         public void ToggleAwaitingInput()
         {
 

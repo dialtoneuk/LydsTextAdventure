@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LydsTextAdventure", "LydsTextAdventure\LydsTextAdventure.csproj", "{46F916FF-6A79-43C8-A98B-1ABCC299B29B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LydsTextAdventure", "LydsTextAdventure\LydsTextAdventure.csproj", "{46F916FF-6A79-43C8-A98B-1ABCC299B29B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLogger", "Console\ConsoleLogger.csproj", "{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleLogger", "Console\ConsoleLogger.csproj", "{C56F2350-F0CE-43C2-A1B4-6ECF761C3C02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
