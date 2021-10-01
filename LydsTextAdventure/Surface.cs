@@ -15,6 +15,12 @@ namespace LydsTextAdventure
             Surface.currentCameraContext = camera;
         }
 
+        public static void EndCameraContext()
+        {
+
+            Surface.currentCameraContext = null;
+        }
+
         public static void WriteOver(int x, int y, string str)
         {
 
@@ -29,7 +35,7 @@ namespace LydsTextAdventure
             Console.SetCursorPosition(0, y);
             Console.Write(Surface.blankChars(Console.WindowWidth));
 
-            Console.SetCursorPosition(x, y);
+            Console.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
             Console.Write(chars);
 
             Console.SetCursorPosition(lastx, lasty);
@@ -53,13 +59,14 @@ namespace LydsTextAdventure
             int lastx = Console.CursorLeft;
             int lasty = Console.CursorTop;
 
-            Console.SetCursorPosition(x, y);
+            Console.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
             Console.Write(chars);
 
             Console.SetCursorPosition(lastx, lasty);
         }
 
-        public static void WriteSurface(int x, int y, string str)
+        //requires current camera context
+        public static void DrawText(int x, int y, string str)
         {
 
             if (Surface.currentCameraContext == null)
@@ -70,16 +77,24 @@ namespace LydsTextAdventure
    
             int lastx = Console.CursorLeft;
             int lasty = Console.CursorTop;
+            int padding = 3;
 
-            if (y > Surface.currentCameraContext.height - 1)
+            if (Surface.currentCameraContext.IsDrawingTitle())
+                padding++;
+
+            if (y > Surface.currentCameraContext.height)
                 return;
 
-            Console.SetCursorPosition(x, y);
+            Console.SetCursorPosition(Math.Max(0, x), Math.Max(padding, y));
 
             if (x + chars.Length > Surface.currentCameraContext.width)
             {
 
-                int a = (x + chars.Length) - Surface.currentCameraContext.width;
+                int a = (x + chars.Length) - ( Surface.currentCameraContext.width + 1 );
+
+                if (a >= chars.Length)
+                    a--;
+
                 dchars = new char[chars.Length - a];
                 Array.Copy(chars, dchars, chars.Length - a);
                 Console.Write(dchars);

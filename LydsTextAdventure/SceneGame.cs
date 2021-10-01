@@ -11,7 +11,6 @@ namespace LydsTextAdventure
         protected World world;
         protected Player player;
         protected Camera camera;
-        protected Camera cameraTwo;
 
         public SceneGame(string name, List<Command> commands = null) : base(name, commands)
         { }
@@ -36,24 +35,19 @@ namespace LydsTextAdventure
 
             this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetSize(92, 32);
-            this.camera.position.x = 1;
-            this.camera.position.y = 1;
+            this.camera.position.x = 2;
+            this.camera.position.y = 2;
 
-  
-            Entity ent1 = new EntityMoving("Barry");
+            EntityMoving ent1 = new EntityMoving("Barry");
             ent1.position.x = 10;
             ent1.position.y = 10;
+            ent1.SetSpeed(1);
 
             EntityMoving ent3 = new EntityMoving("Steve");
-            ent3.SetSpeed(1000);
+            ent3.SetUpdateOutsideView(false); //will update this entity even outside the cameras view
+            ent3.SetSpeed(10);
             ent3.SetMovementType(EntityMoving.MovementType.VERTICAL);
             ent3.position.x = 55;
-            ent3.position.y = 55;
-
-            this.cameraTwo = new Camera(ent3, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraTwo.SetSize(32, 32);
-            this.cameraTwo.position.x = 1;
-            this.cameraTwo.position.y = 33;
 
             Entity ent2 = new EntityMoving("Jim");
             ent2.position.x = 100;
@@ -62,12 +56,13 @@ namespace LydsTextAdventure
             base.Before();
         }
 
-        public override void Draw()
+        public override void Update()
         {
 
             //render world and entities using this camera
             this.camera.Render(this.world, EntityManager.GetVisibleEntities());
-            this.cameraTwo.Render(this.world, EntityManager.GetVisibleEntities());
+
+            base.Update();
         }
 
 

@@ -35,8 +35,6 @@ namespace LydsTextAdventure
                 speed = Entity.MaxSpeed;
 
             this.Wait(Entity.MaxSpeed / speed); //will wait 1 second before updating again
-
-            base.Update(tick); //must call base
         }
 
         public void SetDistance(int distance)
@@ -125,6 +123,7 @@ namespace LydsTextAdventure
             }
         }
 
+        //will move speed + distance in a second
         public void SetSpeed(int speed)
         {
 

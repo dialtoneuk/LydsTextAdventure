@@ -13,7 +13,7 @@ namespace LydsTextAdventure
         public EntityMovingText(string name = "") : base(name)
         {
 
-            this.SetSpeed(30);
+            this.SetSpeed(5);
             this.SetDistance(32);
         }
 

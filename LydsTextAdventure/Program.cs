@@ -67,9 +67,6 @@ namespace LydsTextAdventure
 
                 //forever counts
                 Program.tick++;
-
-                //fixes graphical issues
-                Thread.Sleep(2);
             }
         }
 
@@ -101,7 +98,7 @@ namespace LydsTextAdventure
             if (Program.logger is null)
                 return;
 
-            Program.logger.WriteLine( string.Concat( "[", op, "] ", msg));
+            Program.logger.WriteLine( string.Concat( "[", op + ":" + DateTime.Now + ":" + Program.tick, "] ", msg));
         }
 
         public static void SetState(State state)

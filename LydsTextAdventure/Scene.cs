@@ -87,7 +87,13 @@ namespace LydsTextAdventure
         public virtual void Draw()
         {
 
-            return;
+            //draws all the cameras in the scene
+            foreach(Entity entity in EntityManager.GetEntitiesByType(typeof(Camera)))
+            {
+
+                Camera camera = (Camera)entity;
+                camera.Draw(camera.position.x, camera.position.y);
+            }
         }
 
 
@@ -101,11 +107,31 @@ namespace LydsTextAdventure
         public virtual void Update()
         {
 
-            foreach(Entity entity in EntityManager.GetAliveEntities()){
+            //entities update every 8 ticks
+            if (Program.GetTick() % 4 == 0)
+            {
 
-                if(!entity.isWaiting)
-                    entity.Update(Program.GetTick());
+                foreach (Entity entity in EntityManager.GetAliveEntities())
+                {
+
+                    if (!entity.isWaiting)
+                    {
+
+                        if (entity.IsUpdatedOutsideView() && entity.IsOutsideView())
+                            continue;
+
+                        entity.Update(Program.GetTick());
+                    }
+                }
             }
+
+            //recaches every second
+            if (Program.GetTick() % 1024 == 0)
+            {
+
+                EntityManager.GetVisibleEntities(true); //caches
+                EntityManager.GetAliveEntities(true); //caches
+            }   
         }
     }
 }

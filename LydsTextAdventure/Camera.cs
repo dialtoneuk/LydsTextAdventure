@@ -18,11 +18,16 @@ namespace LydsTextAdventure
         protected Camera reference;
 
         public readonly Position cameraPosition;
-        public char[,] buffer;
+        private char[,] temporaryBuffer;
+        private char[][] buffer;
         public int width = 128;
         public int height = 32;
 
+        protected bool drawBorder = true;
+        protected bool drawTitle = true;
+
         private Camera.Perspective perspective;
+        private List<Entity> renderEntities;
 
         public Camera(Entity entity = null, Camera.Perspective perspective = Camera.Perspective.CENTER_ON_OWNER, Position origin=null )
         {
@@ -38,18 +43,30 @@ namespace LydsTextAdventure
                 this.cameraPosition = new Position(0, 0);
 
             //creates the view buffer
-            this.buffer = new char[this.width, this.height];
-
+            this.temporaryBuffer = new char[this.width, this.height];
 
             //sets the name of this camera
  
             Program.DebugLog("Camera has been created", "camera");
         }
 
+        public void SetDrawBorder(bool draw)
+        {
+
+            this.drawBorder = draw;
+        }
+
+
+        public void SetDrawTitle(bool draw)
+        {
+
+            this.drawTitle = draw;
+        }
+
         public override bool IsVisible()
         {
 
-            return false;
+            return true;
         }
 
         public override bool DrawTexture()
@@ -70,21 +87,23 @@ namespace LydsTextAdventure
 
             if (this.perspective.Equals(Camera.Perspective.CENTER_ON_OWNER) && this.owner != null)
                 this.cameraPosition.SetPosition(this.CenterOnOwner());
+
+            this.UpdateBuffer();
         }
 
         public virtual void Render(bool drawBorder = true)
         {
 
-            this.Render(new char[,] { }, EntityManager.GetVisibleEntities(), drawBorder);
+            this.Render(new char[,] { }, EntityManager.GetVisibleEntities());
         }
 
-        public virtual void Render(List<Entity> entities, bool drawBorder = true)
+        public virtual void Render(List<Entity> entities)
         {
 
-            this.Render(new char[,] { }, entities, drawBorder);
+            this.Render(new char[,] { }, entities);
         }
 
-        public virtual void Render(char[,] data, List<Entity> entities, bool drawBorder = true)
+        public virtual void Render(char[,] data, List<Entity> entities)
         {
 
             for(int x = 0; x < this.width; x++)
@@ -93,11 +112,12 @@ namespace LydsTextAdventure
                 for (int y = 0; y < this.height; y++)
                 {
 
-                    this.buffer[x, y] = data[x, y];
+                    this.temporaryBuffer[x, y] = data[x, y];
                 }
             }
 
-            this.RenderProcess(entities, drawBorder);
+            this.AddEntityTextures(entities);
+            this.renderEntities = entities;
         }
 
         public Position GetViewCenter()
@@ -106,7 +126,7 @@ namespace LydsTextAdventure
             return new Position(this.cameraPosition.x + this.width / 2, this.cameraPosition.y + this.height / 2);
         }
 
-        public virtual void Render(World world, List<Entity> entities, bool drawBorder = true)
+        public virtual void Render(World world, List<Entity> entities)
         {
 
             if(world != null )
@@ -120,20 +140,24 @@ namespace LydsTextAdventure
                     for (int y = 0; y < this.height; y++)
                     {
 
-                        this.buffer[x, y] = worldData[x, y];
+                        this.temporaryBuffer[x, y] = worldData[x, y];
                     }
                 }
             }
 
-            this.RenderProcess(entities, drawBorder);
+            this.AddEntityTextures(entities);
+            this.renderEntities = entities;
         }
 
-        private void RenderProcess(List<Entity> entities, bool drawBorder)
+        private void AddEntityTextures(List<Entity> entities)
         {
 
             //prepare entities for buffer
             foreach (Entity entity in entities)
             {
+
+                if (!entity.IsVisible() || entity.IsDestroyed())
+                    continue;
 
                 if (!entity.DrawTexture())
                     continue;
@@ -148,86 +172,126 @@ namespace LydsTextAdventure
                     continue;
 
                 //draw entity texture
-                this.buffer[x, y] = entity.GetTexture().character;
+                this.temporaryBuffer[x, y] = entity.GetTexture().character;
             }
-
-            this.DrawBuffer(drawBorder);
-
-            //draw entities stuff
-            foreach (Entity entity in entities)
-            {
-
-                int x = entity.position.x - (this.cameraPosition.x);
-                int y = entity.position.y - (this.cameraPosition.y);
-
-                if (x < 0 || x >= width)
-                    continue;
-
-                if (y < 0 || y >= height)
-                    continue;
-
-                entity.SetCamera(ref this.reference);
-                entity.Draw(x + this.position.x, y + this.position.y - 1);
-            }
-
-            this.CleanBuffer();
         }
-
 
         public void CleanBuffer()
         {
 
-            this.buffer = new char[this.width, this.height];
+            this.temporaryBuffer = new char[this.width, this.height];
         }
 
-        public void DrawBuffer(bool drawBorder = true, bool drawName = true)
+        public void UpdateBuffer()
         {
 
-            int posx = position.x;
-            int posy = position.y;
+            this.buffer = new char[this.height][];
 
+            for (int y = 0; y < this.height; y++)
+            {
+
+                char[] line = new char[this.width];
+
+                for (int x = 0; x < width; x++)
+                {
+
+                    if (this.drawBorder)
+                    {
+                        if (x == 0 || x == this.width - 1)
+                            line[x] = '|';
+                        else if (y == 1 || y == this.height - 1)
+                            line[x] = '=';
+                        else
+                            line[x] = this.temporaryBuffer[x, y];
+
+                        continue;
+                    }
+
+                    line[x] = this.temporaryBuffer[x, y];
+                }
+
+                this.buffer[y] = line;
+            }
+        }
+
+
+        public bool IsDrawingTitle()
+        {
+
+            return this.drawTitle;
+        }
+
+
+        public bool IsDrawingBorder()
+        {
+
+            return this.drawBorder;
+        }
+
+        public override void Draw(int posx, int posy)
+        {
             if (posx < 0)
                 posx = 0;
 
             if (posy < 0)
                 posy = 0;
 
-            Console.SetCursorPosition(posx, posy);
+   
 
-            for (int y = 0; y < this.height; y++ )
+            if(this.buffer != null && Program.GetTick() % 48 == 0)
             {
 
-                char[] line = new char[this.width];
-
-                for(int x = 0; x < width; x++ )
+                int y = 0;
+                foreach (char[] line in this.buffer)
                 {
 
+                    Console.SetCursorPosition(posx, posy++);
 
-                    if (drawBorder)
+                    if (y == 0 && this.drawTitle)
+                        Console.Write("[ " + this.GetName() + " ]");
+                    else
+                        Console.Write(line);
+
+                    y++;
+                }
+            }
+ 
+            //draw entities stuff
+            if(this.renderEntities != null)
+                foreach (Entity entity in this.renderEntities)
+                {
+
+                    if (!entity.IsVisible() || entity.IsDestroyed() || entity.GetType() == typeof(Camera) )
+                        continue;
+
+                    int x = entity.position.x - (this.cameraPosition.x);
+                    int y = entity.position.y - (this.cameraPosition.y);
+
+                    if (x < 0 || x >= width)
                     {
-                        if (x == 0 || x == this.width - 1)
-                            line[x] = '|';
-                        else if (y == 1 || y == this.height - 1)
-                            line[x] = '-';
-                        else
-                            line[x] = this.buffer[x, y];
+
+                        if(!entity.IsOutsideView())
+                            entity.SetOutsideView(true);
 
                         continue;
                     }
-                    line[x] = this.buffer[x, y];
+                     
+
+                    if (y < 0 || y >= height)
+                    {
+
+                        if (!entity.IsOutsideView())
+                            entity.SetOutsideView(true);
+
+                        continue;
+                    }
+
+                    entity.SetCamera(ref this.reference);
+                    entity.Draw(x + this.position.x, y + this.position.y);
+
+                    if(entity.IsOutsideView())
+                        entity.SetOutsideView(false);
                 }
-
-                Console.WriteLine(line);
-
-                if(drawBorder && posy == position.y)
-                {
-
-                    Console.SetCursorPosition(posx + 4, posy);
-                    Console.Write("[ " + this.GetName() + " ]");
-                }
-
-                Console.SetCursorPosition(posx, posy + y);
-            }
         }
 
         public void UpdatePerspective(Camera.Perspective perspective)

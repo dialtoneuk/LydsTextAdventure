@@ -8,6 +8,8 @@ namespace LydsTextAdventure
    {
 
         private static List<Entity> entities = new List<Entity>();
+        private static List<Entity> visibleEntities;
+        private static List<Entity> aliveEntities;
 
         public static void RegisterEntity(Entity entity)
         {
@@ -26,6 +28,8 @@ namespace LydsTextAdventure
             }
 
             EntityManager.entities = new List<Entity>();
+            EntityManager.visibleEntities = null;
+            EntityManager.aliveEntities = null;
         }
 
         public static List<Entity> GetEntitiesByType(Type type)
@@ -97,8 +101,11 @@ namespace LydsTextAdventure
             return EntityManager.entities.GetRange(0, entities.Count);
         }
 
-        public static List<Entity> GetVisibleEntities()
+        public static List<Entity> GetVisibleEntities(bool ignoreCache=false)
         {
+
+            if (!ignoreCache && EntityManager.visibleEntities != null)
+                return EntityManager.visibleEntities;
 
             List<Entity> result = new List<Entity>();
             foreach( Entity entity in EntityManager.entities )
@@ -108,11 +115,15 @@ namespace LydsTextAdventure
                     result.Add(entity);
             }
 
+            EntityManager.visibleEntities = result;
             return result;
         }
 
-        public static List<Entity> GetAliveEntities()
+        public static List<Entity> GetAliveEntities(bool ignoreCache = false)
         {
+
+            if (!ignoreCache && EntityManager.aliveEntities != null)
+                return EntityManager.aliveEntities;
 
             List<Entity> result = new List<Entity>();
             foreach (Entity entity in EntityManager.entities)
@@ -122,6 +133,7 @@ namespace LydsTextAdventure
                     result.Add(entity);
             }
 
+            EntityManager.aliveEntities = result;
             return result;
         }
     }

@@ -24,5 +24,14 @@ namespace LydsTextAdventure
 
             return buffer;
         }
+
+        public char[,] GetBuffer()
+        {
+
+            if (this.buffer == null)
+                throw new ApplicationException("buffer is null");
+
+            return this.buffer;
+        }
     }
 }

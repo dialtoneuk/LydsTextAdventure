@@ -31,10 +31,16 @@ namespace LydsTextAdventure
         {
 
             this.camera = new Camera();
+            this.camera.SetDrawBorder(false);
+            this.camera.SetDrawTitle(false);
+
             this.camera.position.x = 1;
             this.camera.position.y = 1;
 
-            EntityMovingText text = new EntityMovingText("MenuText");
+            //generate title screen background
+            this.titleScreen.Generate(this.camera.width, this.camera.height);
+
+            EntityMovingText text = new EntityMovingText();
             text.position.SetPosition(this.camera.GetViewCenter());
             text.position.x = text.GetDistance();
 
@@ -43,11 +49,16 @@ namespace LydsTextAdventure
             base.Before();
         }
 
-
-        public override void Draw()
+        public override void Update()
         {
 
-            this.camera.Render(this.titleScreen.Generate(Console.WindowWidth, Console.WindowHeight), EntityManager.GetVisibleEntities(), false);
+            if(Program.GetTick() % 100 == 0 )
+                this.titleScreen.Generate(this.camera.width, this.camera.height);
+
+            //render world and entities using this camera
+            this.camera.Render(this.titleScreen.GetBuffer(), EntityManager.GetVisibleEntities());
+
+            base.Update(); //must call base
         }
 
 

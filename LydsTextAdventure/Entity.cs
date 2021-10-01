@@ -8,7 +8,7 @@ namespace LydsTextAdventure
     public class Entity
     {
 
-        public const int MaxSpeed = 5042;
+        public const int MaxSpeed = 1024;
         public const int MaxHealth = 5042;
 
         public readonly Position position = new Position(0, 0);
@@ -22,6 +22,8 @@ namespace LydsTextAdventure
         public bool visible = true;
         public bool destroyed = false;
         public bool isWaiting = false;
+        public bool outsideView = false;
+        public bool updateOutsideView = true;
         public int sleepTime = 0;
 
         public Entity(string name)
@@ -73,6 +75,18 @@ namespace LydsTextAdventure
             return true;
         }
 
+        public virtual bool IsUpdatedOutsideView()
+        {
+
+            return this.updateOutsideView;
+        }
+
+        public virtual bool IsOutsideView()
+        {
+
+            return this.outsideView;
+        }
+
         public virtual string GetName()
         {
 
@@ -93,6 +107,19 @@ namespace LydsTextAdventure
         public virtual void OnPlayerColision(Player player)
         {
 
+        }
+
+        public virtual void SetUpdateOutsideView(bool val)
+        {
+
+            this.updateOutsideView = val;
+        }
+        
+        public virtual void SetOutsideView(bool cull)
+        {
+
+            this.outsideView = cull;
+            Program.DebugLog("enity " + this.ToString() + " outside view: " + cull.ToString());
         }
 
         public virtual void Destroy()
@@ -126,11 +153,13 @@ namespace LydsTextAdventure
             Surface.SetCameraContext(ref this.camera);
 
             //requires camera context to be set
-            Surface.WriteSurface(x, y + 1, "entity id: " + this.id);
-            Surface.WriteSurface(x, y + 2, "entity name: " + this.name);
-            Surface.WriteSurface(x, y + 3, "entity position: " + this.position.ToString());
-            Surface.WriteSurface(x, y + 4, "entity type: " + this.GetType().ToString());
-            Surface.WriteSurface(x, y + 5, "entity name: " + this.GetType().ToString());
+            Surface.DrawText(x, y + 1, "entity id: " + this.id);
+            Surface.DrawText(x, y + 2, "entity name: " + this.name);
+            Surface.DrawText(x, y + 3, "entity type: " + this.GetType().ToString());
+            Surface.DrawText(x, y + 4, "entity position: " + this.position.ToString());
+
+            //must end
+            Surface.EndCameraContext();
 
             Console.BackgroundColor = ConsoleColor.Black;
 #endif
