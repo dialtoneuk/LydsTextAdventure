@@ -25,6 +25,7 @@ namespace LydsTextAdventure
 
         protected bool drawBorder = true;
         protected bool drawTitle = true;
+        protected bool mainCamera = false;
 
         private Camera.Perspective perspective;
         private List<Entity> renderEntities;
@@ -67,6 +68,18 @@ namespace LydsTextAdventure
         {
 
             return true;
+        }
+
+        public void SetMainCamera(bool val)
+        {
+
+            this.mainCamera = true;
+        }
+
+        public bool IsMainCamera()
+        {
+
+            return this.mainCamera;
         }
 
         public override bool DrawTexture()
@@ -116,7 +129,7 @@ namespace LydsTextAdventure
                 }
             }
 
-            this.AddEntityTextures(entities);
+            this.RenderEntityGroup(entities);
             this.renderEntities = entities;
         }
 
@@ -145,11 +158,11 @@ namespace LydsTextAdventure
                 }
             }
 
-            this.AddEntityTextures(entities);
+            this.RenderEntityGroup(entities);
             this.renderEntities = entities;
         }
 
-        private void AddEntityTextures(List<Entity> entities)
+        private void RenderEntityGroup(List<Entity> entities)
         {
 
             //prepare entities for buffer
@@ -267,20 +280,19 @@ namespace LydsTextAdventure
                     int x = entity.position.x - (this.cameraPosition.x);
                     int y = entity.position.y - (this.cameraPosition.y);
 
-                    if (x < 0 || x >= width)
+                    if (x < 0 || x >= this.width)
                     {
 
-                        if(!entity.IsOutsideView())
+                        if (this.IsMainCamera() && entity.IsHiddenOutsideView() && !entity.IsOutsideView())
                             entity.SetOutsideView(true);
 
                         continue;
                     }
-                     
 
-                    if (y < 0 || y >= height)
+                    if (y < 0 || y >= this.height)
                     {
 
-                        if (!entity.IsOutsideView())
+                        if (this.IsMainCamera() && entity.IsHiddenOutsideView() && !entity.IsOutsideView())
                             entity.SetOutsideView(true);
 
                         continue;
@@ -289,7 +301,7 @@ namespace LydsTextAdventure
                     entity.SetCamera(ref this.reference);
                     entity.Draw(x + this.position.x, y + this.position.y);
 
-                    if(entity.IsOutsideView())
+                    if(this.IsMainCamera() && entity.IsHiddenOutsideView() && entity.IsOutsideView() )
                         entity.SetOutsideView(false);
                 }
         }

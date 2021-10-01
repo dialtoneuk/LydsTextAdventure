@@ -111,13 +111,13 @@ namespace LydsTextAdventure
             if (Program.GetTick() % 4 == 0)
             {
 
-                foreach (Entity entity in EntityManager.GetAliveEntities())
+                foreach (Entity entity in EntityManager.GetVisibleEntities())
                 {
 
                     if (!entity.isWaiting)
                     {
 
-                        if (entity.IsUpdatedOutsideView() && entity.IsOutsideView())
+                        if (entity.IsHiddenOutsideView() && entity.IsOutsideView())
                             continue;
 
                         entity.Update(Program.GetTick());
@@ -125,7 +125,6 @@ namespace LydsTextAdventure
                 }
             }
 
-            //recaches every second
             if (Program.GetTick() % 1024 == 0)
             {
 

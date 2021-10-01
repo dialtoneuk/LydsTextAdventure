@@ -111,7 +111,7 @@ namespace LydsTextAdventure
             foreach( Entity entity in EntityManager.entities )
             {
 
-                if (entity.IsVisible() && !entity.IsDestroyed())
+                if (entity.IsVisible() && !entity.IsDestroyed() && ( !entity.IsHiddenOutsideView() || !entity.IsOutsideView() ) )
                     result.Add(entity);
             }
 

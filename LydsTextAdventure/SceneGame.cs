@@ -34,24 +34,22 @@ namespace LydsTextAdventure
             this.player = new Player();
 
             this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
+            this.camera.SetMainCamera(true);
             this.camera.SetSize(92, 32);
             this.camera.position.x = 2;
             this.camera.position.y = 2;
 
-            EntityMoving ent1 = new EntityMoving("Barry");
-            ent1.position.x = 10;
-            ent1.position.y = 10;
-            ent1.SetSpeed(1);
+            for(int i = 0; i < 5000; i++)
+            {
 
-            EntityMoving ent3 = new EntityMoving("Steve");
-            ent3.SetUpdateOutsideView(false); //will update this entity even outside the cameras view
-            ent3.SetSpeed(10);
-            ent3.SetMovementType(EntityMoving.MovementType.VERTICAL);
-            ent3.position.x = 55;
+                EntityMoving ent = new EntityMoving("Frank #" + i.ToString());
+                ent.SetDistance(5);
+                ent.position.x = 10;
+                ent.position.y = 10 + ( (i + 1) * 2 );
 
-            Entity ent2 = new EntityMoving("Jim");
-            ent2.position.x = 100;
-            ent2.position.y = 100;
+                ent.SetSpeed(i);
+            }
+
 
             base.Before();
         }
@@ -60,7 +58,7 @@ namespace LydsTextAdventure
         {
 
             //render world and entities using this camera
-            this.camera.Render(this.world, EntityManager.GetVisibleEntities());
+            this.camera.Render(this.world, EntityManager.GetAliveEntities());
 
             base.Update();
         }

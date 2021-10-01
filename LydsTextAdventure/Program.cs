@@ -31,6 +31,9 @@ namespace LydsTextAdventure
 
             //setwindow size
             Console.SetWindowSize(156, 70);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+
             Console.Title = "Lyds Text Adventure";
 
             //adds the remote logger
@@ -88,6 +91,7 @@ namespace LydsTextAdventure
                 }, "m"),
             });
         }
+
 
         public static void DebugLog(string msg, string op="general" )
         {

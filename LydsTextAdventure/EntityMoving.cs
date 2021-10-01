@@ -34,13 +34,19 @@ namespace LydsTextAdventure
             if (this.speed > Entity.MaxSpeed)
                 speed = Entity.MaxSpeed;
 
-            this.Wait(Entity.MaxSpeed / speed); //will wait 1 second before updating again
+            this.Wait(Entity.MaxSpeed / Math.Max(1, speed)); //will wait 1 second before updating again
         }
 
         public void SetDistance(int distance)
         {
 
             this.distance = distance;
+        }
+
+        public override Texture GetTexture()
+        {
+
+            return new Texture('F');
         }
 
         public int GetDistance()

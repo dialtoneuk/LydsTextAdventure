@@ -23,8 +23,9 @@ namespace LydsTextAdventure
         public bool destroyed = false;
         public bool isWaiting = false;
         public bool outsideView = false;
-        public bool updateOutsideView = true;
+        public bool hiddenOutsideView = true;
         public int sleepTime = 0;
+        public int health = 0;
 
         public Entity(string name)
         {
@@ -75,10 +76,10 @@ namespace LydsTextAdventure
             return true;
         }
 
-        public virtual bool IsUpdatedOutsideView()
+        public virtual bool IsHiddenOutsideView()
         {
 
-            return this.updateOutsideView;
+            return this.hiddenOutsideView;
         }
 
         public virtual bool IsOutsideView()
@@ -109,17 +110,17 @@ namespace LydsTextAdventure
 
         }
 
-        public virtual void SetUpdateOutsideView(bool val)
+        public virtual void SetHiddenOutsideView(bool val)
         {
 
-            this.updateOutsideView = val;
+            this.hiddenOutsideView = val;
         }
         
-        public virtual void SetOutsideView(bool cull)
+        public virtual void SetOutsideView(bool val)
         {
 
-            this.outsideView = cull;
-            Program.DebugLog("enity " + this.ToString() + " outside view: " + cull.ToString());
+            this.outsideView = val;
+            Program.DebugLog("enity " + this.ToString() + " outside view: " + val.ToString());
         }
 
         public virtual void Destroy()
@@ -147,16 +148,21 @@ namespace LydsTextAdventure
                 return;
 
 #if DEBUG
-            Console.BackgroundColor = ConsoleColor.Red;
+            Console.BackgroundColor = ConsoleColor.Blue;
 
             //keeps entities inside the camera
             Surface.SetCameraContext(ref this.camera);
 
             //requires camera context to be set
-            Surface.DrawText(x, y + 1, "entity id: " + this.id);
-            Surface.DrawText(x, y + 2, "entity name: " + this.name);
-            Surface.DrawText(x, y + 3, "entity type: " + this.GetType().ToString());
-            Surface.DrawText(x, y + 4, "entity position: " + this.position.ToString());
+            Surface.DrawText(x, y + 1, "id: " + this.id);
+            Surface.DrawText(x, y + 2, "name: " + this.name);
+            Surface.DrawText(x, y + 3, "type: " + this.GetType().ToString());
+
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+
+            Surface.DrawText(x, y + 4, "position: " + this.position.ToString());
+            Surface.DrawText(x, y + 5, "not always visible: " + this.IsHiddenOutsideView().ToString());
+            Surface.DrawText(x, y + 6, "health: " + this.health.ToString() );
 
             //must end
             Surface.EndCameraContext();
@@ -175,6 +181,19 @@ namespace LydsTextAdventure
         {
 
             return new List<Command>();
+        }
+
+
+        public virtual int GetHealth()
+        {
+
+            return this.health;
+        }
+
+        public void SetHealth(int health)
+        {
+
+            this.health = health;
         }
 
         public virtual bool IsVisible()

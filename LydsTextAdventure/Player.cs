@@ -9,6 +9,12 @@ namespace LydsTextAdventure
 
         public new Texture texture = new Texture('P');
 
+        public Player()
+        {
+
+            this.SetHealth(100);
+        }
+
         public override Texture GetTexture()
         {
             return this.texture;
