@@ -22,7 +22,7 @@ namespace LydsTextAdventure
 
             return (position.x == this.x && position.y == this.y);
         }
-
+         
         public void SetPosition(Position position)
         {
 

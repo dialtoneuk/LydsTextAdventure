@@ -15,8 +15,6 @@ namespace LydsTextAdventure
         public readonly Texture texture = new Texture();
         public readonly string id = Guid.NewGuid().ToString();
 
-        private Camera camera;
-
         private string name;
 
         public bool visible = true;
@@ -37,12 +35,6 @@ namespace LydsTextAdventure
                 this.name = this.GetType().ToString();
 
             EntityManager.RegisterEntity(this);
-        }
-
-        public void SetCamera(Camera camera)
-        {
-
-            this.camera = camera;
         }
 
         public Entity()
@@ -149,18 +141,12 @@ namespace LydsTextAdventure
             //does nothing
         }
 
-        public virtual void Draw(int x, int y)
+        public virtual void Draw(int x, int y, Camera camera)
         {
 
 #if DEBUG
-            //keeps entities inside the camera
-            Surface.SetCameraContext(ref this.camera);
-
             //requires camera context to be set
-            Surface.DrawText(x, y + 1, this.name);
-
-            //must end
-            Surface.EndCameraContext();
+            Surface.DrawText(x, y + 1, this.name, camera);
 #endif
         }
 

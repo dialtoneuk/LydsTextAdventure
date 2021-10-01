@@ -29,13 +29,9 @@ namespace LydsTextAdventure
             return false;
         }
 
-        public override void Draw(int x, int y)
+        public override void Draw(int x, int y, Camera camera)
         {
-
-            if(this.writeOver)
-                Surface.WriteOver(x, y, this.text);
-            else
-                Surface.Write(x, y, this.text);
+            Surface.DrawText(x, y, this.text, camera);
         }
 
         public void SetText(string str)

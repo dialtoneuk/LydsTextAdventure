@@ -15,7 +15,7 @@ namespace LydsTextAdventure
 
         private readonly FastNoise noise;
 
-        public World(int width = 1024, int height = 2014)
+        public World(int width = 712, int height = 712)
         {
 
             this.seed = new Random().Next(0, int.MaxValue);

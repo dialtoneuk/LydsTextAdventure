@@ -19,8 +19,6 @@ namespace LydsTextAdventure
             return new List<Command>(){
                 new Command("game", () =>
                 {
-
-                    Console.Clear();
                     SceneManager.EndScene();
                     SceneManager.StartScene("sceneGame");
                 }, "g")

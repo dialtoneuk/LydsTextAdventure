@@ -17,49 +17,7 @@ namespace LydsTextAdventure
         private Command lastCommand;
         private static bool taskRunning = false;
 
-        //some C++ shiz
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr GetStdHandle(int nStdHandle);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool ReadConsoleOutputCharacter(
-            IntPtr hConsoleOutput,
-            [Out] StringBuilder lpCharacter,
-            uint length,
-            COORD bufferCoord,
-            out uint lpNumberOfCharactersRead);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct COORD
-        {
-            public short X;
-            public short Y;
-        }
-
-        //returns a character from the positions its in on the console
-        public static char GetCharacter(int x, int y)
-        {
-            IntPtr consoleHandle = GetStdHandle(-11);
-            if (consoleHandle == IntPtr.Zero)
-            {
-                return '\0';
-            }
-            COORD position = new COORD
-            {
-                X = (short)x,
-                Y = (short)y
-            };
-            StringBuilder result = new StringBuilder(1);
-            uint read = 0;
-            if (ReadConsoleOutputCharacter(consoleHandle, result, 1, position, out read))
-            {
-                return result[0];
-            }
-            else
-            {
-                return '\0';
-            }
-        }
+        public static string userInput = "";
 
         //our input loop task
         public static void InputTask()
@@ -67,22 +25,38 @@ namespace LydsTextAdventure
 
             Input.taskRunning = true;
             Input input = Program.GetInputController();
-
+ 
             while ( input.awaitingInput || input.textInput || !(input.currentKey = input.GetKey()).Key.Equals(input.breakProgram))
             {
 
                 Program.SetState(Program.State.AWAITING_INPUT);
 
-                string userInput;
-                if (input.textInput)
-                    userInput = input.GetLine();
-                else
-                    userInput = input.GetKey().Key.ToString();
+                ConsoleKey key = input.GetKey().Key;
 
+                if (input.textInput)
+                {
+
+                    if(key != ConsoleKey.Enter)
+                    {
+                        userInput = userInput + key.ToString();
+                        Program.DebugLog(userInput);
+                        continue;
+                    } else if(key == ConsoleKey.Backspace){
+                        userInput = userInput.Substring(0, userInput.Length - 1);
+                        continue;
+                    } 
+                }                   
+                else
+                    userInput = key.ToString();
+
+                userInput = userInput.ToLower();
                 Command command = Program.GetCommandController().GetCommand(userInput);
 
                 if (command == null)
+                {
                     Program.DebugLog("command not found " + userInput, "input");
+                    userInput = "";
+                }
                 else
                 {
 

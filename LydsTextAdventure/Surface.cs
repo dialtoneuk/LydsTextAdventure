@@ -7,20 +7,6 @@ namespace LydsTextAdventure
     public class Surface
     {
 
-        private static Camera currentCameraContext;
-
-        public static void SetCameraContext(ref Camera camera)
-        {
-
-            Surface.currentCameraContext = camera;
-        }
-
-        public static void EndCameraContext()
-        {
-
-            Surface.currentCameraContext = null;
-        }
-
         public static void WriteOver(int x, int y, string str)
         {
 
@@ -29,22 +15,22 @@ namespace LydsTextAdventure
         public static void WriteOver(int x, int y, char[] chars)
         {
 
-            int lastx = Console.CursorLeft;
-            int lasty = Console.CursorTop;
+            int lastx = Buffer.CursorLeft();
+            int lasty = Buffer.CursorTop();
 
-            Console.SetCursorPosition(0, y);
-            Console.Write(Surface.blankChars(Console.WindowWidth));
+            Buffer.SetCursorPosition(0, y);
+            Buffer.Write(Surface.blankChars(Buffer.WindowWidth()), Buffer.Types.GUI_BUFFER);
 
-            Console.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
-            Console.Write(chars);
+            Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
+            Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
 
-            Console.SetCursorPosition(lastx, lasty);
+            Buffer.SetCursorPosition(lastx, lasty);
         }
 
         public static Position GetCenter()
         {
 
-            return new Position(Console.WindowHeight / 2, Console.WindowWidth / 2);
+            return new Position(Buffer.WindowHeight() / 2, Buffer.WindowWidth() / 2);
         }
 
         public static void Write(int x, int y, string str)
@@ -56,53 +42,41 @@ namespace LydsTextAdventure
         public static void Write(int x, int y, char[] chars)
         {
 
-            int lastx = Console.CursorLeft;
-            int lasty = Console.CursorTop;
+            int lastx = Buffer.CursorLeft();
+            int lasty = Buffer.CursorTop();
 
-            Console.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
-            Console.Write(chars);
-
-            Console.SetCursorPosition(lastx, lasty);
+            Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
+            Buffer.Write(chars);
         }
 
         //requires current camera context
-        public static void DrawText(int x, int y, string str)
+        public static void DrawText(int x, int y, string str, Camera camera)
         {
 
-            if (Surface.currentCameraContext == null)
-                throw new ApplicationException("need to call SetCameraContext");
 
             char[] chars = str.ToCharArray();
             char[] dchars;
    
-            int lastx = Console.CursorLeft;
-            int lasty = Console.CursorTop;
-            int padding = 3;
+            int lastx = Buffer.CursorLeft();
+            int lasty = Buffer.CursorTop();
 
-            if (Surface.currentCameraContext.IsDrawingTitle())
-                padding++;
+            Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(2, y));
 
-            if (y > Surface.currentCameraContext.height)
-                return;
-
-            Console.SetCursorPosition(Math.Max(0, x), Math.Max(padding, y));
-
-            if (x + chars.Length > Surface.currentCameraContext.width)
+            if (x + chars.Length > camera.width)
             {
 
-                int a = (x + chars.Length) - ( Surface.currentCameraContext.width + 1 );
+                int a = (x + chars.Length) - ( camera.width + 1 );
 
                 if (a >= chars.Length)
                     a--;
 
                 dchars = new char[chars.Length - a];
                 Array.Copy(chars, dchars, chars.Length - a);
-                Console.Write(dchars);
+                Buffer.Write(dchars, Buffer.Types.GUI_BUFFER);
             } 
             else
-                Console.Write(chars);
-                     
-            Console.SetCursorPosition(lastx, lasty);
+                Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
+
         }
 
         public static char[] blankChars(int length)

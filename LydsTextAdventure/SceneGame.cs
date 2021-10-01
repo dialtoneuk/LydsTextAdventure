@@ -11,6 +11,7 @@ namespace LydsTextAdventure
         protected World world;
         protected Player player;
         protected Camera camera;
+        protected Camera cameraSec;
 
         public SceneGame(string name, List<Command> commands = null) : base(name, commands)
         { }
@@ -40,17 +41,18 @@ namespace LydsTextAdventure
             this.camera.position.x = 2;
             this.camera.position.y = 2;
 
-            for (int i = 0; i < 5000; i++)
-            {
 
-                EntityMoving ent = new EntityMoving("Frank #" + i.ToString());
-                ent.SetDistance(5 * i);
-                ent.position.x = 10;
-                ent.position.y = 10 + ( (i + 1) * 2 );
+            EntityMoving ent2 = new EntityMoving("M Frank #");
+            ent2.SetAutomaticDisable(false);
+            ent2.position.x = 10;
+            ent2.position.y = 10;
+            ent2.SetSpeed(10);
 
-                ent.SetSpeed(i);
-            }
-
+            this.cameraSec = new Camera(ent2, Camera.Perspective.CENTER_ON_OWNER);
+            this.cameraSec.SetSize(32, 32);
+            this.cameraSec.SetName("Secondary Camera");
+            this.cameraSec.position.x = 2;
+            this.cameraSec.position.y = 35;
 
             base.Before();
         }
@@ -60,6 +62,7 @@ namespace LydsTextAdventure
 
             //render world and entities using this camera
             this.camera.Render(this.world, EntityManager.GetAliveEntities());
+            this.cameraSec.Render(this.world, EntityManager.GetAliveEntities());
 
             base.Update();
         }

@@ -31,14 +31,16 @@ namespace LydsTextAdventure
 
             SceneManager.currentScene.Destroy();
             SceneManager.currentScene = null;
-
-            Console.Clear();
         }
 
         public static void StartScene(Scene scene)
         {
 
             Program.DebugLog("loading scene " + scene.sceneName, "scene_manager");
+
+            Console.Clear();
+            Buffer.Clear();
+            Buffer.CleanBuffer();
 
             if (SceneManager.currentScene != null)
                 throw new ApplicationException("scene not ended");

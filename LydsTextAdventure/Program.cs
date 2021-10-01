@@ -30,11 +30,15 @@ namespace LydsTextAdventure
         {
 
             //setwindow size
-            Console.SetWindowSize(156, 70);
+            Console.SetWindowSize(160, 72);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
 
             Console.Title = "Lyds Text Adventure";
+
+            //Create the buffer/viewable draw space
+            Buffer.Create(128, 64);
+
 
             //adds the remote logger
 #if DEBUG
@@ -52,6 +56,8 @@ namespace LydsTextAdventure
             while (!programState.Equals(State.SHUTDOWN))
             {
 
+                Buffer.Clear();
+
                 //if we are awaiting input, lets get it
                 if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning())
                     Task.Factory.StartNew(Input.InputTask);
@@ -66,11 +72,17 @@ namespace LydsTextAdventure
                 if (SceneManager.IsSceneActive())
                     SceneManager.UpdateScene();
 
+                //generate buffer
+                Buffer.GenerateBuffer();
+
                 //forever counts
                 Program.tick++;
 
-                if(Program.tick > 4086)
+                if (Program.tick > 4086)
                     Program.tick = 0;
+
+                //Draw it
+                Task.Factory.StartNew(Buffer.DrawBuffer).Wait();
             }
         }
 

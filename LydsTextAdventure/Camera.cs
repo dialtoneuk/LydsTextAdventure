@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
@@ -127,7 +128,10 @@ namespace LydsTextAdventure
                 }
             }
 
-            this.RenderEntityGroup(entities);
+            Task.Factory.StartNew(() => {
+                this.RenderEntityGroup(entities);
+            }).Wait();
+
             this.renderEntities = entities;
         }
 
@@ -239,7 +243,7 @@ namespace LydsTextAdventure
             return this.drawBorder;
         }
 
-        public override void Draw(int posx, int posy)
+        public override void Draw(int posx, int posy, Camera camera)
         {
             if (posx < 0)
                 posx = 0;
@@ -247,21 +251,19 @@ namespace LydsTextAdventure
             if (posy < 0)
                 posy = 0;
 
-   
-
-            if(this.buffer != null && Program.GetTick() % 8 == 0)
+            if(this.buffer != null)
             {
 
                 int y = 0;
                 foreach (char[] line in this.buffer)
                 {
 
-                    Console.SetCursorPosition(posx, posy++);
+                    Buffer.SetCursorPosition(posx, posy++);
 
                     if (y == 0 && this.drawTitle)
-                        Console.Write("[ " + this.GetName() + " ]");
+                        Buffer.Write("[ " + this.GetName() + " ]", Buffer.Types.WORLD_BUFFER);
                     else
-                        Console.Write(line);
+                        Buffer.Write(line, Buffer.Types.WORLD_BUFFER);
 
                     y++;
                 }
@@ -296,8 +298,10 @@ namespace LydsTextAdventure
                         continue;
                     }
 
-                    entity.SetCamera(this);
-                    entity.Draw(x + this.position.x, y + this.position.y);
+                    Task.Factory.StartNew(() =>
+                    {
+                        entity.Draw(x + this.position.x, y + this.position.y, this);
+                    }).Wait();
 
                     if(this.IsMainCamera() && entity.IsAutomaticDisabled() && entity.IsDisabled() )
                         entity.SetDisabled(false);

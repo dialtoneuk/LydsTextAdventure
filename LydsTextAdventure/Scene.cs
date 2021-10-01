@@ -92,7 +92,7 @@ namespace LydsTextAdventure
             {
 
                 Camera camera = (Camera)entity;
-                camera.Draw(camera.position.x, camera.position.y);
+                camera.Draw(camera.position.x, camera.position.y, camera);
             }
         }
 
@@ -107,30 +107,26 @@ namespace LydsTextAdventure
         public virtual void Update()
         {
 
-            //entities update every 8 ticks
-            if (Program.GetTick() % 2 == 0)
+       
+            foreach (Entity entity in EntityManager.GetVisibleEntities())
             {
 
-                foreach (Entity entity in EntityManager.GetVisibleEntities())
+                if (!entity.isWaiting)
                 {
 
-                    if (!entity.isWaiting)
-                    {
+                    if (entity.IsAutomaticDisabled() && entity.IsDisabled())
+                        continue;
 
-                        if (entity.IsAutomaticDisabled() && entity.IsDisabled())
-                            continue;
-
-                        entity.Update(Program.GetTick());
-                    }
+                    entity.Update(Program.GetTick());
                 }
             }
 
-            if (Program.GetTick() % 64 == 0)
-            {
 
-                EntityManager.GetVisibleEntities(true); //caches
+            if(Program.GetTick() % 128 == 0)
+            {
+                EntityManager.GetVisibleEntities(true); //caches which helps with multiple cameras
                 EntityManager.GetAliveEntities(true); //caches
-            }   
+            }
         }
     }
 }
