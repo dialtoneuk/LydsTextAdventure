@@ -29,6 +29,7 @@ namespace LydsTextAdventure
 
         private Camera.Perspective perspective;
         private List<Entity> renderEntities;
+        private List<Entity> renderedEntities = new List<Entity>();
 
         public Camera(Entity entity = null, Camera.Perspective perspective = Camera.Perspective.CENTER_ON_OWNER, Position origin=null )
         {
@@ -48,6 +49,50 @@ namespace LydsTextAdventure
             //sets the name of this camera
  
             Program.DebugLog("Camera has been created", "camera");
+        }
+
+        public static void UpdateDisabled()
+        {
+
+            List<Entity> cameras = EntityManager.GetEntitiesByType(typeof(Camera));
+            List<Entity> allRendered = new List<Entity>(); 
+
+            foreach (Camera camera in cameras )
+            {
+
+                List<Entity> ents = camera.renderedEntities;
+
+                foreach (Entity e in ents)
+                    allRendered.Add(e);
+            }
+
+            foreach(Entity ent in EntityManager.GetAliveEntities())
+            {
+
+                if(ent.IsAlwaysOn() && ent.IsDisabled()){
+                    ent.SetDisabled(false);
+                    continue;
+                }
+
+                if(ent.GetType() == typeof(Camera))
+                    continue;
+
+                bool found = false;
+                foreach(Entity comp in allRendered)
+                {
+                    if(ent.id == comp.id)
+                    {
+                        ent.SetDisabled(false);
+                        found = true;
+                        break;
+                    }
+               
+                }
+
+                if (!found){
+                    ent.SetDisabled(true);
+                }
+            }
         }
 
         public void SetDrawBorder(bool draw)
@@ -101,6 +146,7 @@ namespace LydsTextAdventure
                 this.cameraPosition.SetPosition(this.CenterOnOwner());
 
             this.UpdateBuffer();
+            this.renderedEntities.Clear();
         }
 
         public virtual void Render(bool drawBorder = true)
@@ -128,10 +174,7 @@ namespace LydsTextAdventure
                 }
             }
 
-            Task.Factory.StartNew(() => {
-                this.RenderEntityGroup(entities);
-            }).Wait();
-
+            this.RenderEntityGroup(entities);
             this.renderEntities = entities;
         }
 
@@ -274,7 +317,7 @@ namespace LydsTextAdventure
                 foreach (Entity entity in this.renderEntities)
                 {
 
-                    if (!entity.IsVisible() || entity.IsDestroyed() || entity.GetType() == typeof(Camera) )
+                    if (entity.GetType() == typeof(Camera) )
                         continue;
 
                     int x = entity.position.x - (this.cameraPosition.x);
@@ -282,29 +325,17 @@ namespace LydsTextAdventure
 
                     if (x < 0 || x >= this.width)
                     {
-
-                        if (this.IsMainCamera() && entity.IsAutomaticDisabled() && !entity.IsDisabled())
-                            entity.SetDisabled(true);
-
                         continue;
                     }
 
                     if (y < 0 || y >= this.height)
                     {
-
-                        if (this.IsMainCamera() && entity.IsAutomaticDisabled() && !entity.IsDisabled())
-                            entity.SetDisabled(true);
-
                         continue;
                     }
 
-                    Task.Factory.StartNew(() =>
-                    {
-                        entity.Draw(x + this.position.x, y + this.position.y, this);
-                    }).Wait();
+                    entity.Draw(x + this.position.x, y + this.position.y, this);
 
-                    if(this.IsMainCamera() && entity.IsAutomaticDisabled() && entity.IsDisabled() )
-                        entity.SetDisabled(false);
+                    renderedEntities.Add(entity);
                 }
         }
 

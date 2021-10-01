@@ -21,7 +21,7 @@ namespace LydsTextAdventure
         public bool destroyed = false;
         public bool isWaiting = false;
         public bool disabled = false;
-        public bool automaticDisable = true;
+        public bool alwaysOn = true;
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;
@@ -76,10 +76,10 @@ namespace LydsTextAdventure
             return true;
         }
 
-        public virtual bool IsAutomaticDisabled()
+        public virtual bool IsAlwaysOn()
         {
 
-            return this.automaticDisable;
+            return this.alwaysOn;
         }
 
         public virtual bool IsDisabled()
@@ -110,17 +110,17 @@ namespace LydsTextAdventure
 
         }
 
-        public virtual void SetAutomaticDisable(bool val)
+        public virtual void SetAlwaysOn(bool val)
         {
 
-            this.automaticDisable = val;
+            this.alwaysOn = val;
         }
         
         public virtual void SetDisabled(bool val)
         {
 
             this.disabled = val;
-            Program.DebugLog("entity " + this.ToString() + " is disabled: " + val.ToString());
+
         }
 
         public virtual void Destroy()

@@ -43,7 +43,6 @@ namespace LydsTextAdventure
 
 
             EntityMoving ent2 = new EntityMoving("M Frank #");
-            ent2.SetAutomaticDisable(false);
             ent2.position.x = 10;
             ent2.position.y = 10;
             ent2.SetSpeed(10);
@@ -53,6 +52,12 @@ namespace LydsTextAdventure
             this.cameraSec.SetName("Secondary Camera");
             this.cameraSec.position.x = 2;
             this.cameraSec.position.y = 35;
+
+
+            EntityMoving ent3 = new EntityMoving("M Frank #2");
+            ent3.position.x = 10;
+            ent3.position.y = 5;
+            ent3.SetSpeed(1);
 
             base.Before();
         }

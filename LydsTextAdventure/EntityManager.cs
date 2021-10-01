@@ -10,7 +10,6 @@ namespace LydsTextAdventure
         private static List<Entity> entities = new List<Entity>();
         private static List<Entity> visibleEntities;
         private static List<Entity> aliveEntities;
-        private static List<Entity> visible
 
         private static int globalCount = 0;
         private static int sceneCount = 0;
@@ -120,7 +119,7 @@ namespace LydsTextAdventure
             foreach( Entity entity in EntityManager.entities )
             {
 
-                if (entity.IsVisible() && !entity.IsDestroyed() && ( !entity.IsAutomaticDisabled() || !entity.IsDisabled() ) )
+                if (entity.IsVisible() && !entity.IsDestroyed())
                     result.Add(entity);
             }
 

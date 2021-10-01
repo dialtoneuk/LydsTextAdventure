@@ -107,14 +107,17 @@ namespace LydsTextAdventure
         public virtual void Update()
         {
 
-       
+
+            //updates disabled entities not seen by the camera last frame
+            Camera.UpdateDisabled();
+
             foreach (Entity entity in EntityManager.GetVisibleEntities())
             {
 
                 if (!entity.isWaiting)
                 {
 
-                    if (entity.IsAutomaticDisabled() && entity.IsDisabled())
+                    if (entity.IsDisabled())
                         continue;
 
                     entity.Update(Program.GetTick());
