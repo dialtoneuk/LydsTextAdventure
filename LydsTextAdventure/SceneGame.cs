@@ -54,10 +54,15 @@ namespace LydsTextAdventure
             this.cameraSec.position.y = 35;
 
 
-            EntityMoving ent3 = new EntityMoving("M Frank #2");
-            ent3.position.x = 10;
-            ent3.position.y = 5;
-            ent3.SetSpeed(1);
+            for(int i = 0; i < 1000; i++)
+            {
+
+                EntityMoving ent3 = new EntityMoving("Franky Boy");
+                ent3.position.x = 10;
+                ent3.position.y = 5 * i;
+                ent3.SetSpeed(1);
+            }
+           
 
             base.Before();
         }

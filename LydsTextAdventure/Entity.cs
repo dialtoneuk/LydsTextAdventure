@@ -21,7 +21,7 @@ namespace LydsTextAdventure
         public bool destroyed = false;
         public bool isWaiting = false;
         public bool disabled = false;
-        public bool alwaysOn = true;
+        public bool alwaysOn = false;
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;

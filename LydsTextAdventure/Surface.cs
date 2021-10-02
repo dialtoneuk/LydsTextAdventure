@@ -15,8 +15,7 @@ namespace LydsTextAdventure
         public static void WriteOver(int x, int y, char[] chars)
         {
 
-            int lastx = Buffer.CursorLeft();
-            int lasty = Buffer.CursorTop();
+            Buffer.SaveLastPosition();
 
             Buffer.SetCursorPosition(0, y);
             Buffer.Write(Surface.blankChars(Buffer.WindowWidth()), Buffer.Types.GUI_BUFFER);
@@ -24,7 +23,7 @@ namespace LydsTextAdventure
             Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
             Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
 
-            Buffer.SetCursorPosition(lastx, lasty);
+            Buffer.SetLastPosition();
         }
 
         public static Position GetCenter()
@@ -42,25 +41,20 @@ namespace LydsTextAdventure
         public static void Write(int x, int y, char[] chars)
         {
 
-            int lastx = Buffer.CursorLeft();
-            int lasty = Buffer.CursorTop();
-
+            Buffer.SaveLastPosition();
             Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
             Buffer.Write(chars);
+            Buffer.SetLastPosition();
         }
 
-        //requires current camera context
         public static void DrawText(int x, int y, string str, Camera camera)
         {
 
 
             char[] chars = str.ToCharArray();
             char[] dchars;
-   
-            int lastx = Buffer.CursorLeft();
-            int lasty = Buffer.CursorTop();
 
-            Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(2, y));
+            Buffer.SetCursorPosition(x, y);
 
             if (x + chars.Length > camera.width)
             {
@@ -76,7 +70,6 @@ namespace LydsTextAdventure
             } 
             else
                 Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
-
         }
 
         public static char[] blankChars(int length)

@@ -257,8 +257,10 @@ namespace LydsTextAdventure
                     {
                         if (x == 0 || x == this.width - 1)
                             line[x] = '|';
-                        else if (y == 1 || y == this.height - 1)
-                            line[x] = '=';
+                        else if (y == 1)
+                            line[x] = '-';
+                        else if(y == this.height - 1)
+                            line[x] = '_';
                         else
                             line[x] = this.temporaryBuffer[x, y];
 
@@ -301,14 +303,20 @@ namespace LydsTextAdventure
                 foreach (char[] line in this.buffer)
                 {
 
-                    Buffer.SetCursorPosition(posx, posy++);
+                    Buffer.SetCursorPosition(posx, posy);
 
                     if (y == 0 && this.drawTitle)
-                        Buffer.Write("[ " + this.GetName() + " ]", Buffer.Types.WORLD_BUFFER);
+                    {
+
+                        string title = "[ " + this.GetName() + " ]";
+                        Buffer.SetCursorPosition(posx + (int)Math.Floor( (float)( this.width / 2 ) ) - (int)Math.Floor( (float) ( title.Length / 2) ), posy + 2);
+                        Buffer.Write(title, Buffer.Types.GUI_BUFFER);
+                    }
                     else
                         Buffer.Write(line, Buffer.Types.WORLD_BUFFER);
 
                     y++;
+                    posy++;
                 }
             }
  

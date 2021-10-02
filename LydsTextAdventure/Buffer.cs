@@ -150,18 +150,18 @@ namespace LydsTextAdventure
             Buffer.WriteLine(str.ToCharArray(), type);
         }
 
-        private static void SaveLastPosition()
+        public static void SaveLastPosition()
         {
 
             Buffer.cursorSavedTop = Buffer.cursorTop;
             Buffer.cursorSavedLeft = Buffer.cursorLeft;
         }
 
-        private static void SetLastPosition(bool keep=false)
+        public static void SetLastPosition(bool keep=false)
         {
 
             if (Buffer.cursorSavedLeft == -1 || Buffer.cursorSavedTop == -1)
-                throw new ApplicationException("invalid saved position");
+                return;
 
             Buffer.cursorTop = Buffer.cursorSavedTop;
             Buffer.cursorLeft = Buffer.cursorSavedLeft;
@@ -237,8 +237,7 @@ namespace LydsTextAdventure
                 for (int y = 0; y < Buffer.height; y++)
                 {
 
-                    if (Buffer.worldBuffer[x, y] != '\0')
-                        Buffer.processBuffer[x, y] = Buffer.worldBuffer[x, y];
+                    Buffer.processBuffer[x, y] = Buffer.worldBuffer[x, y];
                 }
             }
 
@@ -295,19 +294,20 @@ namespace LydsTextAdventure
             if (returnCursor)
                 Buffer.SaveLastPosition();
 
-            int x = 0;
-
-            if (newline)
-                x = Buffer.cursorLeft;
+            int x = Buffer.cursorLeft;
 
             foreach(char c in input){
                 Buffer.GetBuffer(type)[Buffer.cursorLeft, Buffer.cursorTop] = c;
-                Buffer.SetCursorPosition(Buffer.cursorLeft + 1, Buffer.cursorTop);
+
+                if (Buffer.width - 1 > Buffer.cursorLeft)
+                    Buffer.cursorLeft++;
             }
 
             if (newline)
                 Buffer.SetCursorPosition(x, Buffer.cursorTop + 1);
-            
+            else
+                Buffer.SetCursorPosition(x, Buffer.cursorTop);
+
             if (returnCursor)
                 Buffer.SetLastPosition();
         }

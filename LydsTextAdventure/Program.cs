@@ -79,7 +79,12 @@ namespace LydsTextAdventure
                 Program.tick++;
 
                 if (Program.tick > 4086)
+                {
+
+                    Console.Clear();
                     Program.tick = 0;
+                }
+                   
 
                 //Draw it
                 Task.Factory.StartNew(Buffer.DrawBuffer).Wait();
