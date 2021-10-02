@@ -22,14 +22,17 @@ namespace LydsTextAdventure
         private static int cursorSavedLeft;
         private static int cursorSavedTop;
 
-        private static int width;
-        private static int height;
+        private static int Width;
+        private static int Height;
 
         private static char[,] drawBuffer;
         private static char[,] processBuffer;
         private static char[,] entityBuffer;
         private static char[,] guiBuffer;
         private static char[,] worldBuffer;
+
+        public static int WindowWidth { get => Buffer.Width;}
+        public static int WindowHeight { get => Buffer.Height;}
 
         public static void Create(int width, int height)
         {
@@ -40,8 +43,8 @@ namespace LydsTextAdventure
             Buffer.guiBuffer = new char[width, height];
             Buffer.worldBuffer = new char[width, height];
 
-            Buffer.width = width;
-            Buffer.height = height;
+            Buffer.Width = width;
+            Buffer.Height = height;
         }
 
         public static char ReadBuffer(int x, int y, Buffer.Types type)
@@ -74,42 +77,30 @@ namespace LydsTextAdventure
 
             char[,] buffer = Buffer.GetBuffer(type);
        
-            for (int y = 0; y < Buffer.height; y++)
+            for (int y = 0; y < Buffer.Height; y++)
             {
 
                 if (y != index)
                     continue;
 
-                char[] line = new char[Buffer.width];
+                char[] line = new char[Buffer.Width];
 
-                for(int x = 0; x < Buffer.width; x++){
+                for(int x = 0; x < Buffer.Width; x++){
                     line[x] = buffer[x, y];
                 }
 
                 return line;
             }
 
-            return new char[Buffer.height];
+            return new char[Buffer.Height];
         }
 
         public static void Clear()
         {
 
-            Buffer.entityBuffer = new char[Buffer.width, Buffer.height];
-            Buffer.guiBuffer = new char[Buffer.width, Buffer.height];
-            Buffer.worldBuffer = new char[Buffer.width, Buffer.height];
-        }
-
-        public static int WindowWidth()
-        {
-
-            return Buffer.width;
-        }
-
-        public static int WindowHeight()
-        {
-
-            return Buffer.height;
+            Buffer.entityBuffer = new char[Buffer.Width, Buffer.Height];
+            Buffer.guiBuffer = new char[Buffer.Width, Buffer.Height];
+            Buffer.worldBuffer = new char[Buffer.Width, Buffer.Height];
         }
 
         public static int CursorTop()
@@ -124,6 +115,11 @@ namespace LydsTextAdventure
             return Buffer.cursorLeft;
         }
 
+        public static void Write(char str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER)
+        {
+
+            Buffer.Write(str.ToString(), type);
+        }
 
         public static void Write(string str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER)
         {
@@ -178,18 +174,18 @@ namespace LydsTextAdventure
 
             Buffer.Clear();
 
-            for (int y = 0; y < Buffer.height; y++)
+            for (int y = 0; y < Buffer.Height; y++)
             {
-                for (int x = 0; x < Buffer.width; x++)
+                for (int x = 0; x < Buffer.Width; x++)
                 {
 
                     Buffer.drawBuffer[x, y] = '\0';
                 }
             }
 
-            for (int y = 0; y < Buffer.height; y++)
+            for (int y = 0; y < Buffer.Height; y++)
             {
-                for (int x = 0; x < Buffer.width; x++)
+                for (int x = 0; x < Buffer.Width; x++)
                 {
 
                     Buffer.processBuffer[x, y] = '\0';
@@ -202,18 +198,32 @@ namespace LydsTextAdventure
 
             Console.SetCursorPosition(0, 0);
 
-            for (int y = 0; y < Buffer.height; y++)
+            for (int y = 0; y < Buffer.Height; y++)
             {
 
-                char[] line = new char[Buffer.width + 1];
-                for (int x = 0; x < Buffer.width; x++)
+                char[] line = new char[Buffer.Width + 1];
+                for (int x = 0; x < Buffer.Width; x++)
                 {
 
                     line[x] = Buffer.drawBuffer[x, y];
                 }
 
-                line[Buffer.width] = '\n';
+                line[Buffer.Width] = '\n';
                 Console.Write(line);
+            }
+        }
+
+        public static void AddToBuffer(Buffer.Types type, char[,] data, int startx=0, int starty=0)
+        {
+
+            for (int y = 0; y < data.GetLength(1); y++)
+            {
+                for (int x = 0; x < data.GetLength(0); x++)
+                {
+
+                    Buffer.SetCursorPosition(startx + x, starty + y);
+                    Buffer.Write(data[x, y], type);
+                }
             }
         }
 
@@ -221,31 +231,32 @@ namespace LydsTextAdventure
         {
 
             //clean process buffer
-            for (int y = 0; y < Buffer.height; y++)
+            for (int y = 0; y < Buffer.Height; y++)
             {
-                for (int x = 0; x < Buffer.width; x++)
+                for (int x = 0; x < Buffer.Width; x++)
                 {
 
-                    Buffer.processBuffer[x, y] = '\0';
+                    Buffer.processBuffer[x, y] = ' ';
                 }
             }
 
             //do the world 
-            for (int x = 0; x < Buffer.width; x++)
+            for (int x = 0; x < Buffer.Width; x++)
             {
 
-                for (int y = 0; y < Buffer.height; y++)
+                for (int y = 0; y < Buffer.Height; y++)
                 {
 
-                    Buffer.processBuffer[x, y] = Buffer.worldBuffer[x, y];
+                    if (Buffer.worldBuffer[x, y] != '\0')
+                        Buffer.processBuffer[x, y] = Buffer.worldBuffer[x, y];
                 }
             }
 
             //do any entities
-            for (int x = 0; x < Buffer.width; x++)
+            for (int x = 0; x < Buffer.Width; x++)
             {
 
-                for (int y = 0; y < Buffer.height; y++)
+                for (int y = 0; y < Buffer.Height; y++)
                 {
 
                     if (Buffer.entityBuffer[x, y] != '\0')
@@ -254,10 +265,10 @@ namespace LydsTextAdventure
             }
 
             //do any gui elements
-            for (int x = 0; x < Buffer.width; x++)
+            for (int x = 0; x < Buffer.Width; x++)
             {
 
-                for (int y = 0; y < Buffer.height; y++)
+                for (int y = 0; y < Buffer.Height; y++)
                 {
 
                     if (Buffer.guiBuffer[x, y] != '\0')
@@ -266,10 +277,10 @@ namespace LydsTextAdventure
             }
 
             //add it to the draw buffer
-            for (int x = 0; x < Buffer.width; x++)
+            for (int x = 0; x < Buffer.Width; x++)
             {
 
-                for (int y = 0; y < Buffer.height; y++)
+                for (int y = 0; y < Buffer.Height; y++)
                 {
 
                     Buffer.drawBuffer[x, y] = Buffer.processBuffer[x, y];
@@ -299,7 +310,7 @@ namespace LydsTextAdventure
             foreach(char c in input){
                 Buffer.GetBuffer(type)[Buffer.cursorLeft, Buffer.cursorTop] = c;
 
-                if (Buffer.width - 1 > Buffer.cursorLeft)
+                if (Buffer.Width - 1 > Buffer.cursorLeft)
                     Buffer.cursorLeft++;
             }
 
@@ -315,10 +326,10 @@ namespace LydsTextAdventure
         public static void SetCursorPosition(int x, int y = -1)
         {
 
-            Buffer.cursorLeft = Math.Max(0, Math.Min(Buffer.width - 1, x));
+            Buffer.cursorLeft = Math.Max(0, Math.Min(Buffer.Width - 1, x));
 
             if(y >= 0)
-                Buffer.cursorTop = Math.Max(0, Math.Min(Buffer.height - 1, y));
+                Buffer.cursorTop = Math.Max(0, Math.Min(Buffer.Height - 1, y));
         }
     }
 }

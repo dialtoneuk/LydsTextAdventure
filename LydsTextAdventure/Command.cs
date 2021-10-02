@@ -52,6 +52,11 @@ namespace LydsTextAdventure
             return true;
         }
 
+        public override string ToString()
+        {
+            return this.commandShortName + " : " + this.commandName;
+        }
+
         //sets the short name of the command
         public void SetShortName(string shortname="")
         {

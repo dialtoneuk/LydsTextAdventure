@@ -36,6 +36,7 @@ namespace LydsTextAdventure
         public virtual void Destroy()
         {
 
+            WorldManager.ClearWorlds();
             EntityManager.DestroyAllEntities();
         }
 
@@ -96,36 +97,25 @@ namespace LydsTextAdventure
             }
         }
 
-
         public virtual void Start()
         {
 
-            Program.DebugLog("scene start finished");
+            Program.DebugLog("base start called");
+
             return;
         }
 
         public virtual void Update()
         {
 
+            //Update the world
+            WorldManager.UpdateWorlds();
 
-            //updates disabled entities not seen by the camera last frame
-            Camera.UpdateDisabled();
+            //then update entities
+            EntityManager.UpdateEntities();
 
-            foreach (Entity entity in EntityManager.GetVisibleEntities())
-            {
-
-                if (!entity.isWaiting)
-                {
-
-                    if (entity.IsDisabled())
-                        continue;
-
-                    entity.Update(Program.GetTick());
-                }
-            }
-
-
-            if(Program.GetTick() % 128 == 0)
+            //recache visible and alive entities (helps performance with multiple cameras)
+            if(Program.GetTick() % 248 == 0)
             {
                 EntityManager.GetVisibleEntities(true); //caches which helps with multiple cameras
                 EntityManager.GetAliveEntities(true); //caches

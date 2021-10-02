@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LydsTextAdventure
 {
@@ -8,7 +6,7 @@ namespace LydsTextAdventure
     {
 
         protected Camera camera;
-        protected readonly TitleScreen titleScreen = new TitleScreen();
+        protected WorldTitleScreen world;
 
         public SceneMenu(string name, List<Command> commands = null) : base(name, commands)
         { }
@@ -25,18 +23,21 @@ namespace LydsTextAdventure
             };
         }
 
+
         public override void Before()
         {
 
+            this.world = new WorldTitleScreen();
+            this.world.SetSize(Buffer.WindowWidth * 2, Buffer.WindowHeight * 2);
+            this.world.GenerateWorld();
+
             this.camera = new Camera();
+            this.camera.SetMainCamera(true);
             this.camera.SetDrawBorder(false);
             this.camera.SetDrawTitle(false);
 
             this.camera.position.x = 1;
             this.camera.position.y = 1;
-
-            //generate title screen background
-            this.titleScreen.Generate(this.camera.width, this.camera.height);
 
             EntityMovingText text = new EntityMovingText();
             text.position.SetPosition(this.camera.GetViewCenter());
@@ -50,12 +51,7 @@ namespace LydsTextAdventure
         public override void Update()
         {
 
-            if(Program.GetTick() % 100 == 0 )
-                this.titleScreen.Generate(this.camera.width, this.camera.height);
-
-            //render world and entities using this camera
-            this.camera.Render(this.titleScreen.GetBuffer(), EntityManager.GetVisibleEntities());
-
+            this.camera.UpdateBuffer();
             base.Update(); //must call base
         }
 

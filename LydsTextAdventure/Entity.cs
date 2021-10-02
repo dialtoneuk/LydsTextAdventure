@@ -13,6 +13,7 @@ namespace LydsTextAdventure
 
         public readonly Position position = new Position(0, 0);
         public readonly Texture texture = new Texture();
+        public World world;
         public readonly string id = Guid.NewGuid().ToString();
 
         private string name;
@@ -42,6 +43,18 @@ namespace LydsTextAdventure
 
             name = this.GetType().ToString();
             EntityManager.RegisterEntity(this);
+        }
+
+        public void SetWorld(World world)
+        {
+
+            this.world = world;
+        }
+
+        public World GetWorld()
+        {
+
+            return this.world;
         }
 
         public void SetIndex(int position)

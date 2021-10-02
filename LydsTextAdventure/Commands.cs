@@ -24,7 +24,7 @@ namespace LydsTextAdventure
         {
 
             if (!this.IsCommandUnique(command))
-                 throw new ApplicationException("command is not unique");
+                 throw new ApplicationException("command is not unique: " + command.ToString());
 
             this.commands.Add(command);
         }

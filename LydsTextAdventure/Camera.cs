@@ -19,7 +19,6 @@ namespace LydsTextAdventure
 
         public readonly Position cameraPosition;
         private char[,] temporaryBuffer;
-        private char[][] buffer;
         public int width = 132;
         public int height = 52;
 
@@ -101,7 +100,6 @@ namespace LydsTextAdventure
             this.drawBorder = draw;
         }
 
-
         public void SetDrawTitle(bool draw)
         {
 
@@ -117,7 +115,7 @@ namespace LydsTextAdventure
         public void SetMainCamera(bool val)
         {
 
-            this.mainCamera = true;
+            this.mainCamera = val;
         }
 
         public bool IsMainCamera()
@@ -145,23 +143,17 @@ namespace LydsTextAdventure
             if (this.perspective.Equals(Camera.Perspective.CENTER_ON_OWNER) && this.owner != null)
                 this.cameraPosition.SetPosition(this.CenterOnOwner());
 
-            this.UpdateBuffer();
             this.renderedEntities.Clear();
         }
 
-        public virtual void Render(bool drawBorder = true)
+        public virtual void UpdateBuffer(List<Entity> entities)
         {
 
-            this.Render(new char[,] { }, EntityManager.GetVisibleEntities());
+            if (this.world != null)
+                this.UpdateBuffer(this.world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height), entities);
         }
 
-        public virtual void Render(List<Entity> entities)
-        {
-
-            this.Render(new char[,] { }, entities);
-        }
-
-        public virtual void Render(char[,] data, List<Entity> entities)
+        public virtual void UpdateBuffer(char[,] data, List<Entity> entities)
         {
 
             for(int x = 0; x < this.width; x++)
@@ -184,13 +176,13 @@ namespace LydsTextAdventure
             return new Position(this.cameraPosition.x + this.width / 2, this.cameraPosition.y + this.height / 2);
         }
 
-        public virtual void Render(World world, List<Entity> entities)
+        public virtual void UpdateBuffer()
         {
 
-            if(world != null )
+            if(this.world != null || this.world.IsDisabled() )
             {
 
-                char[,] worldData = world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
+                char[,] worldData = this.world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
 
                 for (int x = 0; x < this.width; x++)
                 {
@@ -203,8 +195,8 @@ namespace LydsTextAdventure
                 }
             }
 
-            this.RenderEntityGroup(entities);
-            this.renderEntities = entities;
+            this.RenderEntityGroup( EntityManager.GetVisibleEntities() );
+            this.renderEntities = EntityManager.GetVisibleEntities();
         }
 
         private void RenderEntityGroup(List<Entity> entities)
@@ -240,40 +232,6 @@ namespace LydsTextAdventure
             this.temporaryBuffer = new char[this.width, this.height];
         }
 
-        public void UpdateBuffer()
-        {
-
-            this.buffer = new char[this.height][];
-
-            for (int y = 0; y < this.height; y++)
-            {
-
-                char[] line = new char[this.width];
-
-                for (int x = 0; x < width; x++)
-                {
-
-                    if (this.drawBorder)
-                    {
-                        if (x == 0 || x == this.width - 1)
-                            line[x] = '|';
-                        else if (y == 1)
-                            line[x] = '-';
-                        else if(y == this.height - 1)
-                            line[x] = '_';
-                        else
-                            line[x] = this.temporaryBuffer[x, y];
-
-                        continue;
-                    }
-
-                    line[x] = this.temporaryBuffer[x, y];
-                }
-
-                this.buffer[y] = line;
-            }
-        }
-
 
         public bool IsDrawingTitle()
         {
@@ -296,30 +254,8 @@ namespace LydsTextAdventure
             if (posy < 0)
                 posy = 0;
 
-            if(this.buffer != null)
-            {
+            Buffer.AddToBuffer(Buffer.Types.WORLD_BUFFER, this.temporaryBuffer, posx, posy);
 
-                int y = 0;
-                foreach (char[] line in this.buffer)
-                {
-
-                    Buffer.SetCursorPosition(posx, posy);
-
-                    if (y == 0 && this.drawTitle)
-                    {
-
-                        string title = "[ " + this.GetName() + " ]";
-                        Buffer.SetCursorPosition(posx + (int)Math.Floor( (float)( this.width / 2 ) ) - (int)Math.Floor( (float) ( title.Length / 2) ), posy + 2);
-                        Buffer.Write(title, Buffer.Types.GUI_BUFFER);
-                    }
-                    else
-                        Buffer.Write(line, Buffer.Types.WORLD_BUFFER);
-
-                    y++;
-                    posy++;
-                }
-            }
- 
             //draw entities stuff
             if(this.renderEntities != null)
                 foreach (Entity entity in this.renderEntities)
@@ -339,10 +275,9 @@ namespace LydsTextAdventure
                     if (y < 0 || y >= this.height)
                     {
                         continue;
-                    }
+                    } 
 
-                    entity.Draw(x + this.position.x, y + this.position.y, this);
-
+                    entity.Draw(x + posx, y + posy, this);
                     renderedEntities.Add(entity);
                 }
         }

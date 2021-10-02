@@ -26,6 +26,7 @@ namespace LydsTextAdventure
         {
 
             if (this.isVertical)
+                
                 this.VerticalMovement();
             else
                 this.HoriziontalMovement();

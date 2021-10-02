@@ -107,6 +107,9 @@ namespace LydsTextAdventure
                         ent.RemoveEntity();
                     }
                 }, "m"),
+                new Command("delete_current_world", () => {
+                    WorldManager.DeleteWorld(WorldManager.CurrentWorld.id);
+                }, "b"),
             });
         }
 

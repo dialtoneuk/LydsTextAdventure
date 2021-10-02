@@ -18,7 +18,7 @@ namespace LydsTextAdventure
             Buffer.SaveLastPosition();
 
             Buffer.SetCursorPosition(0, y);
-            Buffer.Write(Surface.blankChars(Buffer.WindowWidth()), Buffer.Types.GUI_BUFFER);
+            Buffer.Write(Surface.blankChars(Buffer.WindowWidth), Buffer.Types.GUI_BUFFER);
 
             Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
             Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
@@ -29,7 +29,7 @@ namespace LydsTextAdventure
         public static Position GetCenter()
         {
 
-            return new Position(Buffer.WindowHeight() / 2, Buffer.WindowWidth() / 2);
+            return new Position(Buffer.WindowHeight / 2, Buffer.WindowWidth / 2);
         }
 
         public static void Write(int x, int y, string str)
@@ -59,10 +59,10 @@ namespace LydsTextAdventure
             if (x + chars.Length > camera.width)
             {
 
-                int a = (x + chars.Length) - ( camera.width + 1 );
+                int a = (x + chars.Length) - ( camera.width );
 
                 if (a >= chars.Length)
-                    a--;
+                    a = 0;
 
                 dchars = new char[chars.Length - a];
                 Array.Copy(chars, dchars, chars.Length - a);

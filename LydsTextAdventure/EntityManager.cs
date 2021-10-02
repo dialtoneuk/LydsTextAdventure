@@ -18,10 +18,14 @@ namespace LydsTextAdventure
         {
 
             Program.GetCommandController().Register(entity.RegisterCommands());
+
             entity.SetIndex(EntityManager.sceneCount++);
+            entity.SetWorld(WorldManager.CurrentWorld);
+
             entities.Add(entity);
 
             EntityManager.globalCount++;
+          
 
             Program.DebugLog("entity " + entity.ToString() + " created" );
         }
@@ -100,6 +104,26 @@ namespace LydsTextAdventure
                 entity.Destroy();
                 entities.Remove(entity);
                 break;
+            }
+        }
+
+        public static void UpdateEntities()
+        {
+
+            //updates disabled entities not seen by the camera last frame
+            Camera.UpdateDisabled();
+
+            foreach (Entity entity in EntityManager.GetVisibleEntities())
+            {
+
+                if (!entity.isWaiting)
+                {
+
+                    if (entity.IsDisabled())
+                        continue;
+
+                    entity.Update(Program.GetTick());
+                }
             }
         }
 
