@@ -38,6 +38,7 @@ namespace LydsTextAdventure
 
             Program.DebugLog("loading scene " + scene.sceneName, "scene_manager");
 
+            Program.GetCommandController().Clear();
             Console.Clear();
             Buffer.Clear();
             Buffer.CleanBuffer();

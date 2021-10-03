@@ -8,6 +8,8 @@ namespace LydsTextAdventure
     {
 
         public readonly Texture texture;
+
+        public bool isSolid = false;
         
         public Tile(Texture texture=null)
         {

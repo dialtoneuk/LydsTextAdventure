@@ -4,10 +4,10 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class Commands
+    class CommandManager
     {
 
-        protected List<Command> commands = new List<Command>()
+        protected List<Command> defaultCommands = new List<Command>()
         {
             //exit command
             new Command("break", () => {
@@ -20,6 +20,14 @@ namespace LydsTextAdventure
             })
         };
 
+        protected List<Command> commands = new List<Command>();
+
+        public CommandManager()
+        {
+
+            this.commands.AddRange(defaultCommands);
+        }
+
         public void Add(Command command)
         {
 
@@ -27,6 +35,13 @@ namespace LydsTextAdventure
                  throw new ApplicationException("command is not unique: " + command.ToString());
 
             this.commands.Add(command);
+        }
+        
+        public void Clear()
+        {
+
+            this.commands.Clear();
+            this.commands.AddRange(defaultCommands);
         }
 
         public void Register(List<Command> commands)

@@ -1,32 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LydsTextAdventure
 {
 
-   public class EntityManager
+    public class EntityManager
    {
 
         private static List<Entity> entities = new List<Entity>();
         private static List<Entity> visibleEntities;
         private static List<Entity> aliveEntities;
 
-        private static int globalCount = 0;
         private static int sceneCount = 0;
 
         public static void RegisterEntity(Entity entity)
         {
 
-            Program.GetCommandController().Register(entity.RegisterCommands());
-
             entity.SetIndex(EntityManager.sceneCount++);
             entity.SetWorld(WorldManager.CurrentWorld);
 
             entities.Add(entity);
-
-            EntityManager.globalCount++;
-          
-
             Program.DebugLog("entity " + entity.ToString() + " created" );
         }
 
@@ -60,6 +54,17 @@ namespace LydsTextAdventure
 
         public static Camera GetMainCamera()
         {
+
+            List<Entity> entities = EntityManager.GetEntitiesByType(typeof(Camera));
+
+            foreach(Entity ent in entities)
+            {
+
+                Camera cam = (Camera)ent;
+
+                if (cam.IsMainCamera())
+                    return cam;
+            }
 
             return (Camera)EntityManager.GetEntityByType(typeof(Camera));
         }
@@ -131,6 +136,58 @@ namespace LydsTextAdventure
         {
 
             return EntityManager.entities.GetRange(0, entities.Count);
+        }
+
+        public static Entity GetClosestTo(Entity entity, int range = 1)
+        {
+
+            List<Entity> entities = EntityManager.GetEntitiesAroundPosition(entity.position, range); //this will naturally get the longest distance first
+
+            if (entities.Count == 0)
+                return null;
+
+            entities.Remove(entity);
+
+            return entities.LastOrDefault(); //so get the last element aka the first
+        }
+
+
+        public static Entity GetFurthestFrom(Entity entity, int range = 1)
+        {
+
+            List<Entity> entities = EntityManager.GetEntitiesAroundPosition(entity.position, range );
+
+            if (entities.Count == 0)
+                return null;
+
+            entities.Remove(entity);
+
+            return entities.FirstOrDefault();
+        }
+
+        public static List<Entity> GetEntitiesAroundPosition(Position position, int range=1, bool solidsOnly = true)
+        {
+
+            if (range <= 0)
+                range = 1;
+
+            List<Entity> result = new List<Entity>();
+            foreach (Entity entity in EntityManager.GetAliveEntities())
+            {
+
+                if (entity.position.x > position.x - range && entity.position.x < position.x + range)
+                    if (entity.position.y > position.y - range && entity.position.y < position.y + range)
+                    {
+
+                        if (solidsOnly && !entity.IsSolid())
+                            continue;
+
+                        result.Add(entity);
+                    }
+         
+            }
+
+            return result;
         }
 
         public static List<Entity> GetVisibleEntities(bool ignoreCache=false)

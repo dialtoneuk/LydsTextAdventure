@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -15,9 +16,10 @@ namespace LydsTextAdventure
         private bool textInput = false;
         private bool awaitingInput = false;
         private Command lastCommand;
+        private Command successCommand;
         private static bool taskRunning = false;
 
-        public static string userInput = "";
+        private static string userInput = "";
 
         //our input loop task
         public static void InputTask()
@@ -61,6 +63,7 @@ namespace LydsTextAdventure
                 {
 
                     input.lastCommand = command;
+                    input.successCommand = command;
                     Program.SetState(Program.State.RUNNING);
                     Input.taskRunning = false;
                     return;
@@ -70,6 +73,12 @@ namespace LydsTextAdventure
             Input.taskRunning = false;
             input.lastCommand = null;
             return;
+        }
+
+        public static string GetString()
+        {
+
+            return Input.userInput;
         }
 
         public static bool IsTaskRunning()
@@ -84,10 +93,16 @@ namespace LydsTextAdventure
             return (this.awaitingInput);
         }
 
-        public Command GetCommand()
+        public Command GetLastCommand()
         {
 
             return this.lastCommand;
+        }
+
+        public Command GetLastSuccessfulCommand()
+        {
+
+            return this.successCommand;
         }
 
         public void ClearCommand()

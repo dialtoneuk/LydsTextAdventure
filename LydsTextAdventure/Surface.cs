@@ -43,7 +43,7 @@ namespace LydsTextAdventure
 
             Buffer.SaveLastPosition();
             Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
-            Buffer.Write(chars);
+            Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
             Buffer.SetLastPosition();
         }
 
@@ -70,6 +70,44 @@ namespace LydsTextAdventure
             } 
             else
                 Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
+        }
+
+        public static void DrawBox(int x, int y, int w, int h, Camera camera = null, Buffer.Types type = Buffer.Types.GUI_BUFFER)
+        {
+
+            int rw = Buffer.WindowWidth;
+            int rh = Buffer.WindowHeight;
+
+            if(camera != null)
+            {
+                rw = camera.width;
+                rh = camera.height;
+            } 
+
+            Buffer.SetCursorPosition(x, y);
+
+            for(int ix = 0; ix < w; ix++)
+            {
+
+                if (x + ix > rw)
+                    continue;
+
+                for (int iy = 0; iy < h; iy++)
+                {
+
+                    Buffer.SetCursorPosition(x + ix, y + iy);
+
+                    if (y + iy > rh)
+                        continue;
+
+                    if (ix == 0 || ix == w - 1)
+                        Buffer.Write("|", type);
+                    else if (iy == 0 || iy == h - 1)
+                        Buffer.Write("-", type);
+                    else
+                        Buffer.Write(' ', type);
+                }
+            }
         }
 
         public static char[] blankChars(int length)

@@ -34,6 +34,15 @@ namespace LydsTextAdventure
             this.LoadEntities();
         }
 
+        public Tile GetTile(int x, int y)
+        {
+
+            if (x > this.width || y > this.height || x < 0 || y < 0)
+                return null;
+
+            return this.world[x, y];
+        }
+
         public void SaveWorld()
         {
 

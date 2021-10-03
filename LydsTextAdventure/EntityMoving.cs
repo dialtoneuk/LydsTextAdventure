@@ -94,7 +94,7 @@ namespace LydsTextAdventure
             {
 
                 if (this.position.x != goal)
-                    this.position.x++;
+                    MovementManager.MoveEntity(this, this.position.x + 1, this.position.y);
                 else
                 {
                     flip = true;
@@ -105,7 +105,7 @@ namespace LydsTextAdventure
             {
 
                 if (this.position.x != goal)
-                    this.position.x--;
+                    MovementManager.MoveEntity(this, this.position.x - 1, this.position.y);
                 else
                 {
                     flip = false;
@@ -119,7 +119,7 @@ namespace LydsTextAdventure
 
             if (this.position.y < this.distance && !flip)
             {
-                this.position.y++;
+                MovementManager.MoveEntity(this, this.position.x, this.position.y + 1);
             }
             else
             {
@@ -127,7 +127,7 @@ namespace LydsTextAdventure
                 flip = true;
 
                 if (this.position.y > 0)
-                    this.position.y--;
+                    MovementManager.MoveEntity(this, this.position.x, this.position.y - 1);
                 else
                     flip = false;
             }

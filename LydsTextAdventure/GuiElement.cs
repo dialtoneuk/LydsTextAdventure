@@ -24,7 +24,7 @@ namespace LydsTextAdventure
         public int Height { get => height; }
         public string Name { get => name; }
 
-        public GuiElement(GuiElement parent=null, Window window = null, Position position = null)
+        public GuiElement(Window window = null, GuiElement parent = null, Position position = null)
         {
 
             if (position != null)
@@ -32,9 +32,15 @@ namespace LydsTextAdventure
 
             this.parent = parent;
             this.window = window;
+
+            if(window!=null)
+                window.RegisterElement(this);
         }
 
-
+        public override string ToString()
+        {
+            return this.GetType().ToString();
+        }
 
         public virtual void Update()
         {
@@ -55,10 +61,17 @@ namespace LydsTextAdventure
             this.height = height;
         }
 
-        public virtual void Draw()
+        public virtual void Draw(int x, int y, Camera camera=null)
         {
 
 
+        }
+
+        public void SetPosition(int x, int y)
+        {
+
+            this.position.x = x;
+            this.position.y = y;
         }
 
         public int GetLeft()
@@ -75,12 +88,12 @@ namespace LydsTextAdventure
         public int GetTop()
         {
 
-            int x = this.position.x;
+            int y = this.position.y;
 
             if (this.parent != null)
-                x = this.parent.position.x + x;
+                y = this.parent.position.y + y;
 
-            return x;
+            return y;
         }
 
         public int GetX()

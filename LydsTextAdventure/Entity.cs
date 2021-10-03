@@ -23,6 +23,7 @@ namespace LydsTextAdventure
         public bool isWaiting = false;
         public bool disabled = false;
         public bool alwaysOn = false;
+
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;
@@ -36,6 +37,12 @@ namespace LydsTextAdventure
                 this.name = this.GetType().ToString();
 
             EntityManager.RegisterEntity(this);
+        }
+
+        public virtual bool IsSolid()
+        {
+
+            return true;
         }
 
         public Entity()
@@ -167,12 +174,6 @@ namespace LydsTextAdventure
         {
 
             return this.texture;
-        }
-
-        public virtual List<Command> RegisterCommands()
-        {
-
-            return new List<Command>();
         }
 
 

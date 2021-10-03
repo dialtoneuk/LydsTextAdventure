@@ -95,6 +95,9 @@ namespace LydsTextAdventure
                 Camera camera = (Camera)entity;
                 camera.Draw(camera.position.x, camera.position.y, camera);
             }
+
+            //then draw windows
+            WindowManager.DrawWindows();
         }
 
         public virtual void Start()
@@ -113,6 +116,9 @@ namespace LydsTextAdventure
 
             //then update entities
             EntityManager.UpdateEntities();
+
+            //then update windows
+            WindowManager.UpdateWindows();
 
             //recache visible and alive entities (helps performance with multiple cameras)
             if(Program.GetTick() % 248 == 0)

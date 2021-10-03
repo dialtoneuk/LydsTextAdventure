@@ -11,11 +11,6 @@ namespace LydsTextAdventure
         protected World world;
         protected Player player;
         protected Camera camera;
-        protected Camera cameraSec;
-        protected Camera cameraThr;
-        protected Camera cameraFour;
-        protected Camera cameraFive;
-        protected Camera cameraSix;
 
         public SceneGame(string name, List<Command> commands = null) : base(name, commands)
         { }
@@ -24,9 +19,34 @@ namespace LydsTextAdventure
         {
 
             //scene commands
-            return new List<Command>()
-            {
-          
+            return new List<Command>(){
+                new Command("down", () => {
+                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y + 1));
+                }, "s"),
+                new Command("up", () => {
+                      MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y - 1));
+                }, "w"),
+                new Command("left", () => {
+                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x - 1, this.player.position.y));
+                }, "a"),
+                new Command("right", () => {
+                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x + 1, this.player.position.y));
+                }, "d"),
+                new Command("position", () =>
+                {
+                    Program.DebugLog(this.player.position.ToString());
+                }, "p"),
+                new Command("test", () =>
+                {
+
+                    Entity ent = EntityManager.GetClosestTo(this.player, 4);
+
+                    if(ent == null)
+                        Program.DebugLog("NULL");
+                    else
+                        Program.DebugLog(ent.ToString()); 
+
+                }, "g")
             };
         }
 
@@ -45,58 +65,15 @@ namespace LydsTextAdventure
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
-            this.cameraSix = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraSix.SetMainCamera(true);
-            this.cameraSix.SetSize(32, 32);
-            this.cameraSix.SetName("Main Camera");
-            this.cameraSix.position.x = 65;
-            this.cameraSix.position.y = 0;
+            WindowPlayerStatistics test = new WindowPlayerStatistics();
+            test.SetPlayer(this.player);
+            test.SetPosition(65, 0);
 
+            WindowPlayerStatistics test2 = new WindowPlayerStatistics();
+            test2.SetTitle("Another Window!");
+            test2.SetPlayer(this.player);
+            test2.SetPosition(65, 9);
 
-            EntityMoving ent2 = new EntityMoving("Slow Entity");
-            ent2.position.x = 10;
-            ent2.position.y = 80;
-            ent2.SetSpeed(10);
-
-            EntityMoving ent3 = new EntityMoving("Fast Entity");
-            ent3.position.x = 20;
-            ent3.position.y = 60;
-            ent3.SetMovementType(EntityMoving.MovementType.VERTICAL);
-            ent3.SetSpeed(20);
-
-            this.cameraSec = new Camera(ent2, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraSec.SetSize(32, 32);
-            this.cameraSec.SetName("Secondary Camera");
-            this.cameraSec.position.x = 0;
-            this.cameraSec.position.y = 33;
-
-            this.cameraThr = new Camera(ent2, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraThr.SetSize(32, 32);
-            this.cameraThr.SetName("Secondary Camera");
-            this.cameraThr.position.x = 33;
-            this.cameraThr.position.y = 33;
-
-            this.cameraFour = new Camera(ent2, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraFour.SetSize(32, 32);
-            this.cameraFour.SetName("Secondary Camera");
-            this.cameraFour.position.x = 66;
-            this.cameraFour.position.y = 33;
-
-            this.cameraFive = new Camera(ent2, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraFive.SetSize(32, 32);
-            this.cameraFive.SetName("Secondary Camera");
-            this.cameraFive.position.x = 99;
-            this.cameraFive.position.y = 33;
-
-            for (int i = 0; i < 200; i++)
-            {
-
-                EntityMoving e = new EntityMoving("#" + i);
-                e.position.x = 10;
-                e.position.y = 5 * i;
-                e.SetSpeed(5);
-            }
-           
 
             base.Before();
         }
@@ -106,11 +83,6 @@ namespace LydsTextAdventure
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();
-            this.cameraSec.UpdateBuffer();
-            this.cameraThr.UpdateBuffer();
-            this.cameraFour.UpdateBuffer();
-            this.cameraFive.UpdateBuffer();
-            this.cameraSix.UpdateBuffer();
 
             base.Update();
         }

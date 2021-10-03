@@ -22,7 +22,14 @@ namespace LydsTextAdventure
 
             return (position.x == this.x && position.y == this.y);
         }
-         
+
+        public override bool Equals(object obj)
+        {
+
+            Position pos = (Position)obj;
+            return pos.x == x && pos.y == y;
+        }
+
         public void SetPosition(Position position)
         {
 

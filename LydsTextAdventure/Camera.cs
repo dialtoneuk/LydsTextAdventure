@@ -50,6 +50,12 @@ namespace LydsTextAdventure
             Program.DebugLog("Camera has been created", "camera");
         }
 
+        public override bool IsSolid()
+        {
+
+            return false;
+        }
+
         public static void UpdateDisabled()
         {
 

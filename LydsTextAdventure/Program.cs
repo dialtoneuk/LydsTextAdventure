@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
+
+
 
     class Program
     {
@@ -19,7 +22,7 @@ namespace LydsTextAdventure
 
         //create our classes
         private static readonly Input input = new Input();
-        private static readonly Commands commands = new Commands();
+        private static readonly CommandManager commands = new CommandManager();
         private static ConsoleLogger logger;
 
         private static int tick = 0;
@@ -28,13 +31,14 @@ namespace LydsTextAdventure
        
         static void Main(string[] args)
         {
-
+   
             //setwindow size
             Console.SetWindowSize(160, 72);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
-
             Console.Title = "Lyds Text Adventure";
+
+            ConsoleManager.DisableQuickEdit();
 
             //Create the buffer/viewable draw space
             Buffer.Create(128, 64);
@@ -62,8 +66,8 @@ namespace LydsTextAdventure
                 if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning())
                     Task.Factory.StartNew(Input.InputTask);
 
-                if (Program.input.GetCommand() != null)
-                    if (!Program.input.GetCommand().Execute())
+                if (Program.input.GetLastCommand() != null)
+                    if (!Program.input.GetLastCommand().Execute())
                         throw new ApplicationException("must be true");
                     else
                         Program.input.ClearCommand();
@@ -81,7 +85,7 @@ namespace LydsTextAdventure
                 if (Program.tick > 4086)
                 {
 
-                    Console.Clear();
+                    System.Console.Clear();
                     Program.tick = 0;
                 }
                    
@@ -97,7 +101,7 @@ namespace LydsTextAdventure
             Program.commands.Register(new List<Command>()
             {
                 new Command("clean_screen", () => {
-                        Console.Clear();
+                        System.Console.Clear();
                 }, "z"),
                 new Command("delete_entities", () => {
                     List<Entity> result = EntityManager.GetEntitiesByType(typeof(EntityMoving));
@@ -138,7 +142,7 @@ namespace LydsTextAdventure
             return Program.tick;
         }
 
-        public static Commands GetCommandController()
+        public static CommandManager GetCommandController()
         {
 
             return Program.commands;
