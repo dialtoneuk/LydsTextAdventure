@@ -4,10 +4,14 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
+
+    [Serializable]
     public class Tile
     {
 
-        public readonly Texture texture;
+        //need to pack texture
+        [field: NonSerialized()]
+        public Texture texture;
 
         public bool isSolid = false;
         
@@ -16,8 +20,6 @@ namespace LydsTextAdventure
 
             if (texture != null)
                 this.texture = texture;
-            else
-                this.texture = new Texture();
         }
     }
 }

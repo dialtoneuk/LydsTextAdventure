@@ -45,15 +45,13 @@ namespace LydsTextAdventure
             //creates the view buffer
             this.temporaryBuffer = new char[this.width, this.height];
 
+            //cameras are not solids
+            this.SetSolid(false);
+            this.SetDrawTexture(false);
+
             //sets the name of this camera
  
             Program.DebugLog("Camera has been created", "camera");
-        }
-
-        public override bool IsSolid()
-        {
-
-            return false;
         }
 
         public static void UpdateDisabled()
@@ -112,12 +110,6 @@ namespace LydsTextAdventure
             this.drawTitle = draw;
         }
 
-        public override bool IsVisible()
-        {
-
-            return true;
-        }
-
         public void SetMainCamera(bool val)
         {
 
@@ -130,17 +122,14 @@ namespace LydsTextAdventure
             return this.mainCamera;
         }
 
-        public override bool DrawTexture()
-        {
-
-            return false;
-        }
-
         public void SetSize(int width, int height)
         {
 
             this.width = width;
             this.height = height;
+
+            //recreates the view buffer
+            this.temporaryBuffer = new char[this.width, this.height];
         }
 
         public override void Update(int tick)
@@ -215,7 +204,7 @@ namespace LydsTextAdventure
                 if (!entity.IsVisible() || entity.IsDestroyed())
                     continue;
 
-                if (!entity.DrawTexture())
+                if (!entity.ShouldDrawTexture())
                     continue;
 
                 int x = entity.position.x - (this.cameraPosition.x);
@@ -244,7 +233,6 @@ namespace LydsTextAdventure
 
             return this.drawTitle;
         }
-
 
         public bool IsDrawingBorder()
         {

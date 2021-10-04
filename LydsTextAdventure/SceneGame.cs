@@ -57,23 +57,18 @@ namespace LydsTextAdventure
             this.world.GenerateWorld();
 
             this.player = new Player();
+            this.player.SetSolid(false);
 
             this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(64, 32);
+            this.camera.SetSize(96, 64);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
-            WindowPlayerStatistics test = new WindowPlayerStatistics();
-            test.SetPlayer(this.player);
-            test.SetPosition(65, 0);
-
-            WindowPlayerStatistics test2 = new WindowPlayerStatistics();
-            test2.SetTitle("Another Window!");
-            test2.SetPlayer(this.player);
-            test2.SetPosition(65, 9);
-
+            WindowPlayerStatistics stats = new WindowPlayerStatistics();
+            stats.SetPlayer(this.player);
+            stats.SetPosition(96, 0);
 
             base.Before();
         }

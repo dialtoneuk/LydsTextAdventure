@@ -15,9 +15,9 @@ namespace LydsTextAdventure
 
             window.SetIndex(WindowManager.count++);
             window.Initialize();
-            Program.DebugLog("window initialized: " + window.ToString());
+            Program.DebugLog("window initialized: " + window.ToString(), "window_manager");
             WindowManager.windows.Add(window);
-            Program.DebugLog("window registered: " + window.ToString());
+            Program.DebugLog("window registered: " + window.ToString(), "window_manager");
         }
 
         public static void RemoveWindow(string id)

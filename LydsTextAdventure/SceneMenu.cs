@@ -32,12 +32,13 @@ namespace LydsTextAdventure
             this.world.GenerateWorld();
 
             this.camera = new Camera();
+            this.camera.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);
             this.camera.SetMainCamera(true);
             this.camera.SetDrawBorder(false);
             this.camera.SetDrawTitle(false);
 
-            this.camera.position.x = 1;
-            this.camera.position.y = 1;
+            this.camera.position.x = 0;
+            this.camera.position.y = 0;
 
             EntityMovingText text = new EntityMovingText();
             text.position.SetPosition(this.camera.GetViewCenter());

@@ -31,18 +31,17 @@ namespace LydsTextAdventure
        
         static void Main(string[] args)
         {
-   
-            //setwindow size
-            Console.SetWindowSize(160, 72);
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.SetBufferSize(152, 72);
+            Console.SetWindowSize(152, 72);
+            Console.ResetColor();
             Console.Title = "Lyds Text Adventure";
+            Console.CursorVisible = false;
 
             ConsoleManager.DisableQuickEdit();
 
             //Create the buffer/viewable draw space
-            Buffer.Create(128, 64);
-
+            Buffer.Create(150, 70);
 
             //adds the remote logger
 #if DEBUG
@@ -127,7 +126,7 @@ namespace LydsTextAdventure
             if (Program.logger is null)
                 return;
 
-            Program.logger.WriteLine( string.Concat( "[", op + ":" + DateTime.Now + ":" + Program.tick, "] ", msg));
+            Program.logger.WriteLine( string.Concat( "[", op + "@" + DateTime.Now.TimeOfDay + "{t:" + Program.tick, "}] ", msg));
         }
 
         public static void SetState(State state)

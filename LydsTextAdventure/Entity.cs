@@ -12,7 +12,7 @@ namespace LydsTextAdventure
         public const int MaxHealth = 5042;
 
         public readonly Position position = new Position(0, 0);
-        public readonly Texture texture = new Texture();
+        public Texture texture = new Texture();
         public World world;
         public readonly string id = Guid.NewGuid().ToString();
 
@@ -23,6 +23,8 @@ namespace LydsTextAdventure
         public bool isWaiting = false;
         public bool disabled = false;
         public bool alwaysOn = false;
+        public bool isSolid = true;
+        public bool drawTexture = true;
 
         public int sleepTime = 0;
         public int health = 0;
@@ -39,10 +41,16 @@ namespace LydsTextAdventure
             EntityManager.RegisterEntity(this);
         }
 
-        public virtual bool IsSolid()
+        public bool IsSolid()
         {
 
-            return true;
+            return this.isSolid;
+        }
+
+        public void SetSolid(bool val)
+        {
+
+            this.isSolid = val;
         }
 
         public Entity()
@@ -71,7 +79,7 @@ namespace LydsTextAdventure
                 this.countPosition = position;
         }
 
-        public virtual void RemoveEntity()
+        public void RemoveEntity()
         {
 
             EntityManager.RemoveEntity(this.id);
@@ -90,31 +98,43 @@ namespace LydsTextAdventure
             });
         }
 
-        public virtual bool DrawTexture()
+        public virtual bool ShouldDrawTexture()
         {
 
-            return true;
+            return this.drawTexture;
         }
 
-        public virtual bool IsAlwaysOn()
+        public void SetDrawTexture(bool val)
+        {
+
+            this.drawTexture = val;
+        }
+
+        public void SetVisible(bool val)
+        {
+
+            this.visible = val;
+        }
+
+        public bool IsAlwaysOn()
         {
 
             return this.alwaysOn;
         }
 
-        public virtual bool IsDisabled()
+        public bool IsDisabled()
         {
 
             return this.disabled;
         }
 
-        public virtual string GetName()
+        public string GetName()
         {
 
             return name;
         }
 
-        public virtual void SetName(string name)
+        public void SetName(string name)
         {
 
             this.name = name;
@@ -130,13 +150,13 @@ namespace LydsTextAdventure
 
         }
 
-        public virtual void SetAlwaysOn(bool val)
+        public void SetAlwaysOn(bool val)
         {
 
             this.alwaysOn = val;
         }
         
-        public virtual void SetDisabled(bool val)
+        public void SetDisabled(bool val)
         {
 
             this.disabled = val;
@@ -146,7 +166,7 @@ namespace LydsTextAdventure
         public virtual void Destroy()
         {
 
-            Program.DebugLog("entity " + this.ToString() + " destroyed");
+            Program.DebugLog("entity " + this.ToString() + " destroyed", "entity");
         }
 
         public override string ToString()
@@ -170,7 +190,7 @@ namespace LydsTextAdventure
 #endif
         }
 
-        public virtual Texture GetTexture()
+        public Texture GetTexture()
         {
 
             return this.texture;
@@ -189,13 +209,13 @@ namespace LydsTextAdventure
             this.health = health;
         }
 
-        public virtual bool IsVisible()
+        public bool IsVisible()
         {
 
             return this.visible;
         }
 
-        public virtual bool IsDestroyed()
+        public bool IsDestroyed()
         {
 
             return this.destroyed;

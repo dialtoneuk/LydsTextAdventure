@@ -55,7 +55,7 @@ namespace LydsTextAdventure
                 this.name.SetText("name: " + this.player.GetName());
             }
 
-            this.input.SetText("cursor pos: " + Program.GetInputController().GetMousePosition().ToString());
+            this.input.SetText("mouse pos: " + ConsoleManager.GetMousePosition());
 
             Command cmd = Program.GetInputController().GetLastSuccessfulCommand();
             if ( cmd != null )

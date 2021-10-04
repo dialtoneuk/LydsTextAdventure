@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
+
     public class World
     {
 
@@ -12,10 +13,13 @@ namespace LydsTextAdventure
         public Tile[,] world;
         public int width;
         public int height;
-        public readonly int seed;
-        public bool isWaiting = false;
-        public readonly string id = Guid.NewGuid().ToString();
 
+        public readonly int seed;
+
+        public bool isWaiting = false;
+        public bool isDisabled = false;
+
+        public readonly string id = Guid.NewGuid().ToString();
         private readonly FastNoise noise;
 
         public World(int width = 712, int height = 712)
@@ -28,11 +32,12 @@ namespace LydsTextAdventure
             this.width = width;
             this.height = height;
 
-            this.noise.SetFrequency(0.05f);
+            this.noise.SetFrequency(0.005f);
 
             WorldManager.RegisterWorld(this);
             this.LoadEntities();
         }
+
 
         public Tile GetTile(int x, int y)
         {
@@ -83,10 +88,10 @@ namespace LydsTextAdventure
             //updates world
         }
 
-        public virtual bool IsDisabled()
+        public bool IsDisabled()
         {
 
-            return false;
+            return this.isDisabled;
         }
 
         public virtual void Wait(int miliseconds)
@@ -131,9 +136,10 @@ namespace LydsTextAdventure
         public virtual void GenerateWorld()
         {
 
-            Texture water = new Texture('~', ConsoleColor.Blue);
-            Texture sand = new Texture('#', ConsoleColor.Cyan);
-            Texture ground = new Texture(',', ConsoleColor.Gray);
+            Texture water = new Texture(' ', ConsoleColor.Blue);
+            Texture sand = new Texture(',', ConsoleColor.Cyan);
+            Texture ground = new Texture('_', ConsoleColor.Gray);
+            Texture stone = new Texture('.', ConsoleColor.Gray);
 
             for(int x = 0; x < this.width; x++ )
             {
@@ -144,10 +150,14 @@ namespace LydsTextAdventure
                     float noiseValue = this.noise.GetNoise(x, y);
                     Tile tile;
 
-                    if (noiseValue < 0.03)
-                        tile = new Tile(water);
-                    else
+                    if (noiseValue < 0.1)
+                        tile = new TileWater();
+                    else if (noiseValue < 0.2)
+                        tile = new Tile(sand);
+                    else if (noiseValue < 0.3)
                         tile = new Tile(ground);
+                    else
+                        tile = new Tile(stone);
 
                     this.world[x, y] = tile;
                 }

@@ -7,7 +7,11 @@ namespace LydsTextAdventure
     public class EntityMoving : Entity
     {
 
-        public EntityMoving(string name = "") : base(name) { }
+        public EntityMoving(string name = "") : base(name) 
+        {
+
+            this.texture = new Texture(' ');
+        }
 
         public enum MovementType
         {
@@ -46,13 +50,6 @@ namespace LydsTextAdventure
 
             this.distance = distance;
         }
-
-        public override Texture GetTexture()
-        {
-
-            return new Texture('F');
-        }
-
         public int GetDistance()
         {
 

@@ -54,7 +54,24 @@ namespace ConsoleLogger
                         if (data.GetType() != typeof(ServerData))
                             continue;
 
+                        if (data.message.Contains("general"))
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                        else if(data.message.Contains("window"))
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                        else if (data.message.Contains("camera"))
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                        else if (data.message.Contains("input"))
+                            Console.ForegroundColor = ConsoleColor.DarkBlue;
+                        else if (data.message.Contains("world"))
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        else if (data.message.Contains("entity"))
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        else if (data.message.Contains("scene"))
+                            Console.ForegroundColor = ConsoleColor.DarkCyan;
+
+
                         Console.WriteLine(data.message);
+                        Console.ResetColor();
                     }
 
                 }

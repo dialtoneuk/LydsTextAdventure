@@ -25,7 +25,6 @@ namespace LydsTextAdventure
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr GetStdHandle(int nStdHandle);
 
-
         [DllImport("kernel32.dll", ExactSpelling = true)]
         private static extern IntPtr GetConsoleWindow();
 
@@ -43,7 +42,7 @@ namespace LydsTextAdventure
 
 
         //gets the correct x/y relative to the tile/char
-        public Position GetMousePosition(int fontSize=10)
+        public static Position GetMousePosition(int fontSize=8)
         {
 
             //first get the cursor position
@@ -54,7 +53,7 @@ namespace LydsTextAdventure
             Position console = ConsoleManager.GetConsolePosition();
             //cursors
             Position cursor = new Position(point.X, point.Y);
-            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontSize)), (int)Math.Floor((decimal)((cursor.y - console.y - 32) /fontSize))); //for the header
+            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontSize)), (int)Math.Floor((decimal)((cursor.y - console.y - 32) /fontSize)));
         }
 
         [DllImport("user32.dll")]

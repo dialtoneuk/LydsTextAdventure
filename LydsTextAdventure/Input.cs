@@ -137,14 +137,6 @@ namespace LydsTextAdventure
             Program.DebugLog("toggled input", "input");
         }
 
-        //adds the missing key along with the line and makes it lower
-        private string GetLine()
-        {
-
-      
-            return (Console.ReadLine());
-        }
-
         private ConsoleKeyInfo GetKey()
         {
 

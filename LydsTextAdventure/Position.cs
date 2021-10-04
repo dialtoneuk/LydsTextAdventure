@@ -17,17 +17,17 @@ namespace LydsTextAdventure
             this.y = y;
         }
         
-        public bool IsEqual(Position position)
+        public bool IsEqual(int x_, int y_)
         {
 
-            return (position.x == this.x && position.y == this.y);
+            return (this.x == x_ && this.y == y_);
         }
 
         public override bool Equals(object obj)
         {
 
             Position pos = (Position)obj;
-            return pos.x == x && pos.y == y;
+            return pos.GetHashCode() == this.GetHashCode();
         }
 
         public void SetPosition(Position position)
@@ -40,6 +40,11 @@ namespace LydsTextAdventure
         public override string ToString()
         {
             return "x/y: " + this.x + " / " + this.y;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(x, y);
         }
     }
 }

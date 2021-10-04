@@ -23,7 +23,7 @@ namespace LydsTextAdventure
             this.writeOver = writeOver;
         }
         
-        public override bool DrawTexture()
+        public override bool ShouldDrawTexture()
         {
 
             return false;

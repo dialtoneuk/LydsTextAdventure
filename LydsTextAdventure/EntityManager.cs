@@ -21,7 +21,7 @@ namespace LydsTextAdventure
             entity.SetWorld(WorldManager.CurrentWorld);
 
             entities.Add(entity);
-            Program.DebugLog("entity " + entity.ToString() + " created" );
+            Program.DebugLog("entity " + entity.ToString() + " created", "entity_manager");
         }
 
         public static void DestroyAllEntities()

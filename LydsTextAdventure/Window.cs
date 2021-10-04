@@ -101,7 +101,7 @@ namespace LydsTextAdventure
         public override string ToString()
         {
 
-            return this.id + ":" + this.title + "[" + this.index + "]";
+            return this.id + ":" + this.name + "[" + this.index + "]";
         }
 
         public void SetIndex(int index)
@@ -126,7 +126,7 @@ namespace LydsTextAdventure
         public void RegisterElement(GuiElement element)
         {
 
-            Program.DebugLog("element registered: " + element.ToString());
+            Program.DebugLog("element registered: " + element.ToString(), "window");
             element.window = this;
             guiElements.Add(element);
         }
