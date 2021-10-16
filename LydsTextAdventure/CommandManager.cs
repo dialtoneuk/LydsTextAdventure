@@ -10,15 +10,17 @@ namespace LydsTextAdventure
         protected List<Command> defaultCommands = new List<Command>()
         {
             //exit command
-            new Command("break", () => {
-           
-                 System.Environment.Exit(0);
-            }),
+            new Command("exit", () => {
+                Program.SetState(Program.State.SHUTDOWN);
+            }, "p"),
             new Command("commands", () =>
             {
-                //log commands to printer here
+
+                foreach(Command command in Program.GetCommandController().GetCommands())
+                    Program.DebugLog(command.ToString());
             })
         };
+
 
         protected List<Command> commands = new List<Command>();
 
@@ -26,6 +28,12 @@ namespace LydsTextAdventure
         {
 
             this.commands.AddRange(defaultCommands);
+        }
+
+        public List<Command> GetCommands()
+        {
+
+            return this.defaultCommands;
         }
 
         public void Add(Command command)

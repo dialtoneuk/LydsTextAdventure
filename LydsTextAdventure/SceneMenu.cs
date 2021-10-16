@@ -34,12 +34,12 @@ namespace LydsTextAdventure
             this.camera = new Camera();
             this.camera.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);
             this.camera.SetMainCamera(true);
-            this.camera.SetDrawBorder(false);
-            this.camera.SetDrawTitle(false);
 
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
+            WindowConsole test = new WindowConsole();
+         
             EntityMovingText text = new EntityMovingText();
             text.position.SetPosition(this.camera.GetViewCenter());
             text.position.x = text.GetDistance();
@@ -60,8 +60,8 @@ namespace LydsTextAdventure
         public override void Start()
         {
 
-            Program.GetInputController().SetTextInput(true);
-            Program.GetInputController().SetAwaitingInput(true);
+            InputController.isAwaitingInput = true;
+            InputController.isTextInput = true;
 
             base.Start();
         }

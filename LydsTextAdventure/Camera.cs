@@ -16,16 +16,13 @@ namespace LydsTextAdventure
         }
 
         protected Entity owner;
+        protected bool mainCamera = false;
 
         public readonly Position cameraPosition;
-        private char[,] temporaryBuffer;
         public int width = 132;
         public int height = 52;
 
-        protected bool drawBorder = true;
-        protected bool drawTitle = true;
-        protected bool mainCamera = false;
-
+        private char[,] temporaryBuffer;
         private Camera.Perspective perspective;
         private List<Entity> renderEntities;
         private List<Entity> renderedEntities = new List<Entity>();
@@ -54,6 +51,11 @@ namespace LydsTextAdventure
             Program.DebugLog("Camera has been created", "camera");
         }
 
+        public Rectangle GetViewRectangle()
+        {
+
+            return new Rectangle(this.width, this.height);
+        }
         public static void UpdateDisabled()
         {
 
@@ -96,18 +98,6 @@ namespace LydsTextAdventure
                     ent.SetDisabled(true);
                 }
             }
-        }
-
-        public void SetDrawBorder(bool draw)
-        {
-
-            this.drawBorder = draw;
-        }
-
-        public void SetDrawTitle(bool draw)
-        {
-
-            this.drawTitle = draw;
         }
 
         public void SetMainCamera(bool val)
@@ -225,19 +215,6 @@ namespace LydsTextAdventure
         {
 
             this.temporaryBuffer = new char[this.width, this.height];
-        }
-
-
-        public bool IsDrawingTitle()
-        {
-
-            return this.drawTitle;
-        }
-
-        public bool IsDrawingBorder()
-        {
-
-            return this.drawBorder;
         }
 
         public override void Draw(int posx, int posy, Camera camera)

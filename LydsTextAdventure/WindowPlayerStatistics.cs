@@ -15,9 +15,11 @@ namespace LydsTextAdventure
         protected GuiLabel name = new GuiLabel();
         protected GuiLabel input = new GuiLabel();
         protected GuiLabel lastCommand = new GuiLabel();
- 
+
         public override void Initialize()
         {
+
+            this.SetName("player_statistics");
 
             this.health.SetPosition(1, 2);
             this.playerPosition.SetPosition(1, 3);
@@ -57,7 +59,7 @@ namespace LydsTextAdventure
 
             this.input.SetText("mouse pos: " + ConsoleManager.GetMousePosition());
 
-            Command cmd = Program.GetInputController().GetLastSuccessfulCommand();
+            Command cmd = Program.LastCommand;
             if ( cmd != null )
                 this.lastCommand.SetText("last executed: " + cmd.ToString());
         }

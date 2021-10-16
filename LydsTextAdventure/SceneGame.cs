@@ -11,6 +11,7 @@ namespace LydsTextAdventure
         protected World world;
         protected Player player;
         protected Camera camera;
+        protected Camera cameraTwo;
 
         public SceneGame(string name, List<Command> commands = null) : base(name, commands)
         { }
@@ -61,14 +62,24 @@ namespace LydsTextAdventure
 
             this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(96, 64);
+            this.camera.SetSize(32, 32);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
+            this.cameraTwo = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
+            this.cameraTwo.SetSize(32, 32);
+            this.cameraTwo.SetName("Main Camera");
+            this.cameraTwo.position.x = 33;
+            this.cameraTwo.position.y = 0;
+
+
             WindowPlayerStatistics stats = new WindowPlayerStatistics();
+            WindowConsole test = new WindowConsole();
+
             stats.SetPlayer(this.player);
             stats.SetPosition(96, 0);
+            test.SetPosition(0, 48);
 
             base.Before();
         }
@@ -78,6 +89,7 @@ namespace LydsTextAdventure
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();
+            this.cameraTwo.UpdateBuffer();
 
             base.Update();
         }
@@ -86,8 +98,8 @@ namespace LydsTextAdventure
         public override void Start()
         {
 
-            Program.GetInputController().SetTextInput(false);
-            Program.GetInputController().SetAwaitingInput(true);
+            InputController.isTextInput = false;
+            InputController.isAwaitingInput = true;
 
             base.Start();
         }

@@ -31,7 +31,7 @@ namespace LydsTextAdventure
 
         public override void Draw(int x, int y, Camera camera)
         {
-            Surface.DrawText(x, y, this.text, camera);
+            Surface.DrawText(x, y, this.text, camera.GetViewRectangle());
         }
 
         public void SetText(string str)

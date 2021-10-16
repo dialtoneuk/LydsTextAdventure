@@ -15,7 +15,7 @@ namespace LydsTextAdventure
             this.text = text;
         }
 
-        public override void Draw(int x, int y, Camera camera = null)
+        public override void Draw(int x, int y, Camera camera = null, Window window = null)
         {
 
             Surface.Write(x, y, this.text);

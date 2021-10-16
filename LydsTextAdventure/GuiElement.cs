@@ -48,6 +48,26 @@ namespace LydsTextAdventure
 
         }
 
+        public virtual void Destroy()
+        {
+
+
+        }
+
+        public void DefaultUpdate()
+        {
+
+            if (!this.isVisible)
+                return;
+
+            
+        }
+
+        public virtual void OnHover()
+        {
+
+        }
+
         public void SetName(string name)
         {
 
@@ -61,11 +81,18 @@ namespace LydsTextAdventure
             this.height = height;
         }
 
-        public virtual void Draw(int x, int y, Camera camera=null)
+        public virtual void Draw(int x, int y, Camera camera=null, Window window = null)
         {
 
 
         }
+
+        public Rectangle GetRectangle()
+        {
+
+            return new Rectangle(this.width, this.height);
+        }
+
 
         public void SetPosition(int x, int y)
         {

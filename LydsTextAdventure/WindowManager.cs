@@ -14,6 +14,7 @@ namespace LydsTextAdventure
         {
 
             window.SetIndex(WindowManager.count++);
+            Program.DebugLog("initializing window: " + window.ToString(), "window_manager");
             window.Initialize();
             Program.DebugLog("window initialized: " + window.ToString(), "window_manager");
             WindowManager.windows.Add(window);
@@ -66,6 +67,18 @@ namespace LydsTextAdventure
                 window.DefaultDraw();
                 window.Draw();
             }
+        }
+
+        public static void ClearWindows()
+        {
+
+            foreach (Window window in WindowManager.windows)
+            {
+
+                window.Destroy();
+            }
+
+            WindowManager.windows.Clear();
         }
 
         public static void UpdateWindows()

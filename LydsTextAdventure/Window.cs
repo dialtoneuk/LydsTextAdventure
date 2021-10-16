@@ -95,6 +95,7 @@ namespace LydsTextAdventure
             if (title != "")
                 this.title = title;
 
+            this.camera = EntityManager.GetMainCamera();
             WindowManager.RegisterWindow(this);
         }
 
@@ -102,6 +103,15 @@ namespace LydsTextAdventure
         {
 
             return this.id + ":" + this.name + "[" + this.index + "]";
+        }
+
+        public virtual void Destroy()
+        {
+
+            foreach (GuiElement element in this.guiElements)
+                element.Destroy();
+
+            this.guiElements.Clear();
         }
 
         public void SetIndex(int index)
@@ -151,12 +161,19 @@ namespace LydsTextAdventure
 
             if (this.drawDefault)
             {
-                Surface.DrawBox(this.position.x, this.position.y, this.width, this.height, this.camera);
+
+                Surface.DrawBox(this.position.x, this.position.y, this.width, this.height);
                 Surface.Write(this.position.x + 2, this.position.y, "[" + this.title + "]");
             }
        
             foreach (GuiElement element in this.guiElements)
-                element.Draw(element.GetX(), element.GetY(), this.camera);
+                element.Draw(element.GetX(), element.GetY(), this.camera, this);
+        }
+
+        public Rectangle GetRectangle()
+        {
+
+            return new Rectangle(this.width, this.height);
         }
 
 

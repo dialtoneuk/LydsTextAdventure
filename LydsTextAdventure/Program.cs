@@ -14,20 +14,33 @@ namespace LydsTextAdventure
 
         public enum State: int
         {
-            AWAITING_INPUT,
             RUNNING,
             LOADING,
             SHUTDOWN
         }
 
         //create our classes
-        private static readonly Input input = new Input();
-        private static readonly CommandManager commands = new CommandManager();
-        private static ConsoleLogger logger;
+        private static readonly CommandManager CommandManager = new CommandManager();
+        private static ConsoleLogger DebugLogger;
+
+        private static Command _lastCommand;
+
+#if DEBUG
+        private static string[] debugLog;
+        private static int stackPosition = 0;
+#endif
+
+        public static Command LastCommand
+        {
+            get
+            {
+                return _lastCommand;
+            }
+        }
 
         private static int tick = 0;
         //program state
-        private static State programState = State.LOADING;
+        private static State state = State.LOADING;
        
         static void Main(string[] args)
         {
@@ -45,31 +58,40 @@ namespace LydsTextAdventure
 
             //adds the remote logger
 #if DEBUG
-            Program.logger = new ConsoleLogger();
+            Program.DebugLogger = new ConsoleLogger();
             Program.DebugLog("connected to console log successfully");
-            Program.AddDebugCommands();
+            Program.RegisterDebugCommands();
+            debugLog = new string[1024];
 #endif
-
             //register our scenes
             Scenes.RegisterScenes();
             //start test scene
             SceneManager.StartScene("sceneMenu");
 
+            state = State.RUNNING;
+
             //game loop
-            while (!programState.Equals(State.SHUTDOWN))
+            while (!state.Equals(State.SHUTDOWN))
             {
 
                 Buffer.Clear();
 
-                //if we are awaiting input, lets get it
-                if (Program.input.IsAwaitingInput() && !Input.IsTaskRunning())
-                    Task.Factory.StartNew(Input.InputTask);
+                if(InputController.isAwaitingInput && !InputController.isRunning)
+                {
 
-                if (Program.input.GetLastCommand() != null)
-                    if (!Program.input.GetLastCommand().Execute())
-                        throw new ApplicationException("must be true");
-                    else
-                        Program.input.ClearCommand();
+                    Task.Factory.StartNew(() =>
+                    {
+                        InputController.KeyboardInput input = InputController.GetKeyboardInput();
+                        Command command = Program.CommandManager.GetCommand(input.text);
+                        if (command == null)
+                            Program.DebugLog("invalid command:" + input.text);
+                        else
+                        {
+                            command.Execute();
+                            Program._lastCommand = command;
+                        }
+                    });
+                }
 
                 //update then draw scene
                 if (SceneManager.IsSceneActive())
@@ -81,23 +103,30 @@ namespace LydsTextAdventure
                 //forever counts
                 Program.tick++;
 
-                if (Program.tick > 4086)
+                if (Program.tick > 8192)
                 {
 
                     System.Console.Clear();
                     Program.tick = 0;
                 }
-                   
 
                 //Draw it
-                Task.Factory.StartNew(Buffer.DrawBuffer).Wait();
+                Buffer.DrawBuffer();
             }
+
+            //shutdown stuff here
         }
 
-        public static void AddDebugCommands()
+        public static void SetState(State state)
         {
 
-            Program.commands.Register(new List<Command>()
+            Program.state = state;
+        }
+
+        public static void RegisterDebugCommands()
+        {
+
+            Program.CommandManager.Register(new List<Command>()
             {
                 new Command("clean_screen", () => {
                         System.Console.Clear();
@@ -116,23 +145,37 @@ namespace LydsTextAdventure
             });
         }
 
-
         public static void DebugLog(string msg, string op="general" )
         {
 
             if (msg.Length.Equals(0))
                 return;
 
-            if (Program.logger is null)
+            if (Program.DebugLogger is null)
                 return;
 
-            Program.logger.WriteLine( string.Concat( "[", op + "@" + DateTime.Now.TimeOfDay + "{t:" + Program.tick, "}] ", msg));
+            string str = string.Concat("[", op + "/" + Program.tick +  "] ", msg);
+
+            if (Program.debugLog == null || stackPosition + 1 >= Program.debugLog.Length)
+            {
+                Program.stackPosition = 0;
+                Program.debugLog = new string[1024];
+            }
+             
+            Program.debugLog[Program.stackPosition++] = str;
+            Program.DebugLogger.WriteLine(str);
         }
 
-        public static void SetState(State state)
+        public static string[] GetDebugLog()
         {
 
-            Program.programState = state;
+#if DEBUG
+            string[] debugLog = (string[])Program.debugLog.Clone();
+            Array.Reverse(debugLog);
+            return (debugLog);
+#else
+            return new string[1];
+#endif
         }
 
         public static int GetTick()
@@ -144,13 +187,7 @@ namespace LydsTextAdventure
         public static CommandManager GetCommandController()
         {
 
-            return Program.commands;
-        }
-
-        public static Input GetInputController()
-        {
-
-            return Program.input;
+            return Program.CommandManager;
         }
     }
 }

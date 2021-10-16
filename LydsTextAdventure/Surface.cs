@@ -47,7 +47,7 @@ namespace LydsTextAdventure
             Buffer.SetLastPosition();
         }
 
-        public static void DrawText(int x, int y, string str, Camera camera)
+        public static void DrawText(int x, int y, string str, Rectangle rectangle)
         {
 
 
@@ -56,10 +56,10 @@ namespace LydsTextAdventure
 
             Buffer.SetCursorPosition(x, y);
 
-            if (x + chars.Length > camera.width)
+            if (x + chars.Length > rectangle.Width)
             {
 
-                int a = (x + chars.Length) - ( camera.width );
+                int a = (x + chars.Length) - (rectangle.Width );
 
                 if (a >= chars.Length)
                     a = 0;
@@ -72,16 +72,16 @@ namespace LydsTextAdventure
                 Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
         }
 
-        public static void DrawBox(int x, int y, int w, int h, Camera camera = null, Buffer.Types type = Buffer.Types.GUI_BUFFER)
+        public static void DrawBox(int x, int y, int w, int h, Rectangle rectangle = null, Buffer.Types type = Buffer.Types.GUI_BUFFER)
         {
 
             int rw = Buffer.WindowWidth;
             int rh = Buffer.WindowHeight;
 
-            if(camera != null)
+            if(rectangle != null)
             {
-                rw = camera.width;
-                rh = camera.height;
+                rw = rectangle.Width;
+                rh = rectangle.Height;
             } 
 
             Buffer.SetCursorPosition(x, y);

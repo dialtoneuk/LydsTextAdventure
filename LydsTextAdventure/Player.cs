@@ -17,7 +17,7 @@ namespace LydsTextAdventure
         public override void Draw(int x, int y, Camera camera)
         {
 
-            Surface.DrawText(x, y + 1, "hp: " + this.health.ToString(), camera);
+            Surface.DrawText(x, y + 1, "hp: " + this.health.ToString(), camera.GetViewRectangle());
         }
     }
 }

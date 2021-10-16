@@ -186,7 +186,7 @@ namespace LydsTextAdventure
 
 #if DEBUG
             //requires camera context to be set
-            Surface.DrawText(x, y + 1, this.name, camera);
+            Surface.DrawText(x, y + 1, this.name, camera.GetViewRectangle());
 #endif
         }
 

@@ -41,6 +41,7 @@ namespace LydsTextAdventure
             Program.GetCommandController().Clear();
             Console.Clear();
             Buffer.Clear();
+            WindowManager.ClearWindows();
             Buffer.CleanBuffer();
 
             if (SceneManager.currentScene != null)
@@ -64,12 +65,13 @@ namespace LydsTextAdventure
         public static void UpdateScene()
         {
 
-            if (SceneManager.currentScene is null)
+            if (SceneManager.currentScene == null)
                 throw new ApplicationException("scene not started");
 
+            SceneManager.currentScene.Update();
 
-            Task.Factory.StartNew(SceneManager.currentScene.Update).Wait();
-            SceneManager.currentScene.Draw();
+            if (SceneManager.currentScene != null)
+                SceneManager.currentScene.Draw();
         }
 
         public static void AddScene(Scene scene)
