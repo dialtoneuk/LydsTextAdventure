@@ -88,6 +88,7 @@ namespace LydsTextAdventure
                     if(ent.id == comp.id)
                     {
                         ent.SetDisabled(false);
+                       
                         found = true;
                         break;
                     }
@@ -98,6 +99,15 @@ namespace LydsTextAdventure
                     ent.SetDisabled(true);
                 }
             }
+        }
+
+        public Position GetScreenPosition(Entity entity)
+        {
+
+            Position position = new Position(entity.position.x, entity.position.y);
+            position.x = entity.position.x + this.position.x;
+            position.y = entity.position.y + this.position.y;
+            return position;
         }
 
         public void SetMainCamera(bool val)

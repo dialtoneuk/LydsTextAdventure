@@ -26,6 +26,8 @@ namespace LydsTextAdventure
         public bool isSolid = true;
         public bool drawTexture = true;
 
+        public int width = 2;
+        public int height = 2;
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;
@@ -39,6 +41,16 @@ namespace LydsTextAdventure
                 this.name = this.GetType().ToString();
 
             EntityManager.RegisterEntity(this);
+        }
+
+        public static bool IsHoveringOver(Position position, Position screenPosition, Entity entity)
+        {
+
+            if (position.x > screenPosition.x && position.x < screenPosition.x + Math.Max(2, entity.width))
+                if (position.y < screenPosition.y + Math.Max(2, entity.height) && position.y > screenPosition.y)
+                    return true;
+
+            return false;
         }
 
         public bool IsSolid()
@@ -179,6 +191,15 @@ namespace LydsTextAdventure
         {
 
             //does nothing
+        }
+
+        public virtual void OnHover()
+        {
+
+#if DEBUG
+            //requires camera context to be set
+            Surface.Write(this.position.x, this.position.y - 1, "[Hovering Over!]");
+#endif
         }
 
         public virtual void Draw(int x, int y, Camera camera)

@@ -18,6 +18,7 @@ namespace LydsTextAdventure
 
         public bool isVisible = true;
         public bool isDisbled = false;
+        public bool isHovering = false;
         public bool isAwaitingOutput = false;
 
         public int Width { get => width; }
@@ -46,6 +47,16 @@ namespace LydsTextAdventure
         {
 
 
+        }
+
+        public static bool IsInsideOf(Position position, GuiElement element)
+        {
+
+            if (position.x > element.GetX() && position.x < element.GetX() + Math.Max(2, element.width))
+                if (position.y < element.GetY() + Math.Max(2, element.height) && position.y > element.GetY())
+                    return true;
+
+            return false;
         }
 
         public virtual void Destroy()
@@ -84,7 +95,8 @@ namespace LydsTextAdventure
         public virtual void Draw(int x, int y, Camera camera=null, Window window = null)
         {
 
-
+            if(this.isHovering)
+                Surface.Write(this.GetX(), this.GetY(), "[ Hovering! ]");
         }
 
         public Rectangle GetRectangle()

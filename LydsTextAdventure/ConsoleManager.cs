@@ -6,6 +6,12 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
+
+
+    /*
+     * This is where a collection of console related functions are living, these basically
+     * interact directly with Windows to do the stuff we want to do
+     */
     public class ConsoleManager
     {
 
@@ -53,7 +59,7 @@ namespace LydsTextAdventure
             Position console = ConsoleManager.GetConsolePosition();
             //cursors
             Position cursor = new Position(point.X, point.Y);
-            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontSize)), (int)Math.Floor((decimal)((cursor.y - console.y - 32) /fontSize)));
+            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontSize)), (int)Math.Floor((decimal)((cursor.y - console.y) / 14)) - 1);
         }
 
         [DllImport("user32.dll")]

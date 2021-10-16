@@ -227,7 +227,7 @@ namespace LydsTextAdventure
             }
         }
 
-        public static void GenerateBuffer()
+        public static void PrepareBuffer()
         {
 
             //clean process buffer

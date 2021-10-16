@@ -35,6 +35,8 @@ namespace LydsTextAdventure
             foreach (string str in strings)
                 if (str != null && _y < this.Height)
                     Surface.DrawText(x, y + _y++, str, this.GetRectangle());
+
+            base.Draw(x, y, camera, window);
         }
     }
 }

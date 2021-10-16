@@ -62,6 +62,8 @@ namespace LydsTextAdventure
             Command cmd = Program.LastCommand;
             if ( cmd != null )
                 this.lastCommand.SetText("last executed: " + cmd.ToString());
+
+            base.Update();
         }
 
 

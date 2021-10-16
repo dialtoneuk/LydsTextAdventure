@@ -60,6 +60,15 @@ namespace LydsTextAdventure
             this.player = new Player();
             this.player.SetSolid(false);
 
+            for (int i = 0; i < 10; i++)
+            {
+
+                EntityMoving m = new EntityMoving();
+                m.position.y = 10 + i;
+                m.position.x = 10 + i;
+                m.SetSpeed(i);
+            }
+
             this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
             this.camera.SetSize(32, 32);

@@ -124,9 +124,23 @@ namespace LydsTextAdventure
         {
 
             foreach (GuiElement element in this.guiElements)
+            {
+
                 element.Update();
+
+                //is hovering over
+                if (GuiElement.IsInsideOf(InputController.GetMousePosition(), element))
+                {
+
+                    element.isHovering = true;
+                    element.OnHover();
+                } else {
+                    element.isHovering = false;
+                }
+            }
         }
 
+       
         public virtual void Initialize()
         {
 

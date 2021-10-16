@@ -47,6 +47,8 @@ namespace LydsTextAdventure
 
             foreach (string str in strs)
                 this.console.AddText(str);
+
+            base.Update();
         }
 
         public override bool IsVisible()

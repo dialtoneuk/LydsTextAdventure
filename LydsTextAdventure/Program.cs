@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 namespace LydsTextAdventure
 {
 
-
-
     class Program
     {
 
@@ -97,21 +95,22 @@ namespace LydsTextAdventure
                 if (SceneManager.IsSceneActive())
                     SceneManager.UpdateScene();
 
-                //generate buffer
-                Buffer.GenerateBuffer();
+                //takes all of our draw data and adds it to the buffer
+                Buffer.PrepareBuffer();
 
-                //forever counts
+                //Draws the buffer
+                Buffer.DrawBuffer();
+
+                //tick up
                 Program.tick++;
 
+                //reset
                 if (Program.tick > 8192)
                 {
 
                     System.Console.Clear();
                     Program.tick = 0;
                 }
-
-                //Draw it
-                Buffer.DrawBuffer();
             }
 
             //shutdown stuff here

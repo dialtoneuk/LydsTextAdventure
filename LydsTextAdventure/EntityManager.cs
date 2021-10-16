@@ -128,6 +128,10 @@ namespace LydsTextAdventure
                         continue;
 
                     entity.Update(Program.GetTick());
+
+                    if (entity.GetType() != typeof(Camera))
+                        if (Entity.IsHoveringOver(ConsoleManager.GetMousePosition(), EntityManager.GetMainCamera().GetScreenPosition(entity), entity))
+                            entity.OnHover();
                 }
             }
         }

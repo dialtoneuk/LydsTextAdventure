@@ -136,7 +136,7 @@ namespace LydsTextAdventure
         public virtual void GenerateWorld()
         {
 
-            Texture water = new Texture(' ', ConsoleColor.Blue);
+            Texture water = new Texture('~', ConsoleColor.Blue);
             Texture sand = new Texture(',', ConsoleColor.Cyan);
             Texture ground = new Texture('_', ConsoleColor.Gray);
             Texture stone = new Texture('.', ConsoleColor.Gray);
@@ -150,6 +150,7 @@ namespace LydsTextAdventure
                     float noiseValue = this.noise.GetNoise(x, y);
                     Tile tile;
 
+
                     if (noiseValue < 0.1)
                         tile = new TileWater();
                     else if (noiseValue < 0.2)
@@ -159,6 +160,7 @@ namespace LydsTextAdventure
                     else
                         tile = new Tile(stone);
 
+                    tile.isSolid = false;
                     this.world[x, y] = tile;
                 }
             }
