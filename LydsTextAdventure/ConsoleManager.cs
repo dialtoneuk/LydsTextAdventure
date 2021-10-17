@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -48,7 +46,7 @@ namespace LydsTextAdventure
 
 
         //gets the correct x/y relative to the tile/char
-        public static Position GetMousePosition(int fontSize=8)
+        public static Position GetMousePosition(int fontSize = 8)
         {
 
             //first get the cursor position

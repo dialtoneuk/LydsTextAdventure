@@ -6,7 +6,7 @@ using System.Security.Principal;
 namespace LydsTextAdventure
 {
 
-    class ConsoleLogger
+    class DebugLogger
     {
 
         private readonly NamedPipeClientStream pipe;
@@ -15,7 +15,7 @@ namespace LydsTextAdventure
         private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
 
         public delegate bool EventHandler(CtrlType sig);
-        private static EventHandler _handler;
+        private static EventHandler Handler;
 
         public string lastMessage = "";
 
@@ -28,7 +28,7 @@ namespace LydsTextAdventure
             CTRL_SHUTDOWN_EVENT = 6
         }
 
-        private static bool OnExit(ConsoleLogger.CtrlType sig)
+        private static bool OnExit(DebugLogger.CtrlType sig)
         {
 
 #if DEBUG
@@ -41,12 +41,12 @@ namespace LydsTextAdventure
         public static void CreateExitEvent()
         {
 
-            ConsoleLogger._handler += new EventHandler(OnExit);
-            SetConsoleCtrlHandler(ConsoleLogger._handler, true);
+            DebugLogger.Handler += new EventHandler(OnExit);
+            SetConsoleCtrlHandler(DebugLogger.Handler, true);
         }
 
 
-        public ConsoleLogger()
+        public DebugLogger()
         {
 
             this.pipe = new NamedPipeClientStream(".", "console_log", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
@@ -54,7 +54,7 @@ namespace LydsTextAdventure
 
 
         public void Start()
-        { 
+        {
 
             this.pipe.Connect();
         }
@@ -72,10 +72,10 @@ namespace LydsTextAdventure
                 if (!this.pipe.IsConnected)
                     this.pipe.Connect();
 
-                if (lastMessage == null)
-                    lastMessage = msg;
+                if (this.lastMessage == null)
+                    this.lastMessage = msg;
                 else
-                    if (lastMessage == msg)
+                    if (this.lastMessage == msg)
                     return;
 
                 ServerData data = new ServerData
@@ -87,7 +87,7 @@ namespace LydsTextAdventure
                 StreamString ss = new StreamString(this.pipe);
                 ss.WriteString(ServerData.Serialize(data));
             }
-            catch(IOException)
+            catch (IOException)
             {
 
                 return;

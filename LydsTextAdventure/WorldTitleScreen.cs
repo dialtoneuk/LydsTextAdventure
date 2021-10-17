@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LydsTextAdventure
+﻿namespace LydsTextAdventure
 {
     class WorldTitleScreen : World
     {
@@ -10,10 +6,10 @@ namespace LydsTextAdventure
         public override void GenerateWorld()
         {
 
- 
-            for (int x = 0; x < width; x++)
+
+            for (int x = 0; x < this.width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < this.height; y++)
                 {
 
                     this.world[x, y] = new Tile(new Texture(Texture.RandomChar()));

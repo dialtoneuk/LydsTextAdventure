@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -14,8 +12,8 @@ namespace LydsTextAdventure
         public Texture texture;
 
         public bool isSolid = false;
-        
-        public Tile(Texture texture=null)
+
+        public Tile(Texture texture = null)
         {
 
             if (texture != null)

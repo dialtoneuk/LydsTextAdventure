@@ -8,20 +8,23 @@ namespace ConsoleLogger
     class Program
     {
 
-        private static NamedPipeServerStream serverStream;
-        private static bool running = true;
-        private static bool connected = false;
+        private static NamedPipeServerStream ServerStream;
+        private static readonly bool Running = true;
+        private static bool Connected = false;
+
+        private static int MsgCount = 0;
+        private static int LastCount = 0;
 
         static void Main(string[] args)
         {
 
-            Program.serverStream = new NamedPipeServerStream("console_log", PipeDirection.InOut, 1);
+            Program.ServerStream = new NamedPipeServerStream("console_log", PipeDirection.InOut, 1);
 
             Console.WriteLine(" SERVER WAITING FOR CONNECTION ");
             Task.Delay(10000).ContinueWith((state) =>
             {
 
-                if (!connected)
+                if (!Connected)
                 {
 
                     Console.WriteLine("failed to connect after 10 seconds.. shutting down");
@@ -29,17 +32,20 @@ namespace ConsoleLogger
                 }
             });
 
-            Program.serverStream.WaitForConnection();
-            connected = true;
+            Program.ServerStream.WaitForConnection();
+            Connected = true;
 
             try
             {
+
+                Program.CheckForRecentMessages();
+
                 // Read the request from the client. Once the client has
                 // written to the pipe its security token will be available.
-                while (Program.running)
+                while (Program.Running)
                 {
 
-                    var ss = new StreamString(Program.serverStream);
+                    var ss = new StreamString(Program.ServerStream);
                     string xmlReceive = ss.ReadString();
 
                     if (xmlReceive.Length.Equals(0))
@@ -88,23 +94,50 @@ namespace ConsoleLogger
 
                         Console.WriteLine(data.message);
                         Console.ResetColor();
+
+                        MsgCount++;
                     }
 
                 }
             }
             // Catch the IOException that is raised if the pipe is broken
             // or disconnected.
-            catch (IOException e )
+            catch (IOException e)
             {
 
                 Console.WriteLine("ERROR: {0}", e.Message);
             }
 
             Console.WriteLine("Game shutdown. Press escape key to close debug logger.");
-            Program.serverStream.Close();
+            Program.ServerStream.Close();
 
-            while(Console.ReadKey().Key != ConsoleKey.Escape )
-            {};
+            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            {
+            };
+        }
+
+        public static void CheckForRecentMessages()
+        {
+
+            //check every 60 seconds
+            Task.Delay(60000).ContinueWith((state) =>
+            {
+
+                if (MsgCount != 0 && MsgCount == LastCount)
+                {
+
+                    Console.WriteLine("no message in the last 60 seconds... Press escape key to close debugger");
+
+                    while (Console.ReadKey().Key != ConsoleKey.Escape)
+                    {
+                    };
+
+                    System.Environment.Exit(0);
+                }
+
+                LastCount = MsgCount;
+                Program.CheckForRecentMessages();
+            });
         }
     }
 }

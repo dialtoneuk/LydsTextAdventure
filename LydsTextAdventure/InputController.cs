@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
     public class InputController
     {
 
-        public static bool isTextInput = false;
-        public static bool isAwaitingInput = false;
-        public static bool isRunning = false;
-        public static KeyboardInput lastKeyboardInput;
+        public static bool IsTextInput = false;
+        public static bool IsAwaitingInput = false;
+        public static bool IsRunning = false;
+        public static KeyboardInput LastKeyboardInput;
 
         public struct KeyboardInput
         {
@@ -35,7 +33,7 @@ namespace LydsTextAdventure
             while (true)
             {
 
-                InputController.isRunning = true;
+                InputController.IsRunning = true;
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.Escape)
@@ -44,21 +42,23 @@ namespace LydsTextAdventure
                 if (key.Key == ConsoleKey.Enter)
                     break;
 
-                if (!isTextInput)
+                if (!IsTextInput)
                 {
                     input.text = key.Key.ToString();
                     input.keys.Add(key);
                     break;
-                } else {
-                    input.text = input.text + key.Key.ToString();
+                }
+                else
+                {
+                    input.text += key.Key.ToString();
                 }
 
                 input.keys.Add(key);
             }
 
 
-            InputController.isRunning = false;
-            InputController.lastKeyboardInput = input;
+            InputController.IsRunning = false;
+            InputController.LastKeyboardInput = input;
             return input;
         }
     }

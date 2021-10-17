@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -18,7 +16,7 @@ namespace LydsTextAdventure
             Buffer.SaveLastPosition();
 
             Buffer.SetCursorPosition(0, y);
-            Buffer.Write(Surface.blankChars(Buffer.WindowWidth), Buffer.Types.GUI_BUFFER);
+            Buffer.Write(Surface.BlankChars(Buffer.WindowWidth), Buffer.Types.GUI_BUFFER);
 
             Buffer.SetCursorPosition(Math.Max(0, x), Math.Max(0, y));
             Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
@@ -59,7 +57,7 @@ namespace LydsTextAdventure
             if (x + chars.Length > rectangle.Width)
             {
 
-                int a = (x + chars.Length) - (rectangle.Width );
+                int a = (x + chars.Length) - (rectangle.Width);
 
                 if (a >= chars.Length)
                     a = 0;
@@ -67,7 +65,7 @@ namespace LydsTextAdventure
                 dchars = new char[chars.Length - a];
                 Array.Copy(chars, dchars, chars.Length - a);
                 Buffer.Write(dchars, Buffer.Types.GUI_BUFFER);
-            } 
+            }
             else
                 Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
         }
@@ -78,15 +76,15 @@ namespace LydsTextAdventure
             int rw = Buffer.WindowWidth;
             int rh = Buffer.WindowHeight;
 
-            if(rectangle != null)
+            if (rectangle != null)
             {
                 rw = rectangle.Width;
                 rh = rectangle.Height;
-            } 
+            }
 
             Buffer.SetCursorPosition(x, y);
 
-            for(int ix = 0; ix < w; ix++)
+            for (int ix = 0; ix < w; ix++)
             {
 
                 if (x + ix > rw)
@@ -110,11 +108,11 @@ namespace LydsTextAdventure
             }
         }
 
-        public static char[] blankChars(int length)
+        public static char[] BlankChars(int length)
         {
             char[] buffer = new char[length];
 
-            for(int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
                 buffer[i] = ' ';
             }

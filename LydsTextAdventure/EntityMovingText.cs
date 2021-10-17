@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LydsTextAdventure
+﻿namespace LydsTextAdventure
 {
     public class EntityMovingText : EntityMoving
     {
@@ -22,7 +18,7 @@ namespace LydsTextAdventure
 
             this.writeOver = writeOver;
         }
-        
+
         public override bool ShouldDrawTexture()
         {
 

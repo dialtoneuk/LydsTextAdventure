@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -10,13 +8,13 @@ namespace LydsTextAdventure
         public int x;
         public int y;
 
-        public Position(int x, int y )
+        public Position(int x, int y)
         {
 
             this.x = x;
             this.y = y;
         }
-        
+
         public bool IsEqual(int x_, int y_)
         {
 
@@ -44,7 +42,7 @@ namespace LydsTextAdventure
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(x, y);
+            return HashCode.Combine(this.x, this.y);
         }
     }
 }

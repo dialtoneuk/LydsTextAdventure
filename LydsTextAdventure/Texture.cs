@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -11,7 +9,7 @@ namespace LydsTextAdventure
         public readonly Char character;
         public readonly ConsoleColor color;
 
-        public Texture(Char character='?', ConsoleColor color = ConsoleColor.White )
+        public Texture(Char character = '?', ConsoleColor color = ConsoleColor.White)
         {
 
             this.character = character;

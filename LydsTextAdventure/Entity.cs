@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
@@ -36,7 +34,7 @@ namespace LydsTextAdventure
         public Entity(string name)
         {
 
-            if(name != "")
+            if (name != "")
                 this.name = name;
             else
                 this.name = this.GetType().ToString();
@@ -73,7 +71,7 @@ namespace LydsTextAdventure
         public Entity()
         {
 
-            name = this.GetType().ToString();
+            this.name = this.GetType().ToString();
             EntityManager.RegisterEntity(this);
         }
 
@@ -148,7 +146,7 @@ namespace LydsTextAdventure
         public string GetName()
         {
 
-            return name;
+            return this.name;
         }
 
         public void SetName(string name)
@@ -172,7 +170,7 @@ namespace LydsTextAdventure
 
             this.alwaysOn = val;
         }
-        
+
         public void SetDisabled(bool val)
         {
 
@@ -202,7 +200,7 @@ namespace LydsTextAdventure
         {
 
 #if DEBUG
-            
+
 #endif
         }
 
@@ -211,7 +209,7 @@ namespace LydsTextAdventure
 
 #if DEBUG
             Surface.DrawText(x, y + 1, this.name, camera.GetViewRectangle());
-                   
+
             if (this.isHovering)
                 Surface.Write(x + 1, y + 2, "[ Hovering! ]");
 #endif

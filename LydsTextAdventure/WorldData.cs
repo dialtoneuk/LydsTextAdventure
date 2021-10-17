@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -9,7 +8,7 @@ namespace LydsTextAdventure
     public class WorldData
     {
 
-    
+
         protected Tile[,] worldData;
         protected Entity[] entities;
 
@@ -30,11 +29,11 @@ namespace LydsTextAdventure
             this.worldType = world.GetType();
 
             int i = 0;
-            foreach(Entity entity in entities)
+            foreach (Entity entity in entities)
             {
 
                 this.entities[i++] = entity;
-            } 
+            }
         }
     }
 }

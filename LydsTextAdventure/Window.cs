@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -134,13 +133,15 @@ namespace LydsTextAdventure
 
                     element.isHovering = true;
                     element.OnHover();
-                } else {
+                }
+                else
+                {
                     element.isHovering = false;
                 }
             }
         }
 
-       
+
         public virtual void Initialize()
         {
 
@@ -152,7 +153,7 @@ namespace LydsTextAdventure
 
             Program.DebugLog("element registered: " + element.ToString(), "window");
             element.window = this;
-            guiElements.Add(element);
+            this.guiElements.Add(element);
         }
 
         public void RegisterElements(params GuiElement[] elements)
@@ -162,7 +163,7 @@ namespace LydsTextAdventure
             for (int i = 0; i < elements.Length; i++)
                 this.RegisterElement(elements[i]);
         }
-        
+
         public virtual void ShouldDrawDefault(bool val)
         {
 
@@ -179,7 +180,7 @@ namespace LydsTextAdventure
                 Surface.DrawBox(this.position.x, this.position.y, this.width, this.height);
                 Surface.Write(this.position.x + 2, this.position.y, "[" + this.title + "]");
             }
-       
+
             foreach (GuiElement element in this.guiElements)
                 element.Draw(element.GetX(), element.GetY(), this.camera, this);
         }

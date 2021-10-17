@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LydsTextAdventure
 {
@@ -12,7 +10,7 @@ namespace LydsTextAdventure
 
             MovementManager.MoveEntity(entity, new Position(x, y), world);
         }
-        
+
         public static void MoveEntity(Entity entity, Position position, World world = null)
         {
 
@@ -22,12 +20,12 @@ namespace LydsTextAdventure
             entity.position.SetPosition(position);
         }
 
-        public static bool CanMove(Entity entity, Position position, World world=null)
+        public static bool CanMove(Entity entity, Position position, World world = null)
         {
 
             if (!entity.IsSolid())
                 return true;
-            
+
             if (world == null && entity.world == null)
                 world = WorldManager.CurrentWorld;
             else
@@ -36,7 +34,7 @@ namespace LydsTextAdventure
             Tile tile = world.GetTile(position.x, position.y);
             List<Entity> entities = EntityManager.GetEntitiesAroundPosition(position);
 
-            foreach(Entity ent in entities)
+            foreach (Entity ent in entities)
             {
 
                 //solid entity in the way
@@ -47,7 +45,7 @@ namespace LydsTextAdventure
 
             if (tile == null)
                 return true;
-          
+
             return !tile.isSolid;
         }
     }

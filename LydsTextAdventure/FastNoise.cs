@@ -74,23 +74,35 @@ namespace LydsTextAdventure
 
         public FastNoise(int seed = 1337)
         {
-            m_seed = seed;
-            CalculateFractalBounding();
+            this.m_seed = seed;
+            this.CalculateFractalBounding();
         }
 
         // Returns a 0 float/double
-        public static FN_DECIMAL GetDecimalType() { return 0; }
+        public static FN_DECIMAL GetDecimalType()
+        {
+            return 0;
+        }
 
         // Returns the seed used by this object
-        public int GetSeed() { return m_seed; }
+        public int GetSeed()
+        {
+            return this.m_seed;
+        }
 
         // Sets seed used for all noise types
         // Default: 1337
-        public void SetSeed(int seed) { m_seed = seed; }
+        public void SetSeed(int seed)
+        {
+            this.m_seed = seed;
+        }
 
         // Sets frequency for all noise types
         // Default: 0.01
-        public void SetFrequency(FN_DECIMAL frequency) { m_frequency = frequency; }
+        public void SetFrequency(FN_DECIMAL frequency)
+        {
+            this.m_frequency = frequency;
+        }
 
         // Changes the interpolation method used to smooth between noise values
         // Possible interpolation methods (lowest to highest quality) :
@@ -99,38 +111,62 @@ namespace LydsTextAdventure
         // - Quintic
         // Used in Value, Gradient Noise and Position Perturbing
         // Default: Quintic
-        public void SetInterp(Interp interp) { m_interp = interp; }
+        public void SetInterp(Interp interp)
+        {
+            this.m_interp = interp;
+        }
 
         // Sets noise return type of GetNoise(...)
         // Default: Simplex
-        public void SetNoiseType(NoiseType noiseType) { m_noiseType = noiseType; }
+        public void SetNoiseType(NoiseType noiseType)
+        {
+            this.m_noiseType = noiseType;
+        }
 
 
         // Sets octave count for all fractal noise types
         // Default: 3
-        public void SetFractalOctaves(int octaves) { m_octaves = octaves; CalculateFractalBounding(); }
+        public void SetFractalOctaves(int octaves)
+        {
+            this.m_octaves = octaves; this.CalculateFractalBounding();
+        }
 
         // Sets octave lacunarity for all fractal noise types
         // Default: 2.0
-        public void SetFractalLacunarity(FN_DECIMAL lacunarity) { m_lacunarity = lacunarity; }
+        public void SetFractalLacunarity(FN_DECIMAL lacunarity)
+        {
+            this.m_lacunarity = lacunarity;
+        }
 
         // Sets octave gain for all fractal noise types
         // Default: 0.5
-        public void SetFractalGain(FN_DECIMAL gain) { m_gain = gain; CalculateFractalBounding(); }
+        public void SetFractalGain(FN_DECIMAL gain)
+        {
+            this.m_gain = gain; this.CalculateFractalBounding();
+        }
 
         // Sets method for combining octaves in all fractal noise types
         // Default: FBM
-        public void SetFractalType(FractalType fractalType) { m_fractalType = fractalType; }
+        public void SetFractalType(FractalType fractalType)
+        {
+            this.m_fractalType = fractalType;
+        }
 
 
         // Sets return type from cellular noise calculations
         // Note: NoiseLookup requires another FastNoise object be set with SetCellularNoiseLookup() to function
         // Default: CellValue
-        public void SetCellularDistanceFunction(CellularDistanceFunction cellularDistanceFunction) { m_cellularDistanceFunction = cellularDistanceFunction; }
+        public void SetCellularDistanceFunction(CellularDistanceFunction cellularDistanceFunction)
+        {
+            this.m_cellularDistanceFunction = cellularDistanceFunction;
+        }
 
         // Sets distance function used in cellular noise calculations
         // Default: Euclidean
-        public void SetCellularReturnType(CellularReturnType cellularReturnType) { m_cellularReturnType = cellularReturnType; }
+        public void SetCellularReturnType(CellularReturnType cellularReturnType)
+        {
+            this.m_cellularReturnType = cellularReturnType;
+        }
 
         // Sets the 2 distance indicies used for distance2 return types
         // Default: 0, 1
@@ -138,26 +174,35 @@ namespace LydsTextAdventure
         // Both indicies must be >= 0, index1 must be < 4
         public void SetCellularDistance2Indicies(int cellularDistanceIndex0, int cellularDistanceIndex1)
         {
-            m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
-            m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
+            this.m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
+            this.m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
 
-            m_cellularDistanceIndex0 = Math.Min(Math.Max(m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
-            m_cellularDistanceIndex1 = Math.Min(Math.Max(m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
+            this.m_cellularDistanceIndex0 = Math.Min(Math.Max(this.m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
+            this.m_cellularDistanceIndex1 = Math.Min(Math.Max(this.m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
         }
 
         // Sets the maximum distance a cellular point can move from it's grid position
         // Setting this high will make artifacts more common
         // Default: 0.45
-        public void SetCellularJitter(float cellularJitter) { m_cellularJitter = cellularJitter; }
+        public void SetCellularJitter(float cellularJitter)
+        {
+            this.m_cellularJitter = cellularJitter;
+        }
 
         // Noise used to calculate a cell value if cellular return type is NoiseLookup
         // The lookup value is acquired through GetNoise() so ensure you SetNoiseType() on the noise lookup, value, gradient or simplex is recommended
-        public void SetCellularNoiseLookup(FastNoise noise) { m_cellularNoiseLookup = noise; }
+        public void SetCellularNoiseLookup(FastNoise noise)
+        {
+            this.m_cellularNoiseLookup = noise;
+        }
 
 
         // Sets the maximum perturb distance from original location when using GradientPerturb{Fractal}(...)
         // Default: 1.0
-        public void SetGradientPerturbAmp(FN_DECIMAL gradientPerturbAmp) { m_gradientPerturbAmp = gradientPerturbAmp; }
+        public void SetGradientPerturbAmp(FN_DECIMAL gradientPerturbAmp)
+        {
+            this.m_gradientPerturbAmp = gradientPerturbAmp;
+        }
 
         private struct Float2
         {
@@ -265,19 +310,34 @@ namespace LydsTextAdventure
     };
 
         [MethodImpl(FN_INLINE)]
-        private static int FastFloor(FN_DECIMAL f) { return f >= 0 ? (int)f : (int)f - 1; }
+        private static int FastFloor(FN_DECIMAL f)
+        {
+            return f >= 0 ? (int)f : (int)f - 1;
+        }
 
         [MethodImpl(FN_INLINE)]
-        private static int FastRound(FN_DECIMAL f) { return f >= 0 ? (int)(f + (FN_DECIMAL)0.5) : (int)(f - (FN_DECIMAL)0.5); }
+        private static int FastRound(FN_DECIMAL f)
+        {
+            return f >= 0 ? (int)(f + (FN_DECIMAL)0.5) : (int)(f - (FN_DECIMAL)0.5);
+        }
 
         [MethodImpl(FN_INLINE)]
-        private static FN_DECIMAL Lerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL t) { return a + t * (b - a); }
+        private static FN_DECIMAL Lerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL t)
+        {
+            return a + t * (b - a);
+        }
 
         [MethodImpl(FN_INLINE)]
-        private static FN_DECIMAL InterpHermiteFunc(FN_DECIMAL t) { return t * t * (3 - 2 * t); }
+        private static FN_DECIMAL InterpHermiteFunc(FN_DECIMAL t)
+        {
+            return t * t * (3 - 2 * t);
+        }
 
         [MethodImpl(FN_INLINE)]
-        private static FN_DECIMAL InterpQuinticFunc(FN_DECIMAL t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+        private static FN_DECIMAL InterpQuinticFunc(FN_DECIMAL t)
+        {
+            return t * t * t * (t * (t * 6 - 15) + 10);
+        }
 
         [MethodImpl(FN_INLINE)]
         private static FN_DECIMAL CubicLerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL c, FN_DECIMAL d, FN_DECIMAL t)
@@ -288,14 +348,14 @@ namespace LydsTextAdventure
 
         private void CalculateFractalBounding()
         {
-            FN_DECIMAL amp = m_gain;
+            FN_DECIMAL amp = this.m_gain;
             FN_DECIMAL ampFractal = 1;
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
                 ampFractal += amp;
-                amp *= m_gain;
+                amp *= this.m_gain;
             }
-            m_fractalBounding = 1 / ampFractal;
+            this.m_fractalBounding = 1 / ampFractal;
         }
 
         // Hashing
@@ -435,77 +495,77 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_noiseType)
+            switch (this.m_noiseType)
             {
                 case NoiseType.Value:
-                    return SingleValue(m_seed, x, y, z);
+                    return this.SingleValue(this.m_seed, x, y, z);
                 case NoiseType.ValueFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleValueFractalFBM(x, y, z);
+                            return this.SingleValueFractalFBM(x, y, z);
                         case FractalType.Billow:
-                            return SingleValueFractalBillow(x, y, z);
+                            return this.SingleValueFractalBillow(x, y, z);
                         case FractalType.RigidMulti:
-                            return SingleValueFractalRigidMulti(x, y, z);
+                            return this.SingleValueFractalRigidMulti(x, y, z);
                         default:
                             return 0;
                     }
                 case NoiseType.Perlin:
-                    return SinglePerlin(m_seed, x, y, z);
+                    return this.SinglePerlin(this.m_seed, x, y, z);
                 case NoiseType.PerlinFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SinglePerlinFractalFBM(x, y, z);
+                            return this.SinglePerlinFractalFBM(x, y, z);
                         case FractalType.Billow:
-                            return SinglePerlinFractalBillow(x, y, z);
+                            return this.SinglePerlinFractalBillow(x, y, z);
                         case FractalType.RigidMulti:
-                            return SinglePerlinFractalRigidMulti(x, y, z);
+                            return this.SinglePerlinFractalRigidMulti(x, y, z);
                         default:
                             return 0;
                     }
                 case NoiseType.Simplex:
-                    return SingleSimplex(m_seed, x, y, z);
+                    return this.SingleSimplex(this.m_seed, x, y, z);
                 case NoiseType.SimplexFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleSimplexFractalFBM(x, y, z);
+                            return this.SingleSimplexFractalFBM(x, y, z);
                         case FractalType.Billow:
-                            return SingleSimplexFractalBillow(x, y, z);
+                            return this.SingleSimplexFractalBillow(x, y, z);
                         case FractalType.RigidMulti:
-                            return SingleSimplexFractalRigidMulti(x, y, z);
+                            return this.SingleSimplexFractalRigidMulti(x, y, z);
                         default:
                             return 0;
                     }
                 case NoiseType.Cellular:
-                    switch (m_cellularReturnType)
+                    switch (this.m_cellularReturnType)
                     {
                         case CellularReturnType.CellValue:
                         case CellularReturnType.NoiseLookup:
                         case CellularReturnType.Distance:
-                            return SingleCellular(x, y, z);
+                            return this.SingleCellular(x, y, z);
                         default:
-                            return SingleCellular2Edge(x, y, z);
+                            return this.SingleCellular2Edge(x, y, z);
                     }
                 case NoiseType.WhiteNoise:
-                    return GetWhiteNoise(x, y, z);
+                    return this.GetWhiteNoise(x, y, z);
                 case NoiseType.Cubic:
-                    return SingleCubic(m_seed, x, y, z);
+                    return this.SingleCubic(this.m_seed, x, y, z);
                 case NoiseType.CubicFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleCubicFractalFBM(x, y, z);
+                            return this.SingleCubicFractalFBM(x, y, z);
                         case FractalType.Billow:
-                            return SingleCubicFractalBillow(x, y, z);
+                            return this.SingleCubicFractalBillow(x, y, z);
                         case FractalType.RigidMulti:
-                            return SingleCubicFractalRigidMulti(x, y, z);
+                            return this.SingleCubicFractalRigidMulti(x, y, z);
                         default:
                             return 0;
                     }
@@ -516,76 +576,76 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetNoise(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_noiseType)
+            switch (this.m_noiseType)
             {
                 case NoiseType.Value:
-                    return SingleValue(m_seed, x, y);
+                    return this.SingleValue(this.m_seed, x, y);
                 case NoiseType.ValueFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleValueFractalFBM(x, y);
+                            return this.SingleValueFractalFBM(x, y);
                         case FractalType.Billow:
-                            return SingleValueFractalBillow(x, y);
+                            return this.SingleValueFractalBillow(x, y);
                         case FractalType.RigidMulti:
-                            return SingleValueFractalRigidMulti(x, y);
+                            return this.SingleValueFractalRigidMulti(x, y);
                         default:
                             return 0;
                     }
                 case NoiseType.Perlin:
-                    return SinglePerlin(m_seed, x, y);
+                    return this.SinglePerlin(this.m_seed, x, y);
                 case NoiseType.PerlinFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SinglePerlinFractalFBM(x, y);
+                            return this.SinglePerlinFractalFBM(x, y);
                         case FractalType.Billow:
-                            return SinglePerlinFractalBillow(x, y);
+                            return this.SinglePerlinFractalBillow(x, y);
                         case FractalType.RigidMulti:
-                            return SinglePerlinFractalRigidMulti(x, y);
+                            return this.SinglePerlinFractalRigidMulti(x, y);
                         default:
                             return 0;
                     }
                 case NoiseType.Simplex:
-                    return SingleSimplex(m_seed, x, y);
+                    return this.SingleSimplex(this.m_seed, x, y);
                 case NoiseType.SimplexFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleSimplexFractalFBM(x, y);
+                            return this.SingleSimplexFractalFBM(x, y);
                         case FractalType.Billow:
-                            return SingleSimplexFractalBillow(x, y);
+                            return this.SingleSimplexFractalBillow(x, y);
                         case FractalType.RigidMulti:
-                            return SingleSimplexFractalRigidMulti(x, y);
+                            return this.SingleSimplexFractalRigidMulti(x, y);
                         default:
                             return 0;
                     }
                 case NoiseType.Cellular:
-                    switch (m_cellularReturnType)
+                    switch (this.m_cellularReturnType)
                     {
                         case CellularReturnType.CellValue:
                         case CellularReturnType.NoiseLookup:
                         case CellularReturnType.Distance:
-                            return SingleCellular(x, y);
+                            return this.SingleCellular(x, y);
                         default:
-                            return SingleCellular2Edge(x, y);
+                            return this.SingleCellular2Edge(x, y);
                     }
                 case NoiseType.WhiteNoise:
-                    return GetWhiteNoise(x, y);
+                    return this.GetWhiteNoise(x, y);
                 case NoiseType.Cubic:
-                    return SingleCubic(m_seed, x, y);
+                    return this.SingleCubic(this.m_seed, x, y);
                 case NoiseType.CubicFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleCubicFractalFBM(x, y);
+                            return this.SingleCubicFractalFBM(x, y);
                         case FractalType.Billow:
-                            return SingleCubicFractalBillow(x, y);
+                            return this.SingleCubicFractalBillow(x, y);
                         case FractalType.RigidMulti:
-                            return SingleCubicFractalRigidMulti(x, y);
+                            return this.SingleCubicFractalRigidMulti(x, y);
                         default:
                             return 0;
                     }
@@ -605,61 +665,61 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
         {
-            int xi = FloatCast2Int(x);
-            int yi = FloatCast2Int(y);
-            int zi = FloatCast2Int(z);
-            int wi = FloatCast2Int(w);
+            int xi = this.FloatCast2Int(x);
+            int yi = this.FloatCast2Int(y);
+            int zi = this.FloatCast2Int(z);
+            int wi = this.FloatCast2Int(w);
 
-            return ValCoord4D(m_seed, xi, yi, zi, wi);
+            return ValCoord4D(this.m_seed, xi, yi, zi, wi);
         }
 
         public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int xi = FloatCast2Int(x);
-            int yi = FloatCast2Int(y);
-            int zi = FloatCast2Int(z);
+            int xi = this.FloatCast2Int(x);
+            int yi = this.FloatCast2Int(y);
+            int zi = this.FloatCast2Int(z);
 
-            return ValCoord3D(m_seed, xi, yi, zi);
+            return ValCoord3D(this.m_seed, xi, yi, zi);
         }
 
         public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int xi = FloatCast2Int(x);
-            int yi = FloatCast2Int(y);
+            int xi = this.FloatCast2Int(x);
+            int yi = this.FloatCast2Int(y);
 
-            return ValCoord2D(m_seed, xi, yi);
+            return ValCoord2D(this.m_seed, xi, yi);
         }
 
         public FN_DECIMAL GetWhiteNoiseInt(int x, int y, int z, int w)
         {
-            return ValCoord4D(m_seed, x, y, z, w);
+            return ValCoord4D(this.m_seed, x, y, z, w);
         }
 
         public FN_DECIMAL GetWhiteNoiseInt(int x, int y, int z)
         {
-            return ValCoord3D(m_seed, x, y, z);
+            return ValCoord3D(this.m_seed, x, y, z);
         }
 
         public FN_DECIMAL GetWhiteNoiseInt(int x, int y)
         {
-            return ValCoord2D(m_seed, x, y);
+            return ValCoord2D(this.m_seed, x, y);
         }
 
         // Value Noise
         public FN_DECIMAL GetValueFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y, z);
+                    return this.SingleValueFractalFBM(x, y, z);
                 case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y, z);
+                    return this.SingleValueFractalBillow(x, y, z);
                 case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y, z);
+                    return this.SingleValueFractalRigidMulti(x, y, z);
                 default:
                     return 0;
             }
@@ -667,56 +727,56 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SingleValue(seed, x, y, z);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SingleValue(seed, x, y, z);
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleValue(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleValue(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleValueFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleValue(seed, x, y, z)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SingleValue(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleValue(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SingleValue(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleValueFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleValue(seed, x, y, z));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SingleValue(seed, x, y, z));
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleValue(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleValue(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -724,7 +784,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            return SingleValue(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+            return this.SingleValue(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
         }
 
         private FN_DECIMAL SingleValue(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -737,7 +797,7 @@ namespace LydsTextAdventure
             int z1 = z0 + 1;
 
             FN_DECIMAL xs, ys, zs;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -770,17 +830,17 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetValueFractal(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y);
+                    return this.SingleValueFractalFBM(x, y);
                 case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y);
+                    return this.SingleValueFractalBillow(x, y);
                 case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y);
+                    return this.SingleValueFractalRigidMulti(x, y);
                 default:
                     return 0;
             }
@@ -788,52 +848,52 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SingleValue(seed, x, y);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SingleValue(seed, x, y);
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleValue(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleValue(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleValueFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleValue(seed, x, y)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SingleValue(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                amp *= m_gain;
-                sum += (Math.Abs(SingleValue(++seed, x, y)) * 2 - 1) * amp;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SingleValue(++seed, x, y)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleValueFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleValue(seed, x, y));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SingleValue(seed, x, y));
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleValue(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleValue(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -841,7 +901,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y)
         {
-            return SingleValue(m_seed, x * m_frequency, y * m_frequency);
+            return this.SingleValue(this.m_seed, x * this.m_frequency, y * this.m_frequency);
         }
 
         private FN_DECIMAL SingleValue(int seed, FN_DECIMAL x, FN_DECIMAL y)
@@ -852,7 +912,7 @@ namespace LydsTextAdventure
             int y1 = y0 + 1;
 
             FN_DECIMAL xs, ys;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -878,18 +938,18 @@ namespace LydsTextAdventure
         // Gradient Noise
         public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y, z);
+                    return this.SinglePerlinFractalFBM(x, y, z);
                 case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y, z);
+                    return this.SinglePerlinFractalBillow(x, y, z);
                 case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y, z);
+                    return this.SinglePerlinFractalRigidMulti(x, y, z);
                 default:
                     return 0;
             }
@@ -897,56 +957,56 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SinglePerlin(seed, x, y, z);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SinglePerlin(seed, x, y, z);
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SinglePerlin(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SinglePerlin(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SinglePerlinFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SinglePerlin(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SinglePerlinFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SinglePerlin(seed, x, y, z));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SinglePerlin(seed, x, y, z));
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SinglePerlin(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SinglePerlin(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -954,7 +1014,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            return SinglePerlin(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+            return this.SinglePerlin(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
         }
 
         private FN_DECIMAL SinglePerlin(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -967,7 +1027,7 @@ namespace LydsTextAdventure
             int z1 = z0 + 1;
 
             FN_DECIMAL xs, ys, zs;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -1007,17 +1067,17 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y);
+                    return this.SinglePerlinFractalFBM(x, y);
                 case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y);
+                    return this.SinglePerlinFractalBillow(x, y);
                 case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y);
+                    return this.SinglePerlinFractalRigidMulti(x, y);
                 default:
                     return 0;
             }
@@ -1025,53 +1085,53 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SinglePerlin(seed, x, y);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SinglePerlin(seed, x, y);
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SinglePerlin(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SinglePerlin(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SinglePerlinFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SinglePerlin(seed, x, y)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SinglePerlin(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SinglePerlin(++seed, x, y)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SinglePerlin(++seed, x, y)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SinglePerlinFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SinglePerlin(seed, x, y));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SinglePerlin(seed, x, y));
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SinglePerlin(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SinglePerlin(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1079,7 +1139,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y)
         {
-            return SinglePerlin(m_seed, x * m_frequency, y * m_frequency);
+            return this.SinglePerlin(this.m_seed, x * this.m_frequency, y * this.m_frequency);
         }
 
         private FN_DECIMAL SinglePerlin(int seed, FN_DECIMAL x, FN_DECIMAL y)
@@ -1090,7 +1150,7 @@ namespace LydsTextAdventure
             int y1 = y0 + 1;
 
             FN_DECIMAL xs, ys;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -1121,18 +1181,18 @@ namespace LydsTextAdventure
         // Simplex Noise
         public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y, z);
+                    return this.SingleSimplexFractalFBM(x, y, z);
                 case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y, z);
+                    return this.SingleSimplexFractalBillow(x, y, z);
                 case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y, z);
+                    return this.SingleSimplexFractalRigidMulti(x, y, z);
                 default:
                     return 0;
             }
@@ -1140,56 +1200,56 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SingleSimplex(seed, x, y, z);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SingleSimplex(seed, x, y, z);
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleSimplex(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleSimplex(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleSimplexFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SingleSimplex(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleSimplexFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleSimplex(seed, x, y, z));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SingleSimplex(seed, x, y, z));
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleSimplex(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleSimplex(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -1197,7 +1257,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+            return this.SingleSimplex(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
         }
 
         private const FN_DECIMAL F3 = (FN_DECIMAL)(1.0 / 3.0);
@@ -1299,17 +1359,17 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y);
+                    return this.SingleSimplexFractalFBM(x, y);
                 case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y);
+                    return this.SingleSimplexFractalBillow(x, y);
                 case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y);
+                    return this.SingleSimplexFractalRigidMulti(x, y);
                 default:
                     return 0;
             }
@@ -1317,53 +1377,53 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SingleSimplex(seed, x, y);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SingleSimplex(seed, x, y);
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleSimplex(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleSimplex(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleSimplexFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleSimplex(seed, x, y)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SingleSimplex(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleSimplex(++seed, x, y)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SingleSimplex(++seed, x, y)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleSimplexFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleSimplex(seed, x, y));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SingleSimplex(seed, x, y));
             FN_DECIMAL amp = 1;
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleSimplex(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleSimplex(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1371,7 +1431,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y)
         {
-            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency);
+            return this.SingleSimplex(this.m_seed, x * this.m_frequency, y * this.m_frequency);
         }
 
         //private const FN_DECIMAL F2 = (FN_DECIMAL)(1.0 / 2.0);
@@ -1440,7 +1500,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
         {
-            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency, w * m_frequency);
+            return this.SingleSimplex(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency, w * this.m_frequency);
         }
 
         private static readonly byte[] SIMPLEX_4D =
@@ -1556,18 +1616,18 @@ namespace LydsTextAdventure
         // Cubic Noise
         public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y, z);
+                    return this.SingleCubicFractalFBM(x, y, z);
                 case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y, z);
+                    return this.SingleCubicFractalBillow(x, y, z);
                 case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y, z);
+                    return this.SingleCubicFractalRigidMulti(x, y, z);
                 default:
                     return 0;
             }
@@ -1575,59 +1635,59 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SingleCubic(seed, x, y, z);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SingleCubic(seed, x, y, z);
             FN_DECIMAL amp = 1;
             int i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleCubic(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleCubic(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleCubicFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleCubic(seed, x, y, z)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SingleCubic(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
             int i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleCubic(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SingleCubic(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleCubicFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleCubic(seed, x, y, z));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SingleCubic(seed, x, y, z));
             FN_DECIMAL amp = 1;
             int i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleCubic(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleCubic(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -1635,7 +1695,7 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            return SingleCubic(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+            return this.SingleCubic(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
         }
 
         private const FN_DECIMAL CUBIC_3D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5 * 1.5);
@@ -1691,17 +1751,17 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y);
+                    return this.SingleCubicFractalFBM(x, y);
                 case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y);
+                    return this.SingleCubicFractalBillow(x, y);
                 case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y);
+                    return this.SingleCubicFractalRigidMulti(x, y);
                 default:
                     return 0;
             }
@@ -1709,56 +1769,56 @@ namespace LydsTextAdventure
 
         private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = SingleCubic(seed, x, y);
+            int seed = this.m_seed;
+            FN_DECIMAL sum = this.SingleCubic(seed, x, y);
             FN_DECIMAL amp = 1;
             int i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleCubic(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleCubic(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleCubicFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleCubic(seed, x, y)) * 2 - 1;
+            int seed = this.m_seed;
+            FN_DECIMAL sum = Math.Abs(this.SingleCubic(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
             int i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleCubic(++seed, x, y)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += (Math.Abs(this.SingleCubic(++seed, x, y)) * 2 - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private FN_DECIMAL SingleCubicFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleCubic(seed, x, y));
+            int seed = this.m_seed;
+            FN_DECIMAL sum = 1 - Math.Abs(this.SingleCubic(seed, x, y));
             FN_DECIMAL amp = 1;
             int i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleCubic(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleCubic(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1766,10 +1826,10 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            return SingleCubic(m_seed, x, y);
+            return this.SingleCubic(this.m_seed, x, y);
         }
 
         private const FN_DECIMAL CUBIC_2D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5);
@@ -1804,18 +1864,18 @@ namespace LydsTextAdventure
         // Cellular Noise
         public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
                 case CellularReturnType.NoiseLookup:
                 case CellularReturnType.Distance:
-                    return SingleCellular(x, y, z);
+                    return this.SingleCellular(x, y, z);
                 default:
-                    return SingleCellular2Edge(x, y, z);
+                    return this.SingleCellular2Edge(x, y, z);
             }
         }
 
@@ -1828,7 +1888,7 @@ namespace LydsTextAdventure
             FN_DECIMAL distance = 999999;
             int xc = 0, yc = 0, zc = 0;
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 case CellularDistanceFunction.Euclidean:
                     for (int xi = xr - 1; xi <= xr + 1; xi++)
@@ -1837,11 +1897,11 @@ namespace LydsTextAdventure
                         {
                             for (int zi = zr - 1; zi <= zr + 1; zi++)
                             {
-                                Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                Float3 vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                                FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
+                                FN_DECIMAL vecZ = zi - z + vec.z * this.m_cellularJitter;
 
                                 FN_DECIMAL newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
@@ -1863,11 +1923,11 @@ namespace LydsTextAdventure
                         {
                             for (int zi = zr - 1; zi <= zr + 1; zi++)
                             {
-                                Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                Float3 vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                                FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
+                                FN_DECIMAL vecZ = zi - z + vec.z * this.m_cellularJitter;
 
                                 FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
 
@@ -1889,11 +1949,11 @@ namespace LydsTextAdventure
                         {
                             for (int zi = zr - 1; zi <= zr + 1; zi++)
                             {
-                                Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                Float3 vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                                FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
+                                FN_DECIMAL vecZ = zi - z + vec.z * this.m_cellularJitter;
 
                                 FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
@@ -1910,14 +1970,14 @@ namespace LydsTextAdventure
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
-                    return ValCoord3D(m_seed, xc, yc, zc);
+                    return ValCoord3D(this.m_seed, xc, yc, zc);
 
                 case CellularReturnType.NoiseLookup:
-                    Float3 vec = CELL_3D[Hash3D(m_seed, xc, yc, zc) & 255];
-                    return m_cellularNoiseLookup.GetNoise(xc + vec.x * m_cellularJitter, yc + vec.y * m_cellularJitter, zc + vec.z * m_cellularJitter);
+                    Float3 vec = CELL_3D[Hash3D(this.m_seed, xc, yc, zc) & 255];
+                    return this.m_cellularNoiseLookup.GetNoise(xc + vec.x * this.m_cellularJitter, yc + vec.y * this.m_cellularJitter, zc + vec.z * this.m_cellularJitter);
 
                 case CellularReturnType.Distance:
                     return distance;
@@ -1934,7 +1994,7 @@ namespace LydsTextAdventure
 
             FN_DECIMAL[] distance = { 999999, 999999, 999999, 999999 };
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 case CellularDistanceFunction.Euclidean:
                     for (int xi = xr - 1; xi <= xr + 1; xi++)
@@ -1943,15 +2003,15 @@ namespace LydsTextAdventure
                         {
                             for (int zi = zr - 1; zi <= zr + 1; zi++)
                             {
-                                Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                Float3 vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                                FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
+                                FN_DECIMAL vecZ = zi - z + vec.z * this.m_cellularJitter;
 
                                 FN_DECIMAL newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
-                                for (int i = m_cellularDistanceIndex1; i > 0; i--)
+                                for (int i = this.m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                                 distance[0] = Math.Min(distance[0], newDistance);
                             }
@@ -1965,15 +2025,15 @@ namespace LydsTextAdventure
                         {
                             for (int zi = zr - 1; zi <= zr + 1; zi++)
                             {
-                                Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                Float3 vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                                FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
+                                FN_DECIMAL vecZ = zi - z + vec.z * this.m_cellularJitter;
 
                                 FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
 
-                                for (int i = m_cellularDistanceIndex1; i > 0; i--)
+                                for (int i = this.m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                                 distance[0] = Math.Min(distance[0], newDistance);
                             }
@@ -1987,15 +2047,15 @@ namespace LydsTextAdventure
                         {
                             for (int zi = zr - 1; zi <= zr + 1; zi++)
                             {
-                                Float3 vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                Float3 vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                                FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
-                                FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
+                                FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                                FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
+                                FN_DECIMAL vecZ = zi - z + vec.z * this.m_cellularJitter;
 
                                 FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
-                                for (int i = m_cellularDistanceIndex1; i > 0; i--)
+                                for (int i = this.m_cellularDistanceIndex1; i > 0; i--)
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                                 distance[0] = Math.Min(distance[0], newDistance);
                             }
@@ -2006,18 +2066,18 @@ namespace LydsTextAdventure
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.Distance2:
-                    return distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex1];
                 case CellularReturnType.Distance2Add:
-                    return distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] + distance[this.m_cellularDistanceIndex0];
                 case CellularReturnType.Distance2Sub:
-                    return distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] - distance[this.m_cellularDistanceIndex0];
                 case CellularReturnType.Distance2Mul:
-                    return distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] * distance[this.m_cellularDistanceIndex0];
                 case CellularReturnType.Distance2Div:
-                    return distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex0] / distance[this.m_cellularDistanceIndex1];
                 default:
                     return 0;
             }
@@ -2025,17 +2085,17 @@ namespace LydsTextAdventure
 
         public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
                 case CellularReturnType.NoiseLookup:
                 case CellularReturnType.Distance:
-                    return SingleCellular(x, y);
+                    return this.SingleCellular(x, y);
                 default:
-                    return SingleCellular2Edge(x, y);
+                    return this.SingleCellular2Edge(x, y);
             }
         }
 
@@ -2047,7 +2107,7 @@ namespace LydsTextAdventure
             FN_DECIMAL distance = 999999;
             int xc = 0, yc = 0;
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 default:
                 case CellularDistanceFunction.Euclidean:
@@ -2055,10 +2115,10 @@ namespace LydsTextAdventure
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
                         {
-                            Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            Float2 vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                            FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
 
                             FN_DECIMAL newDistance = vecX * vecX + vecY * vecY;
 
@@ -2076,10 +2136,10 @@ namespace LydsTextAdventure
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
                         {
-                            Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            Float2 vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                            FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
 
                             FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY);
 
@@ -2097,10 +2157,10 @@ namespace LydsTextAdventure
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
                         {
-                            Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            Float2 vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                            FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
 
                             FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
 
@@ -2115,14 +2175,14 @@ namespace LydsTextAdventure
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
-                    return ValCoord2D(m_seed, xc, yc);
+                    return ValCoord2D(this.m_seed, xc, yc);
 
                 case CellularReturnType.NoiseLookup:
-                    Float2 vec = CELL_2D[Hash2D(m_seed, xc, yc) & 255];
-                    return m_cellularNoiseLookup.GetNoise(xc + vec.x * m_cellularJitter, yc + vec.y * m_cellularJitter);
+                    Float2 vec = CELL_2D[Hash2D(this.m_seed, xc, yc) & 255];
+                    return this.m_cellularNoiseLookup.GetNoise(xc + vec.x * this.m_cellularJitter, yc + vec.y * this.m_cellularJitter);
 
                 case CellularReturnType.Distance:
                     return distance;
@@ -2138,7 +2198,7 @@ namespace LydsTextAdventure
 
             FN_DECIMAL[] distance = { 999999, 999999, 999999, 999999 };
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 default:
                 case CellularDistanceFunction.Euclidean:
@@ -2146,14 +2206,14 @@ namespace LydsTextAdventure
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
                         {
-                            Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            Float2 vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                            FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
 
                             FN_DECIMAL newDistance = vecX * vecX + vecY * vecY;
 
-                            for (int i = m_cellularDistanceIndex1; i > 0; i--)
+                            for (int i = this.m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                             distance[0] = Math.Min(distance[0], newDistance);
                         }
@@ -2164,14 +2224,14 @@ namespace LydsTextAdventure
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
                         {
-                            Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            Float2 vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                            FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
 
                             FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY);
 
-                            for (int i = m_cellularDistanceIndex1; i > 0; i--)
+                            for (int i = this.m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                             distance[0] = Math.Min(distance[0], newDistance);
                         }
@@ -2182,14 +2242,14 @@ namespace LydsTextAdventure
                     {
                         for (int yi = yr - 1; yi <= yr + 1; yi++)
                         {
-                            Float2 vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            Float2 vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
-                            FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
+                            FN_DECIMAL vecX = xi - x + vec.x * this.m_cellularJitter;
+                            FN_DECIMAL vecY = yi - y + vec.y * this.m_cellularJitter;
 
                             FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
 
-                            for (int i = m_cellularDistanceIndex1; i > 0; i--)
+                            for (int i = this.m_cellularDistanceIndex1; i > 0; i--)
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                             distance[0] = Math.Min(distance[0], newDistance);
                         }
@@ -2197,18 +2257,18 @@ namespace LydsTextAdventure
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.Distance2:
-                    return distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex1];
                 case CellularReturnType.Distance2Add:
-                    return distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] + distance[this.m_cellularDistanceIndex0];
                 case CellularReturnType.Distance2Sub:
-                    return distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] - distance[this.m_cellularDistanceIndex0];
                 case CellularReturnType.Distance2Mul:
-                    return distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] * distance[this.m_cellularDistanceIndex0];
                 case CellularReturnType.Distance2Div:
-                    return distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex0] / distance[this.m_cellularDistanceIndex1];
                 default:
                     return 0;
             }
@@ -2216,22 +2276,22 @@ namespace LydsTextAdventure
 
         public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
         {
-            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y, ref z);
+            this.SingleGradientPerturb(this.m_seed, this.m_gradientPerturbAmp, this.m_frequency, ref x, ref y, ref z);
         }
 
         public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
         {
-            int seed = m_seed;
-            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = m_frequency;
+            int seed = this.m_seed;
+            FN_DECIMAL amp = this.m_gradientPerturbAmp * this.m_fractalBounding;
+            FN_DECIMAL freq = this.m_frequency;
 
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y, ref z);
+            this.SingleGradientPerturb(seed, amp, this.m_frequency, ref x, ref y, ref z);
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                freq *= m_lacunarity;
-                amp *= m_gain;
-                SingleGradientPerturb(++seed, amp, freq, ref x, ref y, ref z);
+                freq *= this.m_lacunarity;
+                amp *= this.m_gain;
+                this.SingleGradientPerturb(++seed, amp, freq, ref x, ref y, ref z);
             }
         }
 
@@ -2249,7 +2309,7 @@ namespace LydsTextAdventure
             int z1 = z0 + 1;
 
             FN_DECIMAL xs, ys, zs;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -2308,22 +2368,22 @@ namespace LydsTextAdventure
 
         public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y)
         {
-            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y);
+            this.SingleGradientPerturb(this.m_seed, this.m_gradientPerturbAmp, this.m_frequency, ref x, ref y);
         }
 
         public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y)
         {
-            int seed = m_seed;
-            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = m_frequency;
+            int seed = this.m_seed;
+            FN_DECIMAL amp = this.m_gradientPerturbAmp * this.m_fractalBounding;
+            FN_DECIMAL freq = this.m_frequency;
 
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y);
+            this.SingleGradientPerturb(seed, amp, this.m_frequency, ref x, ref y);
 
-            for (int i = 1; i < m_octaves; i++)
+            for (int i = 1; i < this.m_octaves; i++)
             {
-                freq *= m_lacunarity;
-                amp *= m_gain;
-                SingleGradientPerturb(++seed, amp, freq, ref x, ref y);
+                freq *= this.m_lacunarity;
+                amp *= this.m_gain;
+                this.SingleGradientPerturb(++seed, amp, freq, ref x, ref y);
             }
         }
 
@@ -2338,7 +2398,7 @@ namespace LydsTextAdventure
             int y1 = y0 + 1;
 
             FN_DECIMAL xs, ys;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:

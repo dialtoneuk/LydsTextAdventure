@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
     class CommandManager
     {
-
-        protected List<Command> defaultCommands = new List<Command>()
+        private static readonly List<Command> DefaultCommands = new List<Command>()
         {
             //exit command
             new Command("exit", () => {
@@ -16,56 +14,53 @@ namespace LydsTextAdventure
             new Command("commands", () =>
             {
 
-                foreach(Command command in Program.GetCommandController().GetCommands())
+                foreach(Command command in CommandManager.GetCommands())
                     Program.DebugLog(command.ToString());
             })
         };
 
+        protected static List<Command> Commands = new List<Command>();
 
-        protected List<Command> commands = new List<Command>();
-
-        public CommandManager()
+        public static void AddDefaultCommands()
         {
 
-            this.commands.AddRange(defaultCommands);
+            CommandManager.Commands.AddRange(CommandManager.DefaultCommands);
         }
 
-        public List<Command> GetCommands()
+        public static List<Command> GetCommands()
         {
 
-            return this.defaultCommands;
+            return CommandManager.Commands;
         }
 
-        public void Add(Command command)
+        public static void Add(Command command)
         {
 
-            if (!this.IsCommandUnique(command))
-                 throw new ApplicationException("command is not unique: " + command.ToString());
+            if (!CommandManager.IsCommandUnique(command))
+                throw new ApplicationException("command is not unique: " + command.ToString());
 
-            this.commands.Add(command);
-        }
-        
-        public void Clear()
-        {
-
-            this.commands.Clear();
-            this.commands.AddRange(defaultCommands);
+            CommandManager.Commands.Add(command);
         }
 
-        public void Register(List<Command> commands)
+        public static void Clear()
         {
 
-            foreach(Command command in commands)
-            {
-                this.Add(command);
-            }
+            CommandManager.Commands.Clear();
+            CommandManager.Commands.AddRange(CommandManager.DefaultCommands);
+        }
+
+        public static void Register(List<Command> commands)
+        {
+
+            foreach (Command command in commands)
+                CommandManager.Add(command);
         }
 
         //returns true if a command is unique, meaning its command name and short name are not similar
-        public bool IsCommandUnique(Command command)
+        public static bool IsCommandUnique(Command command)
         {
 
-            foreach (Command _command in this.commands)
+            foreach (Command _command in CommandManager.Commands)
                 if (command.IsSimilar(_command))
                     return false;
 
@@ -73,10 +68,10 @@ namespace LydsTextAdventure
         }
 
         //gets a command
-        public Command GetCommand(string search_key)
+        public static Command GetCommand(string search_key)
         {
 
-            foreach (Command command in this.commands)
+            foreach (Command command in CommandManager.Commands)
                 if (command.SearchTermMatches(search_key))
                     return command;
 

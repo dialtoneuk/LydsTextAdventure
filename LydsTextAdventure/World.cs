@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
@@ -9,7 +7,7 @@ namespace LydsTextAdventure
     public class World
     {
 
-  
+
         public Tile[,] world;
         public int width;
         public int height;
@@ -51,7 +49,7 @@ namespace LydsTextAdventure
         public void SaveWorld()
         {
 
-             //saves the world to a file
+            //saves the world to a file
         }
 
         public virtual void LoadWorld()
@@ -107,12 +105,12 @@ namespace LydsTextAdventure
             });
         }
 
-        public virtual char[,] Draw( int startx, int starty, int width, int height)
+        public virtual char[,] Draw(int startx, int starty, int width, int height)
         {
 
             char[,] result = new char[width, height];
- 
-            for(int x = 0; x < width; x++)
+
+            for (int x = 0; x < width; x++)
             {
                 int actualx = x + startx;
 
@@ -120,31 +118,31 @@ namespace LydsTextAdventure
                 {
                     int actualy = y + starty;
 
-                    if(actualy < 0 || actualx < 0 || actualy >= this.height || actualx >= this.width){
+                    if (actualy < 0 || actualx < 0 || actualy >= this.height || actualx >= this.width)
+                    {
                         result[x, y] = ' ';
-                    } 
+                    }
                     else
                     {
                         result[x, y] = this.world[actualx, actualy].texture.character;
                     }
                 }
             }
-           
+
             return result;
         }
 
         public virtual void GenerateWorld()
         {
 
-            Texture water = new Texture('~', ConsoleColor.Blue);
             Texture sand = new Texture(',', ConsoleColor.Cyan);
             Texture ground = new Texture('_', ConsoleColor.Gray);
             Texture stone = new Texture('.', ConsoleColor.Gray);
 
-            for(int x = 0; x < this.width; x++ )
+            for (int x = 0; x < this.width; x++)
             {
 
-                for(int y = 0; y < this.height; y++)
+                for (int y = 0; y < this.height; y++)
                 {
 
                     float noiseValue = this.noise.GetNoise(x, y);

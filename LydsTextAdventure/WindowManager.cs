@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LydsTextAdventure
 {
     public class WindowManager
     {
 
-        private static List<Window> windows = new List<Window>();
-        private static int count = 0;
+        private static readonly List<Window> Windows = new List<Window>();
+        private static int Count = 0;
 
         public static void RegisterWindow(Window window)
         {
 
-            window.SetIndex(WindowManager.count++);
+            window.SetIndex(WindowManager.Count++);
             Program.DebugLog("initializing window: " + window.ToString(), "window_manager");
             window.Initialize();
             Program.DebugLog("window initialized: " + window.ToString(), "window_manager");
-            WindowManager.windows.Add(window);
+            WindowManager.Windows.Add(window);
             Program.DebugLog("window registered: " + window.ToString(), "window_manager");
         }
 
         public static void RemoveWindow(string id)
         {
 
-            foreach (Window window in WindowManager.windows)
+            foreach (Window window in WindowManager.Windows)
             {
 
-                if(window.id == id)
+                if (window.id == id)
                 {
 
-                    WindowManager.windows.Remove(window);
+                    WindowManager.Windows.Remove(window);
                     break;
                 }
             }
@@ -39,13 +37,13 @@ namespace LydsTextAdventure
         public static void RemoveWindow(Window window)
         {
 
-            WindowManager.windows.Remove(window);
+            WindowManager.Windows.Remove(window);
         }
 
         public static Window GetWindowByName(string name)
         {
 
-            foreach (Window window in WindowManager.windows)
+            foreach (Window window in WindowManager.Windows)
             {
 
                 if (window.GetName().ToLower() == name.ToLower())
@@ -58,7 +56,7 @@ namespace LydsTextAdventure
         public static void DrawWindows()
         {
 
-            foreach(Window window in WindowManager.windows)
+            foreach (Window window in WindowManager.Windows)
             {
 
                 if (!window.IsVisible())
@@ -72,19 +70,19 @@ namespace LydsTextAdventure
         public static void ClearWindows()
         {
 
-            foreach (Window window in WindowManager.windows)
+            foreach (Window window in WindowManager.Windows)
             {
 
                 window.Destroy();
             }
 
-            WindowManager.windows.Clear();
+            WindowManager.Windows.Clear();
         }
 
         public static void UpdateWindows()
         {
 
-            foreach (Window window in WindowManager.windows)
+            foreach (Window window in WindowManager.Windows)
             {
 
                 window.Update();

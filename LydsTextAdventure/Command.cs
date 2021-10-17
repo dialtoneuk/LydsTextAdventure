@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -12,23 +10,23 @@ namespace LydsTextAdventure
         protected string commandShortName = "";
         protected Action commandAction;
 
-        public Command(string name, Action action=null, string shortname="")
+        public Command(string name, Action action = null, string shortname = "")
         {
 
             this.commandCode = Guid.NewGuid().ToString();
 
             if (name.Length < 2)
                 throw new ArgumentException();
-            
+
             this.commandName = name;
 
             if (shortname.Length != 0)
                 this.commandShortName = shortname;
 
-            if(action != null )
+            if (action != null)
                 this.commandAction = action;
 
-            if (commandShortName.Length == 0)
+            if (this.commandShortName.Length == 0)
                 this.SetShortName();
         }
 
@@ -43,7 +41,7 @@ namespace LydsTextAdventure
         }
 
         //executes the function
-        public virtual bool Execute() 
+        public virtual bool Execute()
         {
 
             if (this.HasAction())
@@ -58,7 +56,7 @@ namespace LydsTextAdventure
         }
 
         //sets the short name of the command
-        public void SetShortName(string shortname="")
+        public void SetShortName(string shortname = "")
         {
 
             if (shortname.Length == 0)
@@ -84,7 +82,7 @@ namespace LydsTextAdventure
             else
                 return true;
         }
-        
+
         //returns true if a command is similar
         public bool IsSimilar(Command command)
         {
@@ -102,7 +100,7 @@ namespace LydsTextAdventure
         protected bool HasAction()
         {
 
-            return (commandAction != null && commandAction.GetType() == typeof(Action));
+            return (this.commandAction != null && this.commandAction.GetType() == typeof(Action));
         }
     }
 }

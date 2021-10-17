@@ -9,7 +9,8 @@ namespace LydsTextAdventure
         protected WorldTitleScreen world;
 
         public SceneMenu(string name, List<Command> commands = null) : base(name, commands)
-        { }
+        {
+        }
 
         protected override List<Command> LoadCommands()
         {
@@ -77,8 +78,8 @@ namespace LydsTextAdventure
         public override void Start()
         {
 
-            InputController.isAwaitingInput = true;
-            InputController.isTextInput = true;
+            InputController.IsAwaitingInput = true;
+            InputController.IsTextInput = true;
 
             base.Start();
         }

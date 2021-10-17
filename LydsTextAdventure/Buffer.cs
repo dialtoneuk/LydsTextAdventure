@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -31,8 +29,14 @@ namespace LydsTextAdventure
         private static char[,] guiBuffer;
         private static char[,] worldBuffer;
 
-        public static int WindowWidth { get => Buffer.Width;}
-        public static int WindowHeight { get => Buffer.Height;}
+        public static int WindowWidth
+        {
+            get => Buffer.Width;
+        }
+        public static int WindowHeight
+        {
+            get => Buffer.Height;
+        }
 
         public static void Create(int width, int height)
         {
@@ -56,27 +60,21 @@ namespace LydsTextAdventure
         private static char[,] GetBuffer(Buffer.Types type)
         {
 
-            switch (type)
+            return type switch
             {
-
-                case Buffer.Types.GUI_BUFFER:
-                    return Buffer.guiBuffer;
-                case Buffer.Types.ENTITY_BUFFER:
-                    return Buffer.entityBuffer;
-                case Buffer.Types.DRAW_BUFFER:
-                    return Buffer.drawBuffer;
-                case Buffer.Types.WORLD_BUFFER:
-                    return Buffer.worldBuffer;
-            }
-
-            throw new ApplicationException("invalid buffer");
+                Buffer.Types.GUI_BUFFER => Buffer.guiBuffer,
+                Buffer.Types.ENTITY_BUFFER => Buffer.entityBuffer,
+                Buffer.Types.DRAW_BUFFER => Buffer.drawBuffer,
+                Buffer.Types.WORLD_BUFFER => Buffer.worldBuffer,
+                _ => throw new ApplicationException("invalid buffer"),
+            };
         }
 
         public static char[] ReadLine(int index, Buffer.Types type)
         {
 
             char[,] buffer = Buffer.GetBuffer(type);
-       
+
             for (int y = 0; y < Buffer.Height; y++)
             {
 
@@ -85,7 +83,8 @@ namespace LydsTextAdventure
 
                 char[] line = new char[Buffer.Width];
 
-                for(int x = 0; x < Buffer.Width; x++){
+                for (int x = 0; x < Buffer.Width; x++)
+                {
                     line[x] = buffer[x, y];
                 }
 
@@ -153,7 +152,7 @@ namespace LydsTextAdventure
             Buffer.cursorSavedLeft = Buffer.cursorLeft;
         }
 
-        public static void SetLastPosition(bool keep=false)
+        public static void SetLastPosition(bool keep = false)
         {
 
             if (Buffer.cursorSavedLeft == -1 || Buffer.cursorSavedTop == -1)
@@ -168,7 +167,7 @@ namespace LydsTextAdventure
                 Buffer.cursorSavedTop = -1;
             }
         }
-        
+
         public static void CleanBuffer()
         {
 
@@ -213,7 +212,7 @@ namespace LydsTextAdventure
             }
         }
 
-        public static void AddToBuffer(Buffer.Types type, char[,] data, int startx=0, int starty=0)
+        public static void AddToBuffer(Buffer.Types type, char[,] data, int startx = 0, int starty = 0)
         {
 
             for (int y = 0; y < data.GetLength(1); y++)
@@ -307,7 +306,8 @@ namespace LydsTextAdventure
 
             int x = Buffer.cursorLeft;
 
-            foreach(char c in input){
+            foreach (char c in input)
+            {
                 Buffer.GetBuffer(type)[Buffer.cursorLeft, Buffer.cursorTop] = c;
 
                 if (Buffer.Width - 1 > Buffer.cursorLeft)
@@ -328,7 +328,7 @@ namespace LydsTextAdventure
 
             Buffer.cursorLeft = Math.Max(0, Math.Min(Buffer.Width - 1, x));
 
-            if(y >= 0)
+            if (y >= 0)
                 Buffer.cursorTop = Math.Max(0, Math.Min(Buffer.Height - 1, y));
         }
     }

@@ -6,43 +6,43 @@ namespace LydsTextAdventure
 {
 
     public class EntityManager
-   {
+    {
 
-        private static List<Entity> entities = new List<Entity>();
-        private static List<Entity> visibleEntities;
-        private static List<Entity> aliveEntities;
+        private static List<Entity> Entities = new List<Entity>();
+        private static List<Entity> VisibleEntities;
+        private static List<Entity> AliveEntities;
 
-        private static int sceneCount = 0;
+        private static int SceneCount = 0;
 
         public static void RegisterEntity(Entity entity)
         {
 
-            entity.SetIndex(EntityManager.sceneCount++);
+            entity.SetIndex(EntityManager.SceneCount++);
             entity.SetWorld(WorldManager.CurrentWorld);
 
-            entities.Add(entity);
+            Entities.Add(entity);
             Program.DebugLog("entity " + entity.ToString() + " created", "entity_manager");
         }
 
         public static void DestroyAllEntities()
         {
 
-            foreach (Entity entity in EntityManager.entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
                 entity.Destroy();
             }
 
-            EntityManager.entities = new List<Entity>();
-            EntityManager.sceneCount = 0;
-            EntityManager.visibleEntities = null;
-            EntityManager.aliveEntities = null;
+            EntityManager.Entities = new List<Entity>();
+            EntityManager.SceneCount = 0;
+            EntityManager.VisibleEntities = null;
+            EntityManager.AliveEntities = null;
         }
 
         public static List<Entity> GetEntitiesByType(Type type)
         {
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
 
                 if (entity.GetType() == type && !entity.IsDestroyed())
@@ -57,7 +57,7 @@ namespace LydsTextAdventure
 
             List<Entity> entities = EntityManager.GetEntitiesByType(typeof(Camera));
 
-            foreach(Entity ent in entities)
+            foreach (Entity ent in entities)
             {
 
                 Camera cam = (Camera)ent;
@@ -72,7 +72,7 @@ namespace LydsTextAdventure
         public static Entity GetEntityByType(Type type)
         {
 
-            foreach (Entity entity in EntityManager.entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
 
                 if (entity.GetType() == type && !entity.IsDestroyed())
@@ -86,7 +86,7 @@ namespace LydsTextAdventure
         {
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
 
                 if (entity.GetName() == name && !entity.IsDestroyed())
@@ -100,14 +100,14 @@ namespace LydsTextAdventure
         public static void RemoveEntity(string id)
         {
 
-            foreach (Entity entity in EntityManager.entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
                 if (entity.id != id)
                     continue;
-                
+
 
                 entity.Destroy();
-                entities.Remove(entity);
+                Entities.Remove(entity);
                 break;
             }
         }
@@ -144,7 +144,7 @@ namespace LydsTextAdventure
         public static List<Entity> GetEntities()
         {
 
-            return EntityManager.entities.GetRange(0, entities.Count);
+            return EntityManager.Entities.GetRange(0, Entities.Count);
         }
 
         public static Entity GetClosestTo(Entity entity, int range = 1)
@@ -164,7 +164,7 @@ namespace LydsTextAdventure
         public static Entity GetFurthestFrom(Entity entity, int range = 1)
         {
 
-            List<Entity> entities = EntityManager.GetEntitiesAroundPosition(entity.position, range );
+            List<Entity> entities = EntityManager.GetEntitiesAroundPosition(entity.position, range);
 
             if (entities.Count == 0)
                 return null;
@@ -174,7 +174,7 @@ namespace LydsTextAdventure
             return entities.FirstOrDefault();
         }
 
-        public static List<Entity> GetEntitiesAroundPosition(Position position, int range=1, bool solidsOnly = true)
+        public static List<Entity> GetEntitiesAroundPosition(Position position, int range = 1, bool solidsOnly = true)
         {
 
             if (range <= 0)
@@ -193,45 +193,45 @@ namespace LydsTextAdventure
 
                         result.Add(entity);
                     }
-         
+
             }
 
             return result;
         }
 
-        public static List<Entity> GetVisibleEntities(bool ignoreCache=false)
+        public static List<Entity> GetVisibleEntities(bool ignoreCache = false)
         {
 
-            if (!ignoreCache && EntityManager.visibleEntities != null)
-                return EntityManager.visibleEntities;
+            if (!ignoreCache && EntityManager.VisibleEntities != null)
+                return EntityManager.VisibleEntities;
 
             List<Entity> result = new List<Entity>();
-            foreach( Entity entity in EntityManager.entities )
+            foreach (Entity entity in EntityManager.Entities)
             {
 
                 if (entity.IsVisible() && !entity.IsDestroyed())
                     result.Add(entity);
             }
 
-            EntityManager.visibleEntities = result;
+            EntityManager.VisibleEntities = result;
             return result;
         }
 
         public static List<Entity> GetAliveEntities(bool ignoreCache = false)
         {
 
-            if (!ignoreCache && EntityManager.aliveEntities != null)
-                return EntityManager.aliveEntities;
+            if (!ignoreCache && EntityManager.AliveEntities != null)
+                return EntityManager.AliveEntities;
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
 
                 if (!entity.IsDestroyed())
                     result.Add(entity);
             }
 
-            EntityManager.aliveEntities = result;
+            EntityManager.AliveEntities = result;
             return result;
         }
     }

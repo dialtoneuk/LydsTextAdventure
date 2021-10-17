@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
@@ -23,9 +20,9 @@ namespace LydsTextAdventure
         private char[,] temporaryBuffer;
         private Camera.Perspective perspective;
         private List<Entity> renderEntities;
-        private List<Entity> renderedEntities = new List<Entity>();
+        private readonly List<Entity> renderedEntities = new List<Entity>();
 
-        public Camera(Entity entity = null, Camera.Perspective perspective = Camera.Perspective.CENTER_ON_OWNER, Position origin=null )
+        public Camera(Entity entity = null, Camera.Perspective perspective = Camera.Perspective.CENTER_ON_OWNER, Position origin = null)
         {
 
             this.SetName("Default Camera");
@@ -45,7 +42,7 @@ namespace LydsTextAdventure
             this.SetDrawTexture(false);
             this.SetSize(32, 32);
             //sets the name of this camera
- 
+
             Program.DebugLog("Camera has been created", "camera");
         }
 
@@ -58,9 +55,9 @@ namespace LydsTextAdventure
         {
 
             List<Entity> cameras = EntityManager.GetEntitiesByType(typeof(Camera));
-            List<Entity> allRendered = new List<Entity>(); 
+            List<Entity> allRendered = new List<Entity>();
 
-            foreach (Camera camera in cameras )
+            foreach (Camera camera in cameras)
             {
 
                 List<Entity> ents = camera.renderedEntities;
@@ -69,31 +66,33 @@ namespace LydsTextAdventure
                     allRendered.Add(e);
             }
 
-            foreach(Entity ent in EntityManager.GetAliveEntities())
+            foreach (Entity ent in EntityManager.GetAliveEntities())
             {
 
-                if(ent.IsAlwaysOn() && ent.IsDisabled()){
+                if (ent.IsAlwaysOn() && ent.IsDisabled())
+                {
                     ent.SetDisabled(false);
                     continue;
                 }
 
-                if(ent.GetType() == typeof(Camera))
+                if (ent.GetType() == typeof(Camera))
                     continue;
 
                 bool found = false;
-                foreach(Entity comp in allRendered)
+                foreach (Entity comp in allRendered)
                 {
-                    if(ent.id == comp.id)
+                    if (ent.id == comp.id)
                     {
                         ent.SetDisabled(false);
-                       
+
                         found = true;
                         break;
                     }
-               
+
                 }
 
-                if (!found){
+                if (!found)
+                {
                     ent.SetDisabled(true);
                 }
             }
@@ -162,7 +161,7 @@ namespace LydsTextAdventure
         public virtual void UpdateBuffer(char[,] data, List<Entity> entities)
         {
 
-            for(int x = 0; x < this.width; x++)
+            for (int x = 0; x < this.width; x++)
             {
 
                 for (int y = 0; y < this.height; y++)
@@ -185,7 +184,7 @@ namespace LydsTextAdventure
         public virtual void UpdateBuffer()
         {
 
-            if(this.world != null || this.world.IsDisabled() )
+            if (this.world != null || this.world.IsDisabled())
             {
 
                 char[,] worldData = this.world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
@@ -201,7 +200,7 @@ namespace LydsTextAdventure
                 }
             }
 
-            this.RenderEntityGroup( EntityManager.GetVisibleEntities() );
+            this.RenderEntityGroup(EntityManager.GetVisibleEntities());
             this.renderEntities = EntityManager.GetVisibleEntities();
         }
 
@@ -221,10 +220,10 @@ namespace LydsTextAdventure
                 int x = entity.position.x - (this.cameraPosition.x);
                 int y = entity.position.y - (this.cameraPosition.y);
 
-                if (x < 0 || x >= width)
+                if (x < 0 || x >= this.width)
                     continue;
 
-                if (y < 0 || y >= height)
+                if (y < 0 || y >= this.height)
                     continue;
 
                 //draw entity texture
@@ -249,11 +248,11 @@ namespace LydsTextAdventure
             Buffer.AddToBuffer(Buffer.Types.WORLD_BUFFER, this.temporaryBuffer, posx, posy);
 
             //draw entities stuff
-            if(this.renderEntities != null)
+            if (this.renderEntities != null)
                 foreach (Entity entity in this.renderEntities)
                 {
 
-                    if (entity.GetType() == typeof(Camera) )
+                    if (entity.GetType() == typeof(Camera))
                         continue;
 
                     int x = entity.position.x - (this.cameraPosition.x);
@@ -267,10 +266,10 @@ namespace LydsTextAdventure
                     if (y < 0 || y >= this.height)
                     {
                         continue;
-                    } 
+                    }
 
                     entity.Draw(x + posx, y + posy, this);
-                    renderedEntities.Add(entity);
+                    this.renderedEntities.Add(entity);
                 }
         }
 

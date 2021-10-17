@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LydsTextAdventure
 {
@@ -12,7 +8,7 @@ namespace LydsTextAdventure
         public readonly string sceneName;
         private List<Command> sceneCommands;
 
-        public Scene(string name, List<Command> commands=null)
+        public Scene(string name, List<Command> commands = null)
         {
 
             this.sceneName = name;
@@ -21,7 +17,7 @@ namespace LydsTextAdventure
                 if (this.sceneCommands != null)
                 {
 
-                    List<Command> _commands = new List<Command>(sceneCommands.Count + commands.Count);
+                    List<Command> _commands = new List<Command>(this.sceneCommands.Count + commands.Count);
                     _commands.AddRange(this.sceneCommands);
                     _commands.AddRange(commands);
                     this.sceneCommands = _commands;
@@ -30,7 +26,7 @@ namespace LydsTextAdventure
                     this.sceneCommands = commands;
             else
                 if (this.sceneCommands == null)
-                    this.sceneCommands = new List<Command>();
+                this.sceneCommands = new List<Command>();
         }
 
         public virtual void Destroy()
@@ -38,6 +34,7 @@ namespace LydsTextAdventure
 
             WorldManager.ClearWorlds();
             EntityManager.DestroyAllEntities();
+            InputController.IsAwaitingInput = false;
         }
 
         public override string ToString()
@@ -59,7 +56,7 @@ namespace LydsTextAdventure
 
             List<Command> commands = this.LoadCommands();
 
-            if(commands!=null && commands.Count != 0 )
+            if (commands != null && commands.Count != 0)
             {
 
                 List<Command> _commands = new List<Command>(this.sceneCommands.Count + commands.Count);
@@ -69,8 +66,8 @@ namespace LydsTextAdventure
             }
 
             foreach (Command command in this.sceneCommands)
-                if (Program.GetCommandController().IsCommandUnique(command))
-                    Program.GetCommandController().Add(command);
+                if (CommandManager.IsCommandUnique(command))
+                    CommandManager.Add(command);
 
             this.Before();
 
@@ -89,7 +86,7 @@ namespace LydsTextAdventure
         {
 
             //draws all the cameras in the scene
-            foreach(Entity entity in EntityManager.GetEntitiesByType(typeof(Camera)))
+            foreach (Entity entity in EntityManager.GetEntitiesByType(typeof(Camera)))
             {
 
                 Camera camera = (Camera)entity;
@@ -121,7 +118,7 @@ namespace LydsTextAdventure
             WindowManager.UpdateWindows();
 
             //recache visible and alive entities (helps performance with multiple cameras)
-            if(Program.GetTick() % 248 == 0)
+            if (Program.GetTick() % 248 == 0)
             {
                 EntityManager.GetVisibleEntities(true); //caches which helps with multiple cameras
                 EntityManager.GetAliveEntities(true); //caches

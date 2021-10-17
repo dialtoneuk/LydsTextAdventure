@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LydsTextAdventure
+﻿namespace LydsTextAdventure
 {
     public class WindowPlayerStatistics : Window
     {
@@ -48,8 +44,8 @@ namespace LydsTextAdventure
 
         public override void Update()
         {
-            
-            if(this.player!=null)
+
+            if (this.player != null)
             {
 
                 this.health.SetText("hp: " + this.player.GetHealth().ToString());
@@ -60,7 +56,7 @@ namespace LydsTextAdventure
             this.input.SetText("mouse pos: " + ConsoleManager.GetMousePosition());
 
             Command cmd = Program.LastCommand;
-            if ( cmd != null )
+            if (cmd != null)
                 this.lastCommand.SetText("last executed: " + cmd.ToString());
 
             base.Update();

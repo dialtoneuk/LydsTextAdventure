@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LydsTextAdventure
 {
@@ -21,9 +19,18 @@ namespace LydsTextAdventure
         public bool isHovering = false;
         public bool isAwaitingOutput = false;
 
-        public int Width { get => width; }
-        public int Height { get => height; }
-        public string Name { get => name; }
+        public int Width
+        {
+            get => this.width;
+        }
+        public int Height
+        {
+            get => this.height;
+        }
+        public string Name
+        {
+            get => this.name;
+        }
 
         public GuiElement(Window window = null, GuiElement parent = null, Position position = null)
         {
@@ -34,7 +41,7 @@ namespace LydsTextAdventure
             this.parent = parent;
             this.window = window;
 
-            if(window!=null)
+            if (window != null)
                 window.RegisterElement(this);
         }
 
@@ -71,7 +78,7 @@ namespace LydsTextAdventure
             if (!this.isVisible)
                 return;
 
-            
+
         }
 
         public virtual void OnHover()
@@ -92,11 +99,11 @@ namespace LydsTextAdventure
             this.height = height;
         }
 
-        public virtual void Draw(int x, int y, Camera camera=null, Window window = null)
+        public virtual void Draw(int x, int y, Camera camera = null, Window window = null)
         {
 
 #if DEBUG
-            if(this.isHovering)
+            if (this.isHovering)
                 Surface.Write(this.GetX(), this.GetY(), "[ Hovering! ]");
 #endif
         }
@@ -165,7 +172,7 @@ namespace LydsTextAdventure
             if (this.window == null)
                 return new Position(this.GetLeft(), this.GetTop());
 
-            return new Position( this.GetX(), this.GetY());
+            return new Position(this.GetX(), this.GetY());
         }
     }
 }

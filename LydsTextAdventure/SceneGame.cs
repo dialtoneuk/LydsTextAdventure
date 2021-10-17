@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LydsTextAdventure
 {
@@ -13,7 +10,8 @@ namespace LydsTextAdventure
         protected Camera camera;
 
         public SceneGame(string name, List<Command> commands = null) : base(name, commands)
-        { }
+        {
+        }
 
         protected override List<Command> LoadCommands()
         {
@@ -61,7 +59,7 @@ namespace LydsTextAdventure
                 m.SetSpeed(i);
             }
 
-            this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
+            this.camera = new Camera(this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
             this.camera.SetSize(64, 32);
             this.camera.SetName("Main Camera");
@@ -91,8 +89,8 @@ namespace LydsTextAdventure
         public override void Start()
         {
 
-            InputController.isTextInput = false;
-            InputController.isAwaitingInput = true;
+            InputController.IsTextInput = false;
+            InputController.IsAwaitingInput = true;
 
             base.Start();
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
@@ -7,7 +6,7 @@ namespace LydsTextAdventure
     public class EntityMoving : Entity
     {
 
-        public EntityMoving(string name = "") : base(name) 
+        public EntityMoving(string name = "") : base(name)
         {
 
             this.texture = new Texture(' ');
@@ -30,7 +29,7 @@ namespace LydsTextAdventure
         {
 
             if (this.isVertical)
-                
+
                 this.VerticalMovement();
             else
                 this.HoriziontalMovement();
@@ -41,7 +40,7 @@ namespace LydsTextAdventure
 
             int res = Entity.MaxSpeed / Math.Max(1, Math.Min(Entity.MaxSpeed, speed));
 
-            if(res > 0 )
+            if (res > 0)
                 this.Wait(res); //will wait 1 second before updating again
         }
 
@@ -59,13 +58,13 @@ namespace LydsTextAdventure
         public void SetMovementType(MovementType type)
         {
 
-            if(type == MovementType.VERTICAL)
+            if (type == MovementType.VERTICAL)
             {
-                isVertical = true;
-            } 
-            else if ( type == MovementType.HORIZONTAL )
+                this.isVertical = true;
+            }
+            else if (type == MovementType.HORIZONTAL)
             {
-                isVertical = false;
+                this.isVertical = false;
             }
         }
 
@@ -76,36 +75,36 @@ namespace LydsTextAdventure
             if (!this.hasGoal)
             {
 
-                if (!flip)
-                    goal = this.position.x + this.distance;
+                if (!this.flip)
+                    this.goal = this.position.x + this.distance;
                 else
-                    goal = this.position.x - this.distance;
+                    this.goal = this.position.x - this.distance;
 
-                if (goal < 0)
-                    goal = 0;
+                if (this.goal < 0)
+                    this.goal = 0;
 
                 this.hasGoal = true;
             }
 
-            if (!flip)
+            if (!this.flip)
             {
 
-                if (this.position.x != goal)
+                if (this.position.x != this.goal)
                     MovementManager.MoveEntity(this, this.position.x + 1, this.position.y);
                 else
                 {
-                    flip = true;
+                    this.flip = true;
                     this.hasGoal = false;
                 }
             }
             else
             {
 
-                if (this.position.x != goal)
+                if (this.position.x != this.goal)
                     MovementManager.MoveEntity(this, this.position.x - 1, this.position.y);
                 else
                 {
-                    flip = false;
+                    this.flip = false;
                     this.hasGoal = false;
                 }
             }
@@ -114,19 +113,19 @@ namespace LydsTextAdventure
         public void VerticalMovement()
         {
 
-            if (this.position.y < this.distance && !flip)
+            if (this.position.y < this.distance && !this.flip)
             {
                 MovementManager.MoveEntity(this, this.position.x, this.position.y + 1);
             }
             else
             {
 
-                flip = true;
+                this.flip = true;
 
                 if (this.position.y > 0)
                     MovementManager.MoveEntity(this, this.position.x, this.position.y - 1);
                 else
-                    flip = false;
+                    this.flip = false;
             }
         }
 

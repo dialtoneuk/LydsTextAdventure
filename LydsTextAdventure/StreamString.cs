@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -8,32 +7,32 @@ namespace LydsTextAdventure
     // Defines the data protocol for reading and writing strings on our stream
     public class StreamString
     {
-        private Stream ioStream;
-        private UnicodeEncoding streamEncoding;
+        private readonly Stream ioStream;
+        private readonly UnicodeEncoding streamEncoding;
 
         public StreamString(Stream ioStream)
         {
             this.ioStream = ioStream;
-            streamEncoding = new UnicodeEncoding();
+            this.streamEncoding = new UnicodeEncoding();
         }
 
         public string ReadString()
         {
             byte[] strSizeArr = new byte[sizeof(int)];
-            ioStream.Read(strSizeArr, 0, sizeof(int));
+            this.ioStream.Read(strSizeArr, 0, sizeof(int));
             int strSize = BitConverter.ToInt32(strSizeArr, 0);
             byte[] inBuffer = new byte[strSize];
-            ioStream.Read(inBuffer, 0, strSize);
-            return streamEncoding.GetString(inBuffer);
+            this.ioStream.Read(inBuffer, 0, strSize);
+            return this.streamEncoding.GetString(inBuffer);
         }
 
         public int WriteString(string outString)
         {
-            byte[] outBuffer = streamEncoding.GetBytes(outString);
+            byte[] outBuffer = this.streamEncoding.GetBytes(outString);
             byte[] strSize = BitConverter.GetBytes(outBuffer.Length);
-            ioStream.Write(strSize, 0, strSize.Length);
-            ioStream.Write(outBuffer, 0, outBuffer.Length);
-            ioStream.Flush();
+            this.ioStream.Write(strSize, 0, strSize.Length);
+            this.ioStream.Write(outBuffer, 0, outBuffer.Length);
+            this.ioStream.Flush();
             return outBuffer.Length + 2;
         }
     }

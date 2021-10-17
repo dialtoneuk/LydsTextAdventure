@@ -1,36 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
     class SceneManager
     {
 
-        private static Scene currentScene;
+        public static Scene CurrentScene;
 
-        protected static List<Scene> scenes = new List<Scene>();
+        protected static List<Scene> Scenes = new List<Scene>();
 
         public static void StartScene(string scene)
         {
 
-            var r = SceneManager.GetScene( scene );
+            var r = SceneManager.GetScene(scene);
 
             if (r == null)
                 throw new ApplicationException("scene does not exist: " + scene);
 
-            SceneManager.StartScene( r );
+            SceneManager.StartScene(r);
         }
 
         public static void EndScene()
         {
 
-            if (SceneManager.currentScene == null)
+            if (SceneManager.CurrentScene == null)
                 throw new ApplicationException("current scene is aready null");
 
-            SceneManager.currentScene.Destroy();
-            SceneManager.currentScene = null;
+            SceneManager.CurrentScene.Destroy();
+            SceneManager.CurrentScene = null;
         }
 
         public static void StartScene(Scene scene)
@@ -38,13 +36,13 @@ namespace LydsTextAdventure
 
             Program.DebugLog("loading scene " + scene.sceneName, "scene_manager");
 
-            Program.GetCommandController().Clear();
+            CommandManager.Clear();
             Console.Clear();
             Buffer.Clear();
             WindowManager.ClearWindows();
             Buffer.CleanBuffer();
 
-            if (SceneManager.currentScene != null)
+            if (SceneManager.CurrentScene != null)
                 throw new ApplicationException("scene not ended");
 
             Program.DebugLog("calling scene load", "scene_manager");
@@ -53,54 +51,54 @@ namespace LydsTextAdventure
             Program.DebugLog("calling scene start", "scene_manager");
             scene.Start();
 
-            SceneManager.currentScene = scene;
+            SceneManager.CurrentScene = scene;
         }
 
         public static bool IsSceneActive()
         {
 
-            return (SceneManager.currentScene != null);
+            return (SceneManager.CurrentScene != null);
         }
 
         public static void UpdateScene()
         {
 
-            if (SceneManager.currentScene == null)
+            if (SceneManager.CurrentScene == null)
                 throw new ApplicationException("scene not started");
 
-            SceneManager.currentScene.Update();
+            SceneManager.CurrentScene.Update();
 
-            if (SceneManager.currentScene != null)
-                SceneManager.currentScene.Draw();
+            if (SceneManager.CurrentScene != null)
+                SceneManager.CurrentScene.Draw();
         }
 
         public static void AddScene(Scene scene)
         {
 
-            if (SceneManager.GetScene(scene.sceneName) != null )
+            if (SceneManager.GetScene(scene.sceneName) != null)
                 throw new ApplicationException();
 
-            scenes.Add(scene);
+            Scenes.Add(scene);
             Program.DebugLog("registed scene: " + scene.ToString());
         }
 
         public static void AddScenes(List<Scene> collection)
         {
 
-            foreach(Scene _scene in collection)
-                if(SceneManager.GetScene( _scene.sceneName ) != null )
+            foreach (Scene _scene in collection)
+                if (SceneManager.GetScene(_scene.sceneName) != null)
                     throw new ApplicationException();
 
-            List<Scene> _collection = new List<Scene>(collection.Count + SceneManager.scenes.Count);
+            List<Scene> _collection = new List<Scene>(collection.Count + SceneManager.Scenes.Count);
             _collection.AddRange(collection);
-            _collection.AddRange(SceneManager.scenes);
-            SceneManager.scenes = _collection;
+            _collection.AddRange(SceneManager.Scenes);
+            SceneManager.Scenes = _collection;
         }
 
         public static Scene GetScene(string name)
         {
 
-            foreach (Scene scene in scenes)
+            foreach (Scene scene in Scenes)
                 if (scene.sceneName == name)
                     return scene;
 
