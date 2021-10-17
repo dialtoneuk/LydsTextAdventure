@@ -8,9 +8,10 @@ namespace LydsTextAdventure
         private readonly string commandCode;
         protected string commandName;
         protected string commandShortName = "";
+        protected ConsoleKey commandKey;
         protected Action commandAction;
 
-        public Command(string name, Action action = null, string shortname = "")
+        public Command(string name, Action action = null, string shortname = "", ConsoleKey key = ConsoleKey.Tab)
         {
 
             this.commandCode = Guid.NewGuid().ToString();
@@ -28,6 +29,24 @@ namespace LydsTextAdventure
 
             if (this.commandShortName.Length == 0)
                 this.SetShortName();
+
+            if (key == ConsoleKey.Tab)
+                this.commandKey = this.GetKeyFromShortname();
+            else
+                this.commandKey = key;
+        }
+
+        public ConsoleKey GetKeyFromShortname()
+        {
+
+            foreach (ConsoleKey key in Enum.GetValues(typeof(ConsoleKey)))
+            {
+
+                if (this.commandShortName[0].ToString() == key.ToString().ToLower())
+                    return key;
+            }
+
+            throw new SystemException("cannot get key from shortname:" + this.commandShortName[0].ToString());
         }
 
         //returns true if both of the classes are equal by their GUID
@@ -81,6 +100,12 @@ namespace LydsTextAdventure
                     return true;
             else
                 return true;
+        }
+
+        public bool SearchKeyMatches(ConsoleKey key)
+        {
+
+            return this.commandKey.ToString() == key.ToString();
         }
 
         //returns true if a command is similar

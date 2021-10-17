@@ -46,7 +46,7 @@ namespace LydsTextAdventure
 
 
         //gets the correct x/y relative to the tile/char
-        public static Position GetMousePosition(int fontSize = 8)
+        public static Position GetMousePosition(int fontSize = 10)
         {
 
             //first get the cursor position
@@ -57,7 +57,7 @@ namespace LydsTextAdventure
             Position console = ConsoleManager.GetConsolePosition();
             //cursors
             Position cursor = new Position(point.X, point.Y);
-            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontSize)), (int)Math.Floor((decimal)((cursor.y - console.y) / 14)) - 1);
+            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontSize)), (int)Math.Floor((decimal)((cursor.y - console.y) / 16)) - 1);
         }
 
         [DllImport("user32.dll")]

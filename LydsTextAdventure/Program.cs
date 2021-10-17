@@ -8,6 +8,16 @@ namespace LydsTextAdventure
     class Program
     {
 
+
+        public const int MAX_TICK = 8912;
+        public const int DEBUGGER_LOG_SIZE = 2048;
+
+#if DEBUG
+        public const bool DEBUGGER_CONNECT_LOGGER = true;
+#else
+        public const bool DEBUGGER_CONNECT_LOGGER = false;
+#endif
+
         public enum State : int
         {
             RUNNING,
@@ -16,10 +26,6 @@ namespace LydsTextAdventure
         }
 
         public static DebugLogger DebugLogger;
-
-        private static string[] debugLog;
-        private static int StackPosition = 0;
-
 
         public static Command LastCommand
         {
@@ -33,25 +39,38 @@ namespace LydsTextAdventure
         static void Main(string[] args)
         {
 
-            Console.SetBufferSize(152, 72);
-            Console.SetWindowSize(152, 72);
+            Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+  
             Console.ResetColor();
             Console.Title = "Lyds Text Adventure";
-            Console.CursorVisible = false;
 
             CommandManager.AddDefaultCommands();
             ConsoleManager.DisableQuickEdit();
+
+            Program.DebugLogger = new DebugLogger();
+            Program.DebugLogger.DebugLog = new string[Program.DEBUGGER_LOG_SIZE];
             DebugLogger.CreateExitEvent();
 
             //Create the buffer/viewable draw space
-            Buffer.Create(150, 70);
+            Buffer.Create(Console.LargestWindowWidth - 2, Console.LargestWindowHeight - 2);
 
             //adds the remote logger
 #if DEBUG
-            Program.DebugLogger = new DebugLogger();
+
+            try
+            {
+                if (Program.DEBUGGER_CONNECT_LOGGER)
+                    Program.DebugLogger.ConnectDebugLogger();
+            }
+            catch
+            {
+
+                Program.DebugLog("failed to connect to debugger");
+            }
+
             Program.DebugLog("connected to console log successfully");
             Program.RegisterDebugCommands();
-            Program.debugLog = new string[1024];
+            Program.DebugLog("registered debug commands");
 #endif
             //register our scenes
             Scenes.RegisterScenes();
@@ -64,6 +83,7 @@ namespace LydsTextAdventure
             while (!_state.Equals(State.SHUTDOWN))
             {
 
+                Console.CursorVisible = false;
                 Buffer.Clear();
 
                 if (InputController.IsAwaitingInput && !InputController.IsRunning)
@@ -73,13 +93,25 @@ namespace LydsTextAdventure
                     {
                         InputController.KeyboardInput input = InputController.GetKeyboardInput();
                         Command command = CommandManager.GetCommand(input.text);
+
                         if (command == null)
-                            Program.DebugLog("invalid command:" + input.text);
-                        else
                         {
-                            command.Execute();
-                            Program.LastCommand = command;
+
+                            if (input.keys.Count == 0)
+                                return;
+
+                            command = CommandManager.GetCommandByConsoleKey(input.keys[0].Key);
+
+                            if (command == null)
+                            {
+                                Program.DebugLog("invalid command:" + input.text);
+                                return;
+                            }
+                      
                         }
+
+                        command.Execute();
+                        Program.LastCommand = command;
                     });
                 }
 
@@ -93,9 +125,11 @@ namespace LydsTextAdventure
                 //Draws the buffer
                 Buffer.DrawBuffer();
 
+                if (Program.Tick % 1024 == 0)
+                    Program.DebugLog("check alive");
 
-                //reset
-                if (Program.Tick >= 8192)
+                //reset tick if we are over 8192
+                if (Program.Tick >= Program.MAX_TICK)
                 {
 
                     System.Console.Clear();
@@ -145,31 +179,24 @@ namespace LydsTextAdventure
             if (msg.Length.Equals(0))
                 return;
 
-            if (Program.DebugLogger is null)
-                return;
-
             string str = string.Concat("[", op + ":" + Program.Tick + ":" + DateTime.Now.TimeOfDay + "] ", msg);
 
-            if (Program.debugLog == null || StackPosition + 1 >= Program.debugLog.Length)
+            if (Program.DebugLogger.DebugLog == null || Program.DebugLogger.StackPosition + 1 >= Program.DebugLogger.DebugLog.Length)
             {
-                Program.StackPosition = 0;
-                Program.debugLog = new string[1024];
+                Program.DebugLogger.StackPosition = 0;
+                Program.DebugLogger.DebugLog = new string[Program.DEBUGGER_LOG_SIZE];
             }
 
-            Program.debugLog[Program.StackPosition++] = str;
+            Program.DebugLogger.DebugLog[Program.DebugLogger.StackPosition++] = str;
             Program.DebugLogger.WriteLine(str);
         }
 
         public static string[] GetDebugLog()
         {
 
-#if DEBUG
-            string[] debugLog = (string[])Program.debugLog.Clone();
+            string[] debugLog = (string[])DebugLogger.DebugLog.Clone();
             Array.Reverse(debugLog);
             return (debugLog);
-#else
-            return new string[1];
-#endif
         }
 
         public static int GetTick()

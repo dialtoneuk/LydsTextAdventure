@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="debug\ConsoleLogger.exe">
+    <None Update="debug\ConsoleLogger.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tools\ConsoleLogger.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="debug\ConsoleLogger.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -33,9 +36,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="cd debug&#xD;&#xA;powershell start-process ConsoleLogger.exe" />
-  </Target>
-
 </Project>

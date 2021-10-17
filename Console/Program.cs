@@ -9,7 +9,7 @@ namespace ConsoleLogger
     {
 
         private static NamedPipeServerStream ServerStream;
-        private static readonly bool Running = true;
+        private static bool Running = true;
         private static bool Connected = false;
 
         private static int MsgCount = 0;
@@ -18,16 +18,17 @@ namespace ConsoleLogger
         static void Main(string[] args)
         {
 
+            reconnect:
             Program.ServerStream = new NamedPipeServerStream("console_log", PipeDirection.InOut, 1);
 
             Console.WriteLine(" SERVER WAITING FOR CONNECTION ");
-            Task.Delay(10000).ContinueWith((state) =>
+            Task.Delay(60000).ContinueWith((state) =>
             {
 
                 if (!Connected)
                 {
 
-                    Console.WriteLine("failed to connect after 10 seconds.. shutting down");
+                    Console.WriteLine("failed to connect after 60 seconds.. shutting down");
                     System.Environment.Exit(1);
                 }
             });
@@ -44,6 +45,9 @@ namespace ConsoleLogger
                 // written to the pipe its security token will be available.
                 while (Program.Running)
                 {
+
+                    if (!Program.ServerStream.IsConnected)
+                        break;
 
                     var ss = new StreamString(Program.ServerStream);
                     string xmlReceive = ss.ReadString();
@@ -74,8 +78,13 @@ namespace ConsoleLogger
                             continue;
 
                         if (data.flag == 1)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Game shutdown!");
+                            Console.ForegroundColor = ConsoleColor.White;
                             break;
-
+                        }
+                           
                         if (data.message.Contains("general"))
                             Console.ForegroundColor = ConsoleColor.DarkGray;
                         else if (data.message.Contains("window"))
@@ -108,12 +117,12 @@ namespace ConsoleLogger
                 Console.WriteLine("ERROR: {0}", e.Message);
             }
 
-            Console.WriteLine("Game shutdown. Press escape key to close debug logger.");
-            Program.ServerStream.Close();
+            Console.WriteLine("Awaiting reconnect...");
+            
+            if(Program.ServerStream.IsConnected)
+                Program.ServerStream.Close();
 
-            while (Console.ReadKey().Key != ConsoleKey.Escape)
-            {
-            };
+            goto reconnect;
         }
 
         public static void CheckForRecentMessages()
@@ -126,13 +135,12 @@ namespace ConsoleLogger
                 if (MsgCount != 0 && MsgCount == LastCount)
                 {
 
-                    Console.WriteLine("no message in the last 60 seconds... Press escape key to close debugger");
+                    Console.WriteLine("no message in the last 60 seconds... Closing connection");
 
-                    while (Console.ReadKey().Key != ConsoleKey.Escape)
-                    {
-                    };
+                    if (Program.ServerStream.IsConnected)
+                        Program.ServerStream.Close();
 
-                    System.Environment.Exit(0);
+                    return;
                 }
 
                 LastCount = MsgCount;

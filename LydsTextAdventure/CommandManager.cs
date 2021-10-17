@@ -10,13 +10,32 @@ namespace LydsTextAdventure
             //exit command
             new Command("exit", () => {
                 Program.SetState(Program.State.SHUTDOWN);
-            }, "p"),
-            new Command("commands", () =>
+            }, "p", ConsoleKey.P),
+            new Command("click", () =>
             {
 
-                foreach(Command command in CommandManager.GetCommands())
-                    Program.DebugLog(command.ToString());
-            })
+                Position pos = InputController.GetMousePosition();
+                foreach(Window window in WindowManager.GetOpenWindows())
+                {
+
+                    foreach(GuiElement element in window.guiElements)
+                        if(GuiElement.IsInsideOf(pos, element))
+                        {
+                            element.OnClick();
+                            break;
+                        } 
+                }
+
+                foreach(Entity entity in EntityManager.GetVisibleEntities())
+                {
+
+                        if(Entity.IsMouseOver(pos, entity))
+                        {
+                            entity.OnClick();
+                            break;
+                        }               
+                }
+            }, "q", ConsoleKey.Q)
         };
 
         protected static List<Command> Commands = new List<Command>();
@@ -73,6 +92,16 @@ namespace LydsTextAdventure
 
             foreach (Command command in CommandManager.Commands)
                 if (command.SearchTermMatches(search_key))
+                    return command;
+
+            return null;
+        }
+
+        public static Command GetCommandByConsoleKey(ConsoleKey key)
+        {
+
+            foreach (Command command in CommandManager.Commands)
+                if (command.SearchKeyMatches(key))
                     return command;
 
             return null;

@@ -204,6 +204,14 @@ namespace LydsTextAdventure
 #endif
         }
 
+        public virtual void OnClick()
+        {
+
+#if DEBUG
+
+#endif
+        }
+
         public virtual void Draw(int x, int y, Camera camera)
         {
 

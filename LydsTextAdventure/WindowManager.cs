@@ -67,6 +67,18 @@ namespace LydsTextAdventure
             }
         }
 
+        public static List<Window> GetOpenWindows()
+        {
+
+            List<Window> windows = new List<Window>();
+
+            foreach (Window window in WindowManager.Windows)
+                if (window.isVisible)
+                    windows.Add(window);
+
+            return windows;
+        }
+
         public static void ClearWindows()
         {
 

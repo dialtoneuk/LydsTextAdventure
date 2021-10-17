@@ -16,11 +16,25 @@ namespace LydsTextAdventure
         {
 
             return new List<Command>(){
-                new Command("game", () =>
+                new Command("click", () =>
                 {
-                    SceneManager.EndScene();
-                    SceneManager.StartScene("sceneGame");
-                }, "g")
+
+                    Position pos = InputController.GetMousePosition();
+                    foreach(Window window in WindowManager.GetOpenWindows())
+                    {
+
+                        foreach(GuiElement element in window.guiElements)
+                            if(GuiElement.IsInsideOf(pos, element))
+                                element.OnClick();
+                    }
+
+                    foreach(Entity entity in EntityManager.GetVisibleEntities())
+                    {
+
+                            if(Entity.IsMouseOver(pos, entity))
+                                entity.OnClick();
+                    }
+                }, "q")
             };
         }
 
@@ -29,7 +43,7 @@ namespace LydsTextAdventure
         {
 
             this.world = new WorldTitleScreen();
-            this.world.SetSize(Buffer.WindowWidth * 2, Buffer.WindowHeight * 2);
+            this.world.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);
             this.world.GenerateWorld();
 
             this.camera = new Camera();
@@ -39,30 +53,7 @@ namespace LydsTextAdventure
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
-            EntityMovingText text = new EntityMovingText();
-            text.position.SetPosition(this.camera.GetViewCenter());
-            text.SetDistance(this.camera.width / 2);
-            text.position.x = this.camera.width / 4;
-
-            text.SetText("Lyds Text Adventure");
-
-            EntityMovingText text2 = new EntityMovingText();
-            text2.position.SetPosition(this.camera.GetViewCenter());
-            text2.SetDistance(this.camera.width / 2);
-            text2.SetSpeed(16);
-            text2.position.x = this.camera.width / 4;
-            text2.position.y += 1;
-
-            text2.SetText("2.0");
-
-            EntityMovingText text3 = new EntityMovingText();
-            text3.position.SetPosition(this.camera.GetViewCenter());
-            text3.SetDistance(this.camera.width / 2);
-            text3.SetSpeed(8);
-            text3.position.x = this.camera.width / 4;
-            text3.position.y += 2;
-
-            text3.SetText("Written by Llydia Cross");
+            WindowMenu menu = new WindowMenu();
 
             base.Before();
         }
@@ -79,7 +70,7 @@ namespace LydsTextAdventure
         {
 
             InputController.IsAwaitingInput = true;
-            InputController.IsTextInput = true;
+            InputController.IsTextInput = false;
 
             base.Start();
         }
