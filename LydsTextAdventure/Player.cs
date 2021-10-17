@@ -18,6 +18,8 @@ namespace LydsTextAdventure
         {
 
             Surface.DrawText(x, y + 1, "hp: " + this.health.ToString(), camera.GetViewRectangle());
+
+            base.Draw(x, y, camera);
         }
     }
 }

@@ -17,24 +17,14 @@ namespace LydsTextAdventure
             SHUTDOWN
         }
 
-        //create our classes
         private static readonly CommandManager CommandManager = new CommandManager();
-        private static ConsoleLogger DebugLogger;
+        public static ConsoleLogger DebugLogger;
 
-        private static Command _lastCommand;
-
-#if DEBUG
         private static string[] debugLog;
         private static int stackPosition = 0;
-#endif
 
-        public static Command LastCommand
-        {
-            get
-            {
-                return _lastCommand;
-            }
-        }
+
+        public static Command LastCommand { get; private set; }
 
         private static int tick = 0;
         //program state
@@ -50,6 +40,7 @@ namespace LydsTextAdventure
             Console.CursorVisible = false;
 
             ConsoleManager.DisableQuickEdit();
+            ConsoleLogger.CreateExitEvent();
 
             //Create the buffer/viewable draw space
             Buffer.Create(150, 70);
@@ -77,7 +68,7 @@ namespace LydsTextAdventure
                 if(InputController.isAwaitingInput && !InputController.isRunning)
                 {
 
-                    Task.Factory.StartNew(() =>
+                    Task.Factory.StartNew((Action)(() =>
                     {
                         InputController.KeyboardInput input = InputController.GetKeyboardInput();
                         Command command = Program.CommandManager.GetCommand(input.text);
@@ -86,9 +77,9 @@ namespace LydsTextAdventure
                         else
                         {
                             command.Execute();
-                            Program._lastCommand = command;
+                            Program.LastCommand = command;
                         }
-                    });
+                    }));
                 }
 
                 //update then draw scene
@@ -153,7 +144,7 @@ namespace LydsTextAdventure
             if (Program.DebugLogger is null)
                 return;
 
-            string str = string.Concat("[", op + "/" + Program.tick +  "] ", msg);
+            string str = string.Concat("[", op + ":" + Program.tick + ":" + DateTime.Now.TimeOfDay + "] ", msg);
 
             if (Program.debugLog == null || stackPosition + 1 >= Program.debugLog.Length)
             {

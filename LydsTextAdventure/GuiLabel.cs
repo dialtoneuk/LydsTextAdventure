@@ -19,6 +19,8 @@ namespace LydsTextAdventure
         {
 
             Surface.Write(x, y, this.text);
+
+            base.Draw(x, y, camera, window);
         }
     }
 }

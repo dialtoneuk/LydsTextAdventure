@@ -121,17 +121,22 @@ namespace LydsTextAdventure
             foreach (Entity entity in EntityManager.GetVisibleEntities())
             {
 
+                if (entity.IsDisabled())
+                    continue;
+
+                if (entity.GetType() != typeof(Camera))
+                    if (Entity.IsMouseOver(ConsoleManager.GetMousePosition(), entity))
+                    {
+
+                        entity.isHovering = true;
+                        entity.OnHover();
+                    }
+                    else
+                        entity.isHovering = false;
+
                 if (!entity.isWaiting)
                 {
-
-                    if (entity.IsDisabled())
-                        continue;
-
                     entity.Update(Program.GetTick());
-
-                    if (entity.GetType() != typeof(Camera))
-                        if (Entity.IsHoveringOver(ConsoleManager.GetMousePosition(), EntityManager.GetMainCamera().GetScreenPosition(entity), entity))
-                            entity.OnHover();
                 }
             }
         }

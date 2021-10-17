@@ -11,7 +11,6 @@ namespace LydsTextAdventure
         protected World world;
         protected Player player;
         protected Camera camera;
-        protected Camera cameraTwo;
 
         public SceneGame(string name, List<Command> commands = null) : base(name, commands)
         { }
@@ -39,14 +38,7 @@ namespace LydsTextAdventure
                 }, "p"),
                 new Command("test", () =>
                 {
-
-                    Entity ent = EntityManager.GetClosestTo(this.player, 4);
-
-                    if(ent == null)
-                        Program.DebugLog("NULL");
-                    else
-                        Program.DebugLog(ent.ToString()); 
-
+                    Program.DebugLog( EntityManager.GetMainCamera().GetMousePosition().ToString() );
                 }, "g")
             };
         }
@@ -58,37 +50,30 @@ namespace LydsTextAdventure
             this.world.GenerateWorld();
 
             this.player = new Player();
-            this.player.SetSolid(false);
+            this.player.SetSolid(false); //player can walk through world
 
             for (int i = 0; i < 10; i++)
             {
 
                 EntityMoving m = new EntityMoving();
-                m.position.y = 10 + i;
+                m.position.y = 10 * i;
                 m.position.x = 10 + i;
                 m.SetSpeed(i);
             }
 
             this.camera = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(32, 32);
+            this.camera.SetSize(64, 32);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
-
-            this.cameraTwo = new Camera((Entity)this.player, Camera.Perspective.CENTER_ON_OWNER);
-            this.cameraTwo.SetSize(32, 32);
-            this.cameraTwo.SetName("Main Camera");
-            this.cameraTwo.position.x = 33;
-            this.cameraTwo.position.y = 0;
-
 
             WindowPlayerStatistics stats = new WindowPlayerStatistics();
             WindowConsole test = new WindowConsole();
 
             stats.SetPlayer(this.player);
-            stats.SetPosition(96, 0);
-            test.SetPosition(0, 48);
+            stats.SetPosition(65, 0);
+            test.SetPosition(0, 33);
 
             base.Before();
         }
@@ -98,7 +83,6 @@ namespace LydsTextAdventure
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();
-            this.cameraTwo.UpdateBuffer();
 
             base.Update();
         }

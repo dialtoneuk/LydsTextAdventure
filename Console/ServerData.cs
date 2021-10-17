@@ -12,6 +12,7 @@ namespace ConsoleLogger
     {
 
         public string message = "";
+        public int flag = 0; //1 == shutdown
 
         public static string Serialize(ServerData data)
         {

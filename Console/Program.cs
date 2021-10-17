@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading.Tasks;
 
 namespace ConsoleLogger
 {
@@ -9,6 +10,7 @@ namespace ConsoleLogger
 
         private static NamedPipeServerStream serverStream;
         private static bool running = true;
+        private static bool connected = false;
 
         static void Main(string[] args)
         {
@@ -16,8 +18,19 @@ namespace ConsoleLogger
             Program.serverStream = new NamedPipeServerStream("console_log", PipeDirection.InOut, 1);
 
             Console.WriteLine(" SERVER WAITING FOR CONNECTION ");
+            Task.Delay(10000).ContinueWith((state) =>
+            {
+
+                if (!connected)
+                {
+
+                    Console.WriteLine("failed to connect after 10 seconds.. shutting down");
+                    System.Environment.Exit(1);
+                }
+            });
 
             Program.serverStream.WaitForConnection();
+            connected = true;
 
             try
             {
@@ -30,7 +43,7 @@ namespace ConsoleLogger
                     string xmlReceive = ss.ReadString();
 
                     if (xmlReceive.Length.Equals(0))
-                        Environment.Exit(0);
+                        continue;
                     else
                     {
 
@@ -39,7 +52,7 @@ namespace ConsoleLogger
                         {
                             data = ServerData.Deserialize(xmlReceive);
                         }
-                        catch(InvalidOperationException)
+                        catch (InvalidOperationException)
                         {
 
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -54,9 +67,12 @@ namespace ConsoleLogger
                         if (data.GetType() != typeof(ServerData))
                             continue;
 
+                        if (data.flag == 1)
+                            break;
+
                         if (data.message.Contains("general"))
                             Console.ForegroundColor = ConsoleColor.DarkGray;
-                        else if(data.message.Contains("window"))
+                        else if (data.message.Contains("window"))
                             Console.ForegroundColor = ConsoleColor.Yellow;
                         else if (data.message.Contains("camera"))
                             Console.ForegroundColor = ConsoleColor.Blue;
@@ -84,7 +100,7 @@ namespace ConsoleLogger
                 Console.WriteLine("ERROR: {0}", e.Message);
             }
 
-            Console.WriteLine("ended");
+            Console.WriteLine("Game shutdown. Press escape key to close debug logger.");
             Program.serverStream.Close();
 
             while(Console.ReadKey().Key != ConsoleKey.Escape )

@@ -95,8 +95,10 @@ namespace LydsTextAdventure
         public virtual void Draw(int x, int y, Camera camera=null, Window window = null)
         {
 
+#if DEBUG
             if(this.isHovering)
                 Surface.Write(this.GetX(), this.GetY(), "[ Hovering! ]");
+#endif
         }
 
         public Rectangle GetRectangle()

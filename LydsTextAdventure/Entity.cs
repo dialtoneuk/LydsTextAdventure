@@ -24,6 +24,7 @@ namespace LydsTextAdventure
         public bool disabled = false;
         public bool alwaysOn = false;
         public bool isSolid = true;
+        public bool isHovering = false;
         public bool drawTexture = true;
 
         public int width = 2;
@@ -43,15 +44,19 @@ namespace LydsTextAdventure
             EntityManager.RegisterEntity(this);
         }
 
-        public static bool IsHoveringOver(Position position, Position screenPosition, Entity entity)
+        public static bool IsMouseOver(Position position, Entity entity)
         {
 
-            if (position.x > screenPosition.x && position.x < screenPosition.x + Math.Max(2, entity.width))
-                if (position.y < screenPosition.y + Math.Max(2, entity.height) && position.y > screenPosition.y)
+            Position screenPosition = EntityManager.GetMainCamera().GetScreenPosition(entity);
+
+            if (position.x > screenPosition.x - Math.Max(2, entity.width) && position.x < screenPosition.x + Math.Max(2, entity.width))
+                if (position.y < screenPosition.y + Math.Max(2, entity.height) && position.y > screenPosition.y - Math.Max(2, entity.height))
                     return true;
 
             return false;
         }
+
+
 
         public bool IsSolid()
         {
@@ -197,8 +202,7 @@ namespace LydsTextAdventure
         {
 
 #if DEBUG
-            //requires camera context to be set
-            Surface.Write(this.position.x, this.position.y - 1, "[Hovering Over!]");
+            
 #endif
         }
 
@@ -206,8 +210,10 @@ namespace LydsTextAdventure
         {
 
 #if DEBUG
-            //requires camera context to be set
             Surface.DrawText(x, y + 1, this.name, camera.GetViewRectangle());
+                   
+            if (this.isHovering)
+                Surface.Write(x + 1, y + 2, "[ Hovering! ]");
 #endif
         }
 

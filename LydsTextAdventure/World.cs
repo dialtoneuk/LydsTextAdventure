@@ -160,7 +160,6 @@ namespace LydsTextAdventure
                     else
                         tile = new Tile(stone);
 
-                    tile.isSolid = false;
                     this.world[x, y] = tile;
                 }
             }

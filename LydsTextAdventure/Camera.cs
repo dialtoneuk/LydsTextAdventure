@@ -19,8 +19,6 @@ namespace LydsTextAdventure
         protected bool mainCamera = false;
 
         public readonly Position cameraPosition;
-        public int width = 132;
-        public int height = 52;
 
         private char[,] temporaryBuffer;
         private Camera.Perspective perspective;
@@ -45,7 +43,7 @@ namespace LydsTextAdventure
             //cameras are not solids
             this.SetSolid(false);
             this.SetDrawTexture(false);
-
+            this.SetSize(32, 32);
             //sets the name of this camera
  
             Program.DebugLog("Camera has been created", "camera");
@@ -104,9 +102,22 @@ namespace LydsTextAdventure
         public Position GetScreenPosition(Entity entity)
         {
 
-            Position position = new Position(entity.position.x, entity.position.y);
-            position.x = entity.position.x + this.position.x;
-            position.y = entity.position.y + this.position.y;
+
+            int x = entity.position.x - (this.cameraPosition.x) + 1;
+            int y = entity.position.y - (this.cameraPosition.y) + 1;
+
+            Position position = new Position(x, y);
+            return position;
+        }
+
+        public Position GetMousePosition()
+        {
+
+            Position mouse = InputController.GetMousePosition();
+            int x = mouse.x + (this.cameraPosition.x) - 1;
+            int y = mouse.y + (this.cameraPosition.y) - 1;
+
+            Position position = new Position(x, y);
             return position;
         }
 
