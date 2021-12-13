@@ -29,8 +29,10 @@ namespace LydsTextAdventure
 
         private int chunkId = 0;
 
-        public float waterLevel = 0.0075f;
-        public float deepWaterLevel = 0.001f;
+        public float waterLevel = 0.0035f;
+        public float stoneLevel = 0.45f;
+        public float lavaLevel = 0.65f;
+        public float deepWaterLevel = 0.00005f;
 
 
         public WorldChunks(int width = 12, int height = 12) : base( width, height )
@@ -45,7 +47,8 @@ namespace LydsTextAdventure
             this.noise.SetSeed(this.worldSeed);
             this.noise.SetFractalOctaves(this.worldOctaves);
             this.noise.SetNoiseType(FastNoise.NoiseType.Perlin);
-            this.noise.SetFrequency(0.025f);
+            this.noise.SetFrequency(0.019f);
+            this.noise.SetFractalGain(1.0f);
 
             this.chunks = new Dictionary<Tuple<int, int>, Chunk>();
         }
@@ -91,7 +94,7 @@ namespace LydsTextAdventure
                         return false;
                     }
 
-                    if(this.chunks[new Tuple<int,int>(chunkX, chunkY)].GetTileFromWorldPosition(realx, realy).isSolid )
+                    if(this.chunks[new Tuple<int,int>(chunkX, chunkY)].GetTileFromWorldPosition(realx, realy).IsHard() )
                     {
                         return false;
                     }
@@ -154,10 +157,13 @@ namespace LydsTextAdventure
             chunkId = chunkId + 1;
         }
 
-        private bool IsTileNearWater(int startx, int starty, int range = 1)
+        private bool IsTileNear(int startx, int starty, int range = 1, Type type = null)
         {
 
-            for(int x = 0 - range; x <=  range; x++)
+            if (type == null)
+                type = typeof(TileDeepWater);
+
+            for (int x = 0 - range; x <=  range; x++)
             {
                 for (int y = 0 - range; y <= range; y++)
                 {
@@ -167,16 +173,21 @@ namespace LydsTextAdventure
                     if (tile == null)
                         continue;
 
-                    if (tile.GetType() == typeof(TileWater) || tile.GetType() == typeof(TileDeepWater))
+                    if (tile.GetType() == type)
                         return true;
 
+                    //also do it for deepwater if water
+                    if (type == typeof(TileWater) && tile.GetType() == typeof(TileDeepWater))
+                    {
+                        return true;
+                    }
                 }
             }
 
             return false;
         }
 
-        public void InitializeChunk(int x, int y)
+        public void InitializeChunk(int x, int y, bool isSpawn = false)
         {
 
             if(x > this.worldWidth ||  y > this.worldHeight || x < this.worldStartX || y < this.worldStartY)
@@ -194,11 +205,34 @@ namespace LydsTextAdventure
                 for (int _y = 0; _y < Chunk.CHUNK_HEIGHT; _y++)
                 {
 
-                    float waterLevel = this.noise.GetPerlin(startX + _x, startY + _y);
-                    if (waterLevel < this.waterLevel && waterLevel > this.deepWaterLevel)
+
+                    if(startX + _x >= 0 && startX + _x <= 1 || startY + _y > -2 && startY + _y <= 0)
+                    {
+                        chunk.chunkData[_x, _y] = new TileWorldBorder();
+                        continue;
+                    }
+
+                    if (isSpawn)
+                    {
+                        chunk.chunkData[_x, _y] = new TileSpawnGrass();
+                        continue;
+                    }
+
+                    float val = this.noise.GetPerlin(startX + _x, startY + _y);
+         
+                    //add water
+                    if (val < this.waterLevel && val > this.deepWaterLevel)
                         chunk.chunkData[_x, _y] = new TileWater();
-                    else if(waterLevel < this.deepWaterLevel)
+                    else if(val < this.deepWaterLevel)
                         chunk.chunkData[_x, _y] = new TileDeepWater();
+
+                    //add stone
+                    if (val > this.waterLevel + this.stoneLevel)
+                        chunk.chunkData[_x, _y] = new TileStone();
+
+                    //add lava last
+                    if (val > this.lavaLevel)
+                        chunk.chunkData[_x, _y] = new TileLava();
                 }
 
             //this is used later to spawn stuff like trees and plants
@@ -227,13 +261,37 @@ namespace LydsTextAdventure
                 {
                         
                     //add beaches and sand near water
-                    if (chunk.chunkData[_x, _y].GetType() == typeof(TileGrass) && this.IsTileNearWater((chunk.chunkX * Chunk.CHUNK_WIDTH) + _x, (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y))
+                    if (( chunk.chunkData[_x, _y].GetType() == typeof(TileGrass) || chunk.chunkData[_x, _y].GetType() == typeof(TileSpawnGrass) ) && this.IsTileNear((chunk.chunkX * Chunk.CHUNK_WIDTH) + _x, (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y, 2, typeof(TileWater)))
                     {
                         chunk.chunkData[_x, _y] = new TileSand();
+                        continue;
                     }
-                    
+
+                    //place dirt near stone
+                    if (( chunk.chunkData[_x, _y].GetType() == typeof(TileGrass) || chunk.chunkData[_x, _y].GetType() == typeof(TileSpawnGrass)) && this.IsTileNear((chunk.chunkX * Chunk.CHUNK_WIDTH) + _x, (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y, 2, typeof(TileStone)))
+                    {
+                        chunk.chunkData[_x, _y] = new TileDirt();
+                        continue;
+                    }
+
+                    //place magna near lava
+                    if (chunk.chunkData[_x, _y].GetType() == typeof(TileStone) && this.IsTileNear((chunk.chunkX * Chunk.CHUNK_WIDTH) + _x, (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y, 1, typeof(TileLava)))
+                    {
+                        chunk.chunkData[_x, _y] = new TileMagma();
+                        continue;
+                    }
                 }
+
+            if (chunk.fresh)
+            {
+
+                //spawn plants here
+                chunk.fresh = false;
+            }
+
         }
+
+      
 
         public void UpdateChunks()
         {
@@ -250,15 +308,7 @@ namespace LydsTextAdventure
         public bool IsRendered(int x, int y)
         {
 
-            try
-            {
-                return this.chunks.TryGetValue(new Tuple<int, int>(x, y), out Chunk _);
-
-            } catch
-            {
-                return false;
-            }
-
+             return this.chunks.TryGetValue(new Tuple<int, int>(x, y), out Chunk _);
         }
 
         public override char[,] Draw(int startx, int starty, int width, int height)
@@ -278,10 +328,11 @@ namespace LydsTextAdventure
                     int chunkX = actualx / Chunk.CHUNK_WIDTH;
                     int chunkY = actualy / Chunk.CHUNK_HEIGHT;
                                  
+
                     if (actualy <= ((worldStartY) * Chunk.CHUNK_HEIGHT) || actualx <= ((worldStartX) * Chunk.CHUNK_WIDTH) || chunkX >= (worldStartX + worldWidth) 
                         || chunkY >= (worldStartY + worldHeight) || !this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
                         result[x, y] = ' ';
-                    else if(!this.chunks[new Tuple<int, int>(chunkX, chunkY)].IsReady())
+                    else if(this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)) && !this.chunks[new Tuple<int, int>(chunkX, chunkY)].IsReady())
                         result[x, y] = 'L';
                     else
                         result[x, y] = this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(actualx, actualy).texture.character;          
@@ -297,9 +348,9 @@ namespace LydsTextAdventure
                 for(int y = (worldStartY * Chunk.CHUNK_HEIGHT); y < (this.worldHeight * Chunk.CHUNK_HEIGHT); y++)
                 {
 
-                    if(this.IsAreaValid(x - 5, y - 5, 5, 5))
+                    if(this.IsAreaValid(x - 16, y - 16, 16, 16))
                     {
-                        return new Position(x, y);
+                        return new Position(x + 2, y + 2);
                     }
                 }
 
@@ -316,12 +367,13 @@ namespace LydsTextAdventure
             this.worldStartY = 0;
 
             //first lets just generate the spawn chunks
-            for (int x = 0; x < this.width; x++)
-                for (int y = 0; y < this.height; y++)
+            //2 padding for smoothing
+            for (int x = -2; x < this.width + 2; x++)
+                for (int y = -2; y < this.height + 2; y++)
                 {
 
                     this.chunks[new Tuple<int, int>(x, y)] = new Chunk(x, y, chunkId++);
-                    this.InitializeChunk(x, y);
+                    this.InitializeChunk(x, y, (x >= 0 && y >= 0 && x < this.width && y < this.height));
                 }
 
             this.UpdateChunks();

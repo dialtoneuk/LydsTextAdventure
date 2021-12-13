@@ -1,9 +1,9 @@
 ﻿namespace LydsTextAdventure
 {
-    public class TileDeepWater : Tile
+    public class TileWater : Tile
     {
 
-        public TileDeepWater()
+        public TileWater()
         {
 
             this.isSolid = true;

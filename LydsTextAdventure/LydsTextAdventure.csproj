@@ -5,6 +5,24 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <StartupObject>LydsTextAdventure.Program</StartupObject>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <Authors>Llydia Cross</Authors>
+    <Company>LIMC</Company>
+    <Product>Lyds Text Adventure</Product>
+    <PackageId>LydsTextAdventure</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <NeutralLanguage>en</NeutralLanguage>
+    <RepositoryUrl>https://github.com/dialtoneuk/LydsTextAdventure</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>download.png</PackageIcon>
+    <Copyright>Llydia Cross &amp; LIMC 2021</Copyright>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>LydsTextAdventure.pfx</AssemblyOriginatorKeyFile>
+    <ApplicationIcon>download.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,5 +53,28 @@
     <None Update="executables\ConsoleLogger.runtimeconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="D:\Llydia\Documents\download.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

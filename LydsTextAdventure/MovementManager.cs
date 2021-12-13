@@ -32,6 +32,12 @@ namespace LydsTextAdventure
                 world = entity.world;
 
             Tile tile = world.GetTile(position.x, position.y);
+
+            if(tile == null)
+            {
+                return true;
+            }
+
             List<Entity> entities = EntityManager.GetEntitiesAroundPosition(position);
 
             foreach (Entity ent in entities)
@@ -43,7 +49,7 @@ namespace LydsTextAdventure
                     return false;
             }
 
-            return tile.isSolid == false;
+            return tile.IsHard() == false;
         }
     }
 }

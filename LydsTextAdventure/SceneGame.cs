@@ -50,7 +50,7 @@ namespace LydsTextAdventure
             this.world.GenerateWorld();
 
             this.player = new Player();
-            this.player.SetSolid(false); //player can walk through world
+            this.player.SetSolid(true); //player can walk through world
 
             for (int i = 0; i < 10; i++)
             {
@@ -98,9 +98,9 @@ namespace LydsTextAdventure
             InputController.IsTextInput = false;
             InputController.IsAwaitingInput = true;
 
-            this.world.UpdateChunks();
             //set the players spawn position
             this.player.position.SetPosition(this.world.GetInitialSpawnPoint());
+            this.world.UpdateChunks();
 
             base.Start();
         }

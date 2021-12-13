@@ -11,6 +11,8 @@ namespace LydsTextAdventure
             get;
         }
 
+        public bool fresh = true;
+
         public int chunkNutrients;
         public int chunkOre;
         public int chunkDanger;
@@ -22,10 +24,11 @@ namespace LydsTextAdventure
 
         public readonly int chunkX;
         public readonly int chunkY;
+
         private bool ready = false;
 
-        public const int CHUNK_WIDTH = 64;
-        public const int CHUNK_HEIGHT = 64;
+        public const int CHUNK_WIDTH = 32;
+        public const int CHUNK_HEIGHT = 32;
 
         //the default tile we create chunks with
         public static readonly Tile defaultTile = new TileGrass();
@@ -71,7 +74,6 @@ namespace LydsTextAdventure
 
         public Tile GetTileFromWorldPosition(int x, int y)
         {
-
             int _x = x - (this.chunkX * Chunk.CHUNK_WIDTH);
             int _y = y - (this.chunkY * Chunk.CHUNK_WIDTH);
             return this.chunkData[Math.Abs(_x),Math.Abs(_y)];
