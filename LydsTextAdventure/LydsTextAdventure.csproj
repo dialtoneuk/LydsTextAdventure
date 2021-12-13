@@ -9,7 +9,7 @@
     <Company>LIMC</Company>
     <Product>Lyds Text Adventure</Product>
     <PackageId>LydsTextAdventure</PackageId>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <NeutralLanguage>en</NeutralLanguage>
     <RepositoryUrl>https://github.com/dialtoneuk/LydsTextAdventure</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -18,6 +18,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>LydsTextAdventure.pfx</AssemblyOriginatorKeyFile>
     <ApplicationIcon>download.ico</ApplicationIcon>
+    <PackageLicenseExpression>Game is Early Alpha please accept that you accept this!</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -57,10 +58,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="assets\" />
   </ItemGroup>
 
   <ItemGroup>
