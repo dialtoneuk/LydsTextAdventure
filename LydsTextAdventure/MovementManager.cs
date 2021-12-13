@@ -43,10 +43,7 @@ namespace LydsTextAdventure
                     return false;
             }
 
-            if (tile == null)
-                return true;
-
-            return !tile.isSolid;
+            return tile.isSolid == false;
         }
     }
 }

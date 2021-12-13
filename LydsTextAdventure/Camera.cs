@@ -195,6 +195,11 @@ namespace LydsTextAdventure
                     for (int y = 0; y < this.height; y++)
                     {
 
+                        if(x >= worldData.GetLength(0) || y >= worldData.GetLength(1))
+                        {
+                            continue;
+                        }
+
                         this.temporaryBuffer[x, y] = worldData[x, y];
                     }
                 }

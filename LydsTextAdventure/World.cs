@@ -18,7 +18,7 @@ namespace LydsTextAdventure
         public bool isDisabled = false;
 
         public readonly string id = Guid.NewGuid().ToString();
-        private readonly FastNoise noise;
+        protected readonly FastNoise noise;
 
         public World(int width = 712, int height = 712)
         {
@@ -36,8 +36,14 @@ namespace LydsTextAdventure
             this.LoadEntities();
         }
 
+        public virtual Position GetInitialSpawnPoint()
+        {
 
-        public Tile GetTile(int x, int y)
+            return new Position(0, 0);
+        }
+
+
+        public virtual Tile GetTile(int x, int y)
         {
 
             if (x > this.width || y > this.height || x < 0 || y < 0)
@@ -150,7 +156,7 @@ namespace LydsTextAdventure
 
 
                     if (noiseValue < 0.1)
-                        tile = new TileWater();
+                        tile = new TileGrass();
                     else if (noiseValue < 0.2)
                         tile = new Tile(sand);
                     else if (noiseValue < 0.3)

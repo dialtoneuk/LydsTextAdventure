@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
     class SceneGame : Scene
     {
 
-        protected World world;
+        protected WorldChunks world;
         protected Player player;
         protected Camera camera;
 
@@ -22,7 +24,7 @@ namespace LydsTextAdventure
                     MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y + 1));
                 }, "s"),
                 new Command("up", () => {
-                      MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y - 1));
+                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y - 1));
                 }, "w"),
                 new Command("left", () => {
                     MovementManager.MoveEntity( this.player, new Position(this.player.position.x - 1, this.player.position.y));
@@ -44,7 +46,7 @@ namespace LydsTextAdventure
         public override void Before()
         {
 
-            this.world = new World();
+            this.world = new WorldChunks(2, 2);
             this.world.GenerateWorld();
 
             this.player = new Player();
@@ -61,7 +63,7 @@ namespace LydsTextAdventure
 
             this.camera = new Camera(this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(64, 32);
+            this.camera.SetSize(79, 32);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
@@ -70,7 +72,7 @@ namespace LydsTextAdventure
             WindowConsole test = new WindowConsole();
 
             stats.SetPlayer(this.player);
-            stats.SetPosition(65, 0);
+            stats.SetPosition(80, 0);
             test.SetPosition(0, 33);
 
             base.Before();
@@ -79,9 +81,13 @@ namespace LydsTextAdventure
         public override void Update()
         {
 
+            //create any new chunks around the player they haven't seen yet
+            this.world.CreateChunksAroundPlayer(this.player, 8);
+
             //render world and entities using this camera
             this.camera.UpdateBuffer();
 
+            //then do the base updates
             base.Update();
         }
 
@@ -91,6 +97,10 @@ namespace LydsTextAdventure
 
             InputController.IsTextInput = false;
             InputController.IsAwaitingInput = true;
+
+            this.world.UpdateChunks();
+            //set the players spawn position
+            this.player.position.SetPosition(this.world.GetInitialSpawnPoint());
 
             base.Start();
         }

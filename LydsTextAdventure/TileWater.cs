@@ -1,13 +1,13 @@
 ﻿namespace LydsTextAdventure
 {
-    public class TileWater : Tile
+    public class TileDeepWater : Tile
     {
 
-        public TileWater()
+        public TileDeepWater()
         {
 
             this.isSolid = true;
-            this.texture = new Texture(' ');
+            this.texture = new Texture('_', System.ConsoleColor.Blue);
         }
     }
 }

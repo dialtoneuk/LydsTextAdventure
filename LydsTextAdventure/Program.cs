@@ -181,13 +181,21 @@ namespace LydsTextAdventure
 
             string str = string.Concat("[", op + ":" + Program.Tick + ":" + DateTime.Now.TimeOfDay + "] ", msg);
 
-            if (Program.DebugLogger.DebugLog == null || Program.DebugLogger.StackPosition + 1 >= Program.DebugLogger.DebugLog.Length)
+            try
             {
-                Program.DebugLogger.StackPosition = 0;
-                Program.DebugLogger.DebugLog = new string[Program.DEBUGGER_LOG_SIZE];
+                if (Program.DebugLogger.DebugLog == null || Program.DebugLogger.StackPosition + 1 >= Program.DebugLogger.DebugLog.Length)
+                {
+                    Program.DebugLogger.StackPosition = 0;
+                    Program.DebugLogger.DebugLog = new string[Program.DEBUGGER_LOG_SIZE];
+                }
+
+                Program.DebugLogger.DebugLog[Program.DebugLogger.StackPosition++] = str;
+            } catch
+            {
+
             }
 
-            Program.DebugLogger.DebugLog[Program.DebugLogger.StackPosition++] = str;
+
             Program.DebugLogger.WriteLine(str);
         }
 
