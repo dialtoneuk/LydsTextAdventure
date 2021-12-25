@@ -27,8 +27,8 @@ namespace LydsTextAdventure
 
         private bool ready = false;
 
-        public const int CHUNK_WIDTH = 16;
-        public const int CHUNK_HEIGHT = 16;
+        public const int CHUNK_WIDTH = 15;
+        public const int CHUNK_HEIGHT = 15;
 
         //the default tile we create chunks with
         public static readonly Tile defaultTile = new TileGrass();

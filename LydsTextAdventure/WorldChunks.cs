@@ -16,9 +16,9 @@ namespace LydsTextAdventure
         public const int MAX_NUTRIENTS = 12;
         public const int DEFAULT_NUTRIENTS = 1;
         public const int TREE_MODIFIER = 4;
-        public const int BUSH_MODIFIER = 2;
-        public const int TREE_SPAWN_CHANCE = 60;
-        public const int BUSH_SPAWN_CHANCE = 14;
+        public const int BUSH_MODIFIER = 6;
+        public const int TREE_SPAWN_CHANCE = 25;
+        public const int BUSH_SPAWN_CHANCE = 15;
         public const int APPLE_TREE_CHANCE = 45;
         public const int OAK_TREE_CHANCE = 25;
         public const int MAX_ENTITIES_PER_CHUNK = 128;
@@ -361,19 +361,19 @@ namespace LydsTextAdventure
                 {
 
                     //adds a bit of noise
-                    int mod = r.Next(1, 3);
-                    int modEquals = r.Next(0, 1);
+                    int mod = r.Next(-1, 3);
+                    int modEquals;
 
                     for (int _y = Chunk.CHUNK_HEIGHT - 1; _y >= 0; _y--)
                     {
 
-                        if (_x % mod == modEquals)
+                        modEquals = r.Next(0, 1);
+
+                        if (mod > 0 && _x % mod == modEquals)
                             continue;
 
                         if (entityCount >= MAX_ENTITIES_PER_CHUNK)
-                        {
                             break;
-                        }
 
                         //place trees
                         if ((chunk.chunkData[_x, _y].GetType() == typeof(TileGrass) || chunk.chunkData[_x, _y].GetType() == typeof(TileSpawnGrass)) && treeCount > 0 && r.Next(0, 100) < TREE_SPAWN_CHANCE + (nutrientRate * TREE_MODIFIER))

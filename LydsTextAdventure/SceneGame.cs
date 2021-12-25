@@ -46,7 +46,7 @@ namespace LydsTextAdventure
         public override void Before()
         {
 
-            this.world = new WorldChunks(4, 4);
+            this.world = new WorldChunks(8, 8);
             this.world.GenerateWorld();
 
             this.player = new Player();
