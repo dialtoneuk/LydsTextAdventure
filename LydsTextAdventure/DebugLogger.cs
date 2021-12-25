@@ -11,6 +11,7 @@ namespace LydsTextAdventure
 
         public string[] DebugLog;
         public int StackPosition = 0;
+        public int LastPosition = 0;
 
         private NamedPipeClientStream pipe;
 
@@ -48,6 +49,12 @@ namespace LydsTextAdventure
             SetConsoleCtrlHandler(DebugLogger.Handler, true);
         }
 
+        public DebugLogger(int maxLog)
+        {
+
+            this.DebugLog = new string[maxLog];
+        }
+
 
         public void ConnectDebugLogger()
         {
@@ -63,6 +70,9 @@ namespace LydsTextAdventure
                 return;
 
             if (!this.pipe.IsConnected)
+                return;
+
+            if (msg == "")
                 return;
 
             try

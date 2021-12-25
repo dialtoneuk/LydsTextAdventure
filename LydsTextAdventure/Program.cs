@@ -47,8 +47,8 @@ namespace LydsTextAdventure
             CommandManager.AddDefaultCommands();
             ConsoleManager.DisableQuickEdit();
 
-            Program.DebugLogger = new DebugLogger();
-            Program.DebugLogger.DebugLog = new string[Program.DEBUGGER_LOG_SIZE];
+            Program.DebugLogger = new DebugLogger(Program.DEBUGGER_LOG_SIZE);
+           
             DebugLogger.CreateExitEvent();
 
             //Create the buffer/viewable draw space
@@ -69,8 +69,6 @@ namespace LydsTextAdventure
             }
 
             Program.DebugLog("connected to console log successfully");
-            Program.RegisterDebugCommands();
-            Program.DebugLog("registered debug commands");
 #endif
             //register our scenes
             Scenes.RegisterScenes();
@@ -115,18 +113,29 @@ namespace LydsTextAdventure
                     });
                 }
 
-                //update then draw scene
+                //update then draw scene but only on even ticks (this helps with smoothness)
                 if (SceneManager.IsSceneActive())
                     SceneManager.UpdateScene();
 
+                //Draw the scene
+                SceneManager.DrawScene();
                 //takes all of our draw data and adds it to the buffer
                 Buffer.PrepareBuffer();
-
-                //Draws the buffer
+                //Draws the buffer for the next frame
                 Buffer.DrawBuffer();
+     
+#if DEBUG
 
                 if (Program.Tick % 1024 == 0)
                     Program.DebugLog("check alive");
+
+                //send console messages every 1 ticks as if its to fast it will throw exception
+                if (Program.Tick % 1 == 0 && Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)      {
+                    //increments the post position by one if it is less than the stack position and sends that message to the console
+                    Program.DebugLogger.WriteLine(Program.DebugLogger.DebugLog[Program.DebugLogger.LastPosition++]);
+                }
+                 
+#endif
 
                 //reset tick if we are over 8192
                 if (Program.Tick >= Program.MAX_TICK)
@@ -141,7 +150,7 @@ namespace LydsTextAdventure
             }
 
 #if DEBUG
-            Program.DebugLogger.WriteShutdown();
+            //Program.DebugLogger.WriteShutdown();
 #endif
         }
 
@@ -158,18 +167,7 @@ namespace LydsTextAdventure
             {
                 new Command("clean_screen", () => {
                         System.Console.Clear();
-                }, "z"),
-                new Command("delete_entities", () => {
-                    List<Entity> result = EntityManager.GetEntitiesByType(typeof(EntityMoving));
-
-                    foreach(Entity ent in result)
-                    {
-                        ent.RemoveEntity();
-                    }
-                }, "m"),
-                new Command("delete_current_world", () => {
-                    WorldManager.DeleteWorld(WorldManager.CurrentWorld.id);
-                }, "b"),
+                }, "m")
             });
         }
 
@@ -186,17 +184,15 @@ namespace LydsTextAdventure
                 if (Program.DebugLogger.DebugLog == null || Program.DebugLogger.StackPosition + 1 >= Program.DebugLogger.DebugLog.Length)
                 {
                     Program.DebugLogger.StackPosition = 0;
+                    Program.DebugLogger.LastPosition = 0;
                     Program.DebugLogger.DebugLog = new string[Program.DEBUGGER_LOG_SIZE];
                 }
 
+                //put it onto the stack
                 Program.DebugLogger.DebugLog[Program.DebugLogger.StackPosition++] = str;
-            } catch
-            {
-
+            } catch {
+                   //dont crash cuz we can't log
             }
-
-
-            Program.DebugLogger.WriteLine(str);
         }
 
         public static string[] GetDebugLog()

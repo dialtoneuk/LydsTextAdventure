@@ -66,10 +66,11 @@ namespace LydsTextAdventure
                     allRendered.Add(e);
             }
 
-            foreach (Entity ent in EntityManager.GetAliveEntities())
+            List<Entity> list = EntityManager.GetAliveEntities();
+            for (int i1 = 0; i1 < list.Count; i1++)
             {
-
-                if (ent.IsAlwaysOn() && ent.IsDisabled())
+                Entity ent = list[i1];
+                if (ent.IsAlwaysOn() && ent.IsDisabled() && ent.isStatic)
                 {
                     ent.SetDisabled(false);
                     continue;
@@ -79,12 +80,12 @@ namespace LydsTextAdventure
                     continue;
 
                 bool found = false;
-                foreach (Entity comp in allRendered)
+                for (int i = 0; i < allRendered.Count; i++)
                 {
+                    Entity comp = allRendered[i];
                     if (ent.id == comp.id)
                     {
                         ent.SetDisabled(false);
-
                         found = true;
                         break;
                     }
@@ -213,9 +214,9 @@ namespace LydsTextAdventure
         {
 
             //prepare entities for buffer
-            foreach (Entity entity in entities)
+            for (int i = 0; i < entities.Count; i++)
             {
-
+                Entity entity = entities[i];
                 if (!entity.IsVisible() || entity.IsDestroyed())
                     continue;
 
@@ -254,9 +255,9 @@ namespace LydsTextAdventure
 
             //draw entities stuff
             if (this.renderEntities != null)
-                foreach (Entity entity in this.renderEntities)
+                for (int i = 0; i < this.renderEntities.Count; i++)
                 {
-
+                    Entity entity = this.renderEntities[i];
                     if (entity.GetType() == typeof(Camera))
                         continue;
 

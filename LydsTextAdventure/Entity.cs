@@ -19,14 +19,15 @@ namespace LydsTextAdventure
         public bool visible = true;
         public bool destroyed = false;
         public bool isWaiting = false;
+        public bool isStatic = false;
         public bool disabled = false;
         public bool alwaysOn = false;
         public bool isSolid = true;
         public bool isHovering = false;
         public bool drawTexture = true;
 
-        public int width = 2;
-        public int height = 2;
+        public int width = 1;
+        public int height = 1;
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;
@@ -47,8 +48,8 @@ namespace LydsTextAdventure
 
             Position screenPosition = EntityManager.GetMainCamera().GetScreenPosition(entity);
 
-            if (position.x > screenPosition.x - Math.Max(2, entity.width) && position.x < screenPosition.x + Math.Max(2, entity.width))
-                if (position.y < screenPosition.y + Math.Max(2, entity.height) && position.y > screenPosition.y - Math.Max(2, entity.height))
+            if (position.x > screenPosition.x - Math.Max(0, entity.width) && position.x < screenPosition.x + Math.Max(0, entity.width))
+                if (position.y < screenPosition.y + Math.Max(0, entity.height) && position.y > screenPosition.y - Math.Max(0, entity.height))
                     return true;
 
             return false;
@@ -200,7 +201,7 @@ namespace LydsTextAdventure
         {
 
 #if DEBUG
-
+           
 #endif
         }
 

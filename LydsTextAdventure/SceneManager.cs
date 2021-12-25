@@ -45,6 +45,11 @@ namespace LydsTextAdventure
             if (SceneManager.CurrentScene != null)
                 throw new ApplicationException("scene not ended");
 
+#if DEBUG
+            Program.RegisterDebugCommands();
+            Program.DebugLog("registered debug commands");
+#endif
+
             Program.DebugLog("calling scene load", "scene_manager");
             scene.Load();
 
@@ -63,10 +68,12 @@ namespace LydsTextAdventure
         public static void UpdateScene()
         {
 
-            if (SceneManager.CurrentScene == null)
-                throw new ApplicationException("scene not started");
+            if (SceneManager.CurrentScene != null)
+                SceneManager.CurrentScene.Update();
+        }
 
-            SceneManager.CurrentScene.Update();
+        public static void DrawScene()
+        {
 
             if (SceneManager.CurrentScene != null)
                 SceneManager.CurrentScene.Draw();

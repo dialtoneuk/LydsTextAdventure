@@ -8,7 +8,7 @@ namespace LydsTextAdventure
     public class EntityManager
     {
 
-        private static List<Entity> Entities = new List<Entity>();
+        private static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
         private static List<Entity> VisibleEntities;
         private static List<Entity> AliveEntities;
 
@@ -17,22 +17,24 @@ namespace LydsTextAdventure
         public static void RegisterEntity(Entity entity)
         {
 
-            entity.SetIndex(EntityManager.SceneCount++);
+            entity.SetIndex(EntityManager.SceneCount);
             entity.SetWorld(WorldManager.CurrentWorld);
 
-            Entities.Add(entity);
-            Program.DebugLog("entity " + entity.ToString() + " created", "entity_manager");
+            if(!Entities.TryAdd(EntityManager.SceneCount, entity))
+                Program.DebugLog("entity " + entity.ToString() + " FAILED TO CREATE!", "entity_manager");
+
+            EntityManager.SceneCount = EntityManager.SceneCount + 1;
         }
 
         public static void DestroyAllEntities()
         {
 
-            foreach (Entity entity in EntityManager.Entities)
+            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
-                entity.Destroy();
+                entity.Value.Destroy();
             }
 
-            EntityManager.Entities = new List<Entity>();
+            EntityManager.Entities = new Dictionary<int, Entity>();
             EntityManager.SceneCount = 0;
             EntityManager.VisibleEntities = null;
             EntityManager.AliveEntities = null;
@@ -42,8 +44,11 @@ namespace LydsTextAdventure
         {
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.Entities)
+            for (int i = 0; i < Entities.Count; i++)
             {
+
+                if (!EntityManager.Entities.TryGetValue(i, out Entity entity))
+                    continue;
 
                 if (entity.GetType() == type && !entity.IsDestroyed())
                     result.Add(entity);
@@ -72,11 +77,11 @@ namespace LydsTextAdventure
         public static Entity GetEntityByType(Type type)
         {
 
-            foreach (Entity entity in EntityManager.Entities)
+            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
-                if (entity.GetType() == type && !entity.IsDestroyed())
-                    return entity;
+                if (entity.Value.GetType() == type && !entity.Value.IsDestroyed())
+                    return entity.Value;
             }
 
             return null;
@@ -86,11 +91,11 @@ namespace LydsTextAdventure
         {
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.Entities)
+            foreach( KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
-                if (entity.GetName() == name && !entity.IsDestroyed())
-                    result.Add(entity);
+                if (entity.Value.GetName() == name && !entity.Value.IsDestroyed())
+                    result.Add(entity.Value);
             }
 
             return result;
@@ -100,14 +105,14 @@ namespace LydsTextAdventure
         public static void RemoveEntity(string id)
         {
 
-            foreach (Entity entity in EntityManager.Entities)
+            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
-                if (entity.id != id)
+
+                if (entity.Value.id != id)
                     continue;
 
-
-                entity.Destroy();
-                Entities.Remove(entity);
+                entity.Value.Destroy();
+                Entities.Remove(entity.Key);
                 break;
             }
         }
@@ -134,7 +139,7 @@ namespace LydsTextAdventure
                     else
                         entity.isHovering = false;
 
-                if (!entity.isWaiting)
+                if (!entity.isWaiting && !entity.isStatic)
                 {
                     entity.Update(Program.GetTick());
                 }
@@ -144,7 +149,7 @@ namespace LydsTextAdventure
         public static List<Entity> GetEntities()
         {
 
-            return EntityManager.Entities.GetRange(0, Entities.Count);
+            return EntityManager.Entities.Values.ToList();
         }
 
         public static Entity GetClosestTo(Entity entity, int range = 1)
@@ -206,11 +211,11 @@ namespace LydsTextAdventure
                 return EntityManager.VisibleEntities;
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.Entities)
+            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
-                if (entity.IsVisible() && !entity.IsDestroyed())
-                    result.Add(entity);
+                if (entity.Value.IsVisible() && !entity.Value.IsDestroyed())
+                    result.Add(entity.Value);
             }
 
             EntityManager.VisibleEntities = result;
@@ -224,11 +229,11 @@ namespace LydsTextAdventure
                 return EntityManager.AliveEntities;
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.Entities)
+            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
-                if (!entity.IsDestroyed())
-                    result.Add(entity);
+                if (!entity.Value.IsDestroyed())
+                    result.Add(entity.Value);
             }
 
             EntityManager.AliveEntities = result;

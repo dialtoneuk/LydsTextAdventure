@@ -46,11 +46,11 @@ namespace LydsTextAdventure
         public override void Before()
         {
 
-            this.world = new WorldChunks(2, 2);
+            this.world = new WorldChunks(4, 4);
             this.world.GenerateWorld();
 
             this.player = new Player();
-            this.player.SetSolid(true); //player can walk through world
+            this.player.SetSolid(false); //player can walk through world
 
             for (int i = 0; i < 10; i++)
             {
@@ -82,7 +82,7 @@ namespace LydsTextAdventure
         {
 
             //create any new chunks around the player they haven't seen yet
-            this.world.CreateChunksAroundPlayer(this.player, 8);
+            this.world.CreateChunksAroundPlayer(this.player, 4);
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();
@@ -100,6 +100,8 @@ namespace LydsTextAdventure
 
             //set the players spawn position
             this.player.position.SetPosition(this.world.GetInitialSpawnPoint());
+
+            //update spawn chunks
             this.world.UpdateChunks();
 
             base.Start();
