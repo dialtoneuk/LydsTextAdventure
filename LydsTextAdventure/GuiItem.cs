@@ -25,7 +25,7 @@ namespace LydsTextAdventure
         public override void Draw(int x, int y, Camera camera = null, Window window = null)
         {
 
-            Surface.DrawBox(x, y, this.Width, this.Height);
+            Surface.DrawBox(x, y, this.Width, this.Height, window.GetRectangle());
 
             if (this.item != null)
                 Surface.DrawText(x + 2, y + this.Height / 2, item.name + " [" + item.ItemQuantity + "]", window.GetRectangle());

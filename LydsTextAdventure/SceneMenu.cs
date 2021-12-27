@@ -27,10 +27,14 @@ namespace LydsTextAdventure
                         for (int i = 0; i < window.guiElements.Count; i++) { GuiElement element = window.guiElements[i]; if(GuiElement.IsInsideOf(pos, element))
                                 element.OnClick(); } }
 
-                    foreach(Entity entity in EntityManager.GetVisibleEntities())
+                    List<Entity> list = EntityManager.GetVisibleEntities(true);
+
+                    for (int i = 0; i < list.Count; i++)
                     {
 
-                            if(Entity.IsMouseOver(pos, entity))
+                        Entity entity = list[i];
+
+                        if(Entity.IsMouseOver(pos, entity))
                                 entity.OnClick(this.player);
                     }
                 }, "q")

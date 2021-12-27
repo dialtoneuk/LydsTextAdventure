@@ -52,6 +52,9 @@ namespace LydsTextAdventure
             char[] chars = str.ToCharArray();
             char[] dchars;
 
+            if (y > rectangle.Height + rectangle.StartY)
+                return;
+
             Buffer.SetCursorPosition(x, y);
 
             if (x + chars.Length > rectangle.Width)
@@ -75,11 +78,15 @@ namespace LydsTextAdventure
 
             int rw = Buffer.WindowWidth;
             int rh = Buffer.WindowHeight;
+            int sx = 1;
+            int sy = 1;
 
             if (rectangle != null)
             {
                 rw = rectangle.Width;
                 rh = rectangle.Height;
+                sx = rectangle.StartX;
+                sy = rectangle.StartY;
             }
 
             Buffer.SetCursorPosition(x, y);
@@ -87,7 +94,7 @@ namespace LydsTextAdventure
             for (int ix = 0; ix < w; ix++)
             {
 
-                if (x + ix > rw)
+                if (x + ix > sx + rw)
                     continue;
 
                 for (int iy = 0; iy < h; iy++)
@@ -95,7 +102,7 @@ namespace LydsTextAdventure
 
                     Buffer.SetCursorPosition(x + ix, y + iy);
 
-                    if (y + iy > rh)
+                    if (y + iy > sy + rh)
                         continue;
 
                     if (ix == 0 || ix == w - 1)

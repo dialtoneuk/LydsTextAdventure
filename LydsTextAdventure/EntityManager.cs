@@ -9,8 +9,8 @@ namespace LydsTextAdventure
     {
 
         private static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
-        private static List<Entity> VisibleEntities;
-        private static List<Entity> AliveEntities;
+        private static List<Entity> VisibleEntities = new List<Entity>();
+        private static List<Entity> AliveEntities = new List<Entity>();
 
         private static int EntityCount = 0;
 
@@ -36,8 +36,9 @@ namespace LydsTextAdventure
 
             EntityManager.Entities = new Dictionary<int, Entity>();
             EntityManager.EntityCount = 0;
-            EntityManager.VisibleEntities = null;
-            EntityManager.AliveEntities = null;
+
+            EntityManager.VisibleEntities.Clear();
+            EntityManager.AliveEntities.Clear();
         }
 
         public static List<Entity> GetEntitiesByType(Type type)
@@ -211,7 +212,7 @@ namespace LydsTextAdventure
         public static List<Entity> GetVisibleEntities(bool ignoreCache = false)
         {
 
-            if (!ignoreCache && EntityManager.VisibleEntities != null)
+            if (!ignoreCache && EntityManager.VisibleEntities.Count != 0)
                 return EntityManager.VisibleEntities;
 
             List<Entity> result = new List<Entity>();
@@ -234,10 +235,33 @@ namespace LydsTextAdventure
             return result;
         }
 
+        public static void CacheEntities()
+        {
+
+            EntityManager.VisibleEntities.Clear();
+            EntityManager.AliveEntities.Clear();
+
+            for (int i = 0; i < EntityCount; i++)
+            {
+
+                if (!EntityManager.Entities.TryGetValue(i, out Entity entity))
+                {
+                    Program.DebugLog("failed to read entity at index [" + i + "]", "entity_manager");
+                    continue;
+                }
+
+                if (!entity.IsDestroyed() && !entity.isMarkedForDeletion)
+                    AliveEntities.Add(entity);
+
+                if (entity.IsVisible() && !entity.IsDestroyed() && !entity.isMarkedForDeletion)
+                    VisibleEntities.Add(entity);
+            }
+        }
+
         public static List<Entity> GetAliveEntities(bool ignoreCache = false)
         {
 
-            if (!ignoreCache && EntityManager.AliveEntities != null)
+            if (!ignoreCache && EntityManager.AliveEntities.Count != 0)
                 return EntityManager.AliveEntities;
 
             List<Entity> result = new List<Entity>();
@@ -254,7 +278,6 @@ namespace LydsTextAdventure
 
                 if (!entity.IsDestroyed() && !entity.isMarkedForDeletion)
                     result.Add(entity);
-
             }
 
             EntityManager.AliveEntities = result;

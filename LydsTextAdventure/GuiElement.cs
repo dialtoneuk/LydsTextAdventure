@@ -188,7 +188,7 @@ namespace LydsTextAdventure
         public Rectangle GetRectangle()
         {
 
-            return new Rectangle(this.width, this.height);
+            return new Rectangle(this.width, this.height, this.position.x, this.position.y);
         }
 
 

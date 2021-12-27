@@ -9,7 +9,7 @@
 
         //gui elements
         protected GuiLabel health = new GuiLabel();
-        protected GuiLabel armour = new GuiLabel();
+        protected GuiLabel armor = new GuiLabel();
         protected GuiLabel playerPosition = new GuiLabel();
         protected GuiLabel name = new GuiLabel();
         protected GuiLabel input = new GuiLabel();
@@ -27,7 +27,7 @@
             this.group.DockType = GuiElement.Dock.FILL;
 
             //register them
-            this.RegisterElements(this.group, this.health, this.armour, this.name, this.playerPosition, this.input, this.lastCommand);
+            this.RegisterElements(this.group, this.health, this.armor, this.name, this.playerPosition, this.input, this.lastCommand);
             //add it to the group
             this.group.AddElements(this.guiElements.ToArray());
         }
@@ -51,7 +51,7 @@
             {
 
                 this.health.SetText("hp: " + this.player.GetHealth().ToString());
-                this.armour.SetText("armour: XXXXXX");
+                this.armor.SetText("armor: XXXXXX");
                 this.playerPosition.SetText("position: " + this.player.position.ToString());
                 this.name.SetText("name: " + this.player.GetName());
             }

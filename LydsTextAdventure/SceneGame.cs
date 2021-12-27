@@ -36,10 +36,14 @@ namespace LydsTextAdventure
                 {
                     Program.DebugLog(this.player.position.ToString());
                 }, "p"),
-                new Command("test", () =>
+                new Command("no_clip", () =>
                 {
-                    Program.DebugLog( EntityManager.GetMainCamera().GetMousePosition().ToString() );
-                }, "g"),
+
+                    this.player.SetSolid(!this.player.isSolid);
+                    Program.DebugLog("Noclip toggled");
+                }, "n"),
+
+                //Move this somewhere it can be inside its own class/area so its easy to add into every scene where its needed
                 new Command("click", () =>
                 {
 
@@ -56,15 +60,17 @@ namespace LydsTextAdventure
                             }
                     }
 
-                    //entitys
-                    foreach(Entity entity in EntityManager.GetVisibleEntities())
+                    //must ignore cache and get the latest alive entities
+                    List<Entity> list = EntityManager.GetAliveEntities(true);
+                    for (int i = 0; i < list.Count; i++)
                     {
+                        Entity entity = list[i];
 
-                            if(Entity.IsMouseOver(pos, entity))
-                            {
-                                entity.OnClick(this.player);
-                                break;
-                            }
+                        if(Entity.IsMouseOver(pos, entity))
+                        {
+                            entity.OnClick(this.player);
+                            break;
+                        }
                     }
                 }, "q", ConsoleKey.Q)
             };
@@ -109,7 +115,7 @@ namespace LydsTextAdventure
         {
 
             //create any new chunks around the player they haven't seen yet
-            this.world.CreateChunksAroundPlayer(this.player, 8);
+            this.world.CreateChunksAroundPlayer(this.player, 4);
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();

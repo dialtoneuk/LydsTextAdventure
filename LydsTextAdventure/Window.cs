@@ -188,10 +188,10 @@ namespace LydsTextAdventure
                 element.Draw(element.GetX(), element.GetY(), this.camera, this);
         }
 
-        public Rectangle GetRectangle()
+        public Rectangle GetRectangle(bool windowPadding = true)
         {
 
-            return new Rectangle(this.width, this.height);
+            return new Rectangle(this.width - (windowPadding ? 2 : 0), this.height - (windowPadding ? 2 : 0), this.position.x, this.position.y);
         }
 
 

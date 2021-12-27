@@ -12,6 +12,9 @@ namespace LydsTextAdventure
             CENTER_ON_OWNER
         }
 
+        //holds a list of all of our cameras
+        private static List<Camera> cameras = new List<Camera>();
+
         protected Entity owner;
         protected bool mainCamera = false;
 
@@ -44,6 +47,7 @@ namespace LydsTextAdventure
             //sets the name of this camera
 
             Program.DebugLog("Camera has been created", "camera");
+            cameras.Add(this);
         }
 
         public Rectangle GetViewRectangle()
@@ -54,7 +58,7 @@ namespace LydsTextAdventure
         public static void UpdateDisabled()
         {
 
-            List<Entity> cameras = EntityManager.GetEntitiesByType(typeof(Camera));
+
             List<Entity> allRendered = new List<Entity>();
 
             foreach (Camera camera in cameras)
@@ -235,6 +239,15 @@ namespace LydsTextAdventure
                 //draw entity texture
                 this.temporaryBuffer[x, y] = entity.GetTexture().character;
             }
+        }
+
+        public override void Destroy()
+        {
+
+            //remove from cameras list
+            Camera.cameras.Remove(this);
+
+            base.Destroy();
         }
 
         public void CleanBuffer()

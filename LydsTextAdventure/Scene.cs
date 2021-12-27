@@ -117,13 +117,8 @@ namespace LydsTextAdventure
             //then update windows
             WindowManager.UpdateWindows();
 
-
-            if (Program.GetTick() % 512 == 0)
-            {
-
-                EntityManager.GetAliveEntities(true);
-                EntityManager.GetVisibleEntities(true);
-            }
+            //cache alive and visible entities;
+            EntityManager.CacheEntities();
         }
     }
 }
