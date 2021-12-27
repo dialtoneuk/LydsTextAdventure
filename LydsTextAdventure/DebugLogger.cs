@@ -78,7 +78,7 @@ namespace LydsTextAdventure
             try
             {
 
-        
+
                 if (this.lastMessage == null)
                     this.lastMessage = msg;
                 else

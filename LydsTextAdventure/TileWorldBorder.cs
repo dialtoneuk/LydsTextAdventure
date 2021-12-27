@@ -1,6 +1,6 @@
 ﻿namespace LydsTextAdventure
 {
-    public class TileWorldBorder: Tile
+    public class TileWorldBorder : Tile
     {
 
         public TileWorldBorder()

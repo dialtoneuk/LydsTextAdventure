@@ -30,9 +30,9 @@ namespace LydsTextAdventure
 
             Tile tile = world.GetTile(position.x, position.y);
 
-            if(tile == null)
+            if (tile == null)
                 return true;
-           
+
             if (tile.GetType() == typeof(TileWorldBorder))
                 return false;
 

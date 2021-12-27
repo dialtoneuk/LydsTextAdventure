@@ -6,7 +6,7 @@ namespace LydsTextAdventure
     public class EntityMoving : Entity
     {
 
-        public EntityMoving(string name = "") : base(name)
+        public EntityMoving()
         {
 
             this.texture = new Texture(' ');

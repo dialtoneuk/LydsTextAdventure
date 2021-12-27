@@ -39,7 +39,34 @@ namespace LydsTextAdventure
                 new Command("test", () =>
                 {
                     Program.DebugLog( EntityManager.GetMainCamera().GetMousePosition().ToString() );
-                }, "g")
+                }, "g"),
+                new Command("click", () =>
+                {
+
+                    //gui elements
+                    Position pos = InputController.GetMousePosition();
+                    foreach(Window window in WindowManager.GetOpenWindows())
+                    {
+
+                        foreach(GuiElement element in window.guiElements)
+                            if(GuiElement.IsInsideOf(pos, element))
+                            {
+                                element.OnClick();
+                                break;
+                            }
+                    }
+
+                    //entitys
+                    foreach(Entity entity in EntityManager.GetVisibleEntities())
+                    {
+
+                            if(Entity.IsMouseOver(pos, entity))
+                            {
+                                entity.OnClick(this.player);
+                                break;
+                            }
+                    }
+                }, "q", ConsoleKey.Q)
             };
         }
 
@@ -50,7 +77,6 @@ namespace LydsTextAdventure
             this.world.GenerateWorld();
 
             this.player = new Player();
-            this.player.SetSolid(false); //player can walk through world
 
             for (int i = 0; i < 10; i++)
             {
@@ -63,17 +89,18 @@ namespace LydsTextAdventure
 
             this.camera = new Camera(this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(79, 32);
+            this.camera.SetSize(79, 41);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
             WindowPlayerStatistics stats = new WindowPlayerStatistics();
-            WindowConsole test = new WindowConsole();
-
             stats.SetPlayer(this.player);
             stats.SetPosition(80, 0);
-            test.SetPosition(0, 33);
+
+            WindowInventory inventory = new WindowInventory();
+            inventory.SetPlayer(this.player);
+            inventory.SetPosition(80, 9);
 
             base.Before();
         }
@@ -82,7 +109,7 @@ namespace LydsTextAdventure
         {
 
             //create any new chunks around the player they haven't seen yet
-            this.world.CreateChunksAroundPlayer(this.player, 4);
+            this.world.CreateChunksAroundPlayer(this.player, 8);
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();

@@ -11,6 +11,13 @@
             this.text = text;
         }
 
+        public override void Update()
+        {
+
+            this.SetSize(this.text.Length, 1);
+            base.Update();
+        }
+
         public override void Draw(int x, int y, Camera camera = null, Window window = null)
         {
 

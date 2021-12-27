@@ -10,32 +10,7 @@ namespace LydsTextAdventure
             //exit command
             new Command("exit", () => {
                 Program.SetState(Program.State.SHUTDOWN);
-            }, "p", ConsoleKey.P),
-            new Command("click", () =>
-            {
-
-                Position pos = InputController.GetMousePosition();
-                foreach(Window window in WindowManager.GetOpenWindows())
-                {
-
-                    foreach(GuiElement element in window.guiElements)
-                        if(GuiElement.IsInsideOf(pos, element))
-                        {
-                            element.OnClick();
-                            break;
-                        } 
-                }
-
-                foreach(Entity entity in EntityManager.GetVisibleEntities())
-                {
-
-                        if(Entity.IsMouseOver(pos, entity))
-                        {
-                            entity.OnClick();
-                            break;
-                        }               
-                }
-            }, "q", ConsoleKey.Q)
+            }, "p", ConsoleKey.P)
         };
 
         protected static List<Command> Commands = new List<Command>();

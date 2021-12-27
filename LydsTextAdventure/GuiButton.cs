@@ -12,7 +12,7 @@ namespace LydsTextAdventure
         public void SetOnHover(Action<GuiButton> onHover)
         {
 
-            this.onHover = onHover;  
+            this.onHover = onHover;
         }
 
         public void SetOnClick(Action<GuiButton> onClick)
@@ -30,18 +30,14 @@ namespace LydsTextAdventure
         public override void OnHover()
         {
 
-            if (this.onHover != null)
-                this.onHover(this);
-
+            this.onHover?.Invoke(this);
             base.OnHover();
         }
 
         public override void OnClick()
         {
 
-            if (this.onClick != null)
-                this.onClick(this);
-
+            this.onClick?.Invoke(this);
             base.OnClick();
         }
 

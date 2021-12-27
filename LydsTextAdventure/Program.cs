@@ -11,6 +11,7 @@ namespace LydsTextAdventure
 
         public const int MAX_TICK = 8912;
         public const int DEBUGGER_LOG_SIZE = 2048;
+        public const string INITIAL_SCENE = "sceneMenu";
 
 #if DEBUG
         public const bool DEBUGGER_CONNECT_LOGGER = true;
@@ -34,25 +35,43 @@ namespace LydsTextAdventure
 
         private static int Tick = 0;
         //program state
-        private static State _state = State.LOADING;
+        public static State ProgramState
+        {
+            get;
+            private set;
+        }
 
         static void Main(string[] args)
         {
+            ProgramState = State.LOADING;
 
-            Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-  
-            Console.ResetColor();
             Console.Title = "Lyds Text Adventure";
 
-            CommandManager.AddDefaultCommands();
-            ConsoleManager.DisableQuickEdit();
-
-            Program.DebugLogger = new DebugLogger(Program.DEBUGGER_LOG_SIZE);
-           
-            DebugLogger.CreateExitEvent();
-
+            //setup buffer size
+            Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
             //Create the buffer/viewable draw space
             Buffer.Create(Console.LargestWindowWidth - 2, Console.LargestWindowHeight - 2);
+
+            //reset colours and disable quick edit
+            Console.ResetColor();
+            ConsoleManager.DisableQuickEdit();
+
+            //clear the console and create new debug logger instance
+            Program.Clear();
+            Program.DebugLogger = new DebugLogger(Program.DEBUGGER_LOG_SIZE);
+            DebugLogger.CreateExitEvent();
+
+            //load game
+            Program.LoadGame();
+
+            //start gameloop
+            Program.GameLoop();
+        }
+
+        public static void LoadGame()
+        {
+            //add default commands
+            CommandManager.AddDefaultCommands();
 
             //adds the remote logger
 #if DEBUG
@@ -72,13 +91,20 @@ namespace LydsTextAdventure
 #endif
             //register our scenes
             Scenes.RegisterScenes();
-            //start test scene
-            SceneManager.StartScene("sceneMenu");
+        }
 
-            _state = State.RUNNING;
+        public static void GameLoop()
+        {
+
+
+            //start menu scene
+            SceneManager.StartScene(INITIAL_SCENE);
+
+            //set state to running
+            ProgramState = State.RUNNING;
 
             //game loop
-            while (!_state.Equals(State.SHUTDOWN))
+            while (!ProgramState.Equals(State.SHUTDOWN))
             {
 
                 Console.CursorVisible = false;
@@ -105,7 +131,7 @@ namespace LydsTextAdventure
                                 Program.DebugLog("invalid command:" + input.text);
                                 return;
                             }
-                      
+
                         }
 
                         command.Execute();
@@ -115,33 +141,37 @@ namespace LydsTextAdventure
 
                 //update then draw scene but only on even ticks (this helps with smoothness)
                 if (SceneManager.IsSceneActive())
-                    SceneManager.UpdateScene();
+                {
 
-                //Draw the scene
-                SceneManager.DrawScene();
+                    SceneManager.UpdateScene();
+                    //Draw the scene
+                    SceneManager.DrawScene();
+                }
+
                 //takes all of our draw data and adds it to the buffer
                 Buffer.PrepareBuffer();
                 //Draws the buffer for the next frame
                 Buffer.DrawBuffer();
-     
+
 #if DEBUG
 
                 if (Program.Tick % 1024 == 0)
                     Program.DebugLog("check alive");
 
                 //send console messages every 1 ticks as if its to fast it will throw exception
-                if (Program.Tick % 1 == 0 && Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)      {
+                if (Program.Tick % 1 == 0 && Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)
+                {
                     //increments the post position by one if it is less than the stack position and sends that message to the console
                     Program.DebugLogger.WriteLine(Program.DebugLogger.DebugLog[Program.DebugLogger.LastPosition++]);
                 }
-                 
+
 #endif
 
                 //reset tick if we are over 8192
                 if (Program.Tick >= Program.MAX_TICK)
                 {
 
-                    System.Console.Clear();
+                    Program.Clear();
                     Program.DebugLog("screen cleaned");
                     Program.Tick = 0;
                 }
@@ -150,14 +180,30 @@ namespace LydsTextAdventure
             }
 
 #if DEBUG
-            //Program.DebugLogger.WriteShutdown();
+            Program.DebugLogger.WriteShutdown();
 #endif
+        }
+
+        public static void Stop()
+        {
+
+            ProgramState = State.SHUTDOWN;
+        }
+
+        public static void Clear()
+        {
+
+            System.Console.Clear();
+            Console.ForegroundColor = (ConsoleColor)(new Random().Next(0, 15));
+
+            if (Console.ForegroundColor == ConsoleColor.Black)
+                Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void SetState(State state)
         {
 
-            Program._state = state;
+            Program.ProgramState = state;
         }
 
         public static void RegisterDebugCommands()
@@ -166,7 +212,7 @@ namespace LydsTextAdventure
             CommandManager.Register(new List<Command>()
             {
                 new Command("clean_screen", () => {
-                        System.Console.Clear();
+                        Program.Clear();
                 }, "m")
             });
         }
@@ -177,7 +223,7 @@ namespace LydsTextAdventure
             if (msg.Length.Equals(0))
                 return;
 
-            string str = string.Concat("[", op + ":" + Program.Tick + ":" + DateTime.Now.TimeOfDay + "] ", msg);
+            string str = string.Concat("[", op + ":" + Program.Tick + ":" + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + "] ", msg);
 
             try
             {
@@ -190,8 +236,10 @@ namespace LydsTextAdventure
 
                 //put it onto the stack
                 Program.DebugLogger.DebugLog[Program.DebugLogger.StackPosition++] = str;
-            } catch {
-                   //dont crash cuz we can't log
+            }
+            catch
+            {
+                //dont crash cuz we can't log
             }
         }
 

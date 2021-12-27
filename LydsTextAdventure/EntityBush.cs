@@ -1,10 +1,11 @@
 ﻿namespace LydsTextAdventure
 {
-    public class EntityBush: Entity
+    public class EntityBush : Entity
     {
-        public EntityBush(string name = "Bush") : base(name)
+        public EntityBush()
         {
 
+            this.name = "Bush";
             this.texture = new Texture('b');
             this.isStatic = true;
         }

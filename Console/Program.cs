@@ -11,35 +11,50 @@ namespace ConsoleLogger
         private static NamedPipeServerStream ServerStream;
         private static bool Running = true;
         private static bool Connected = false;
-
-        private static int MsgCount = 0;
-        private static int LastCount = 0;
+        private static bool MessageReceived = false;
 
         static void Main(string[] args)
         {
 
+            Program.CheckForRecentMessages();
+
+
             reconnect:
-            Program.ServerStream = new NamedPipeServerStream("console_log", PipeDirection.InOut, 1);
-
-            Console.WriteLine(" SERVER WAITING FOR CONNECTION ");
-            Task.Delay(60000).ContinueWith((state) =>
-            {
-
-                if (!Connected)
-                {
-
-                    Console.WriteLine("failed to connect after 60 seconds.. shutting down");
-                    System.Environment.Exit(1);
-                }
-            });
-
-            Program.ServerStream.WaitForConnection();
-            Connected = true;
-
             try
             {
 
-                Program.CheckForRecentMessages();
+                Program.ServerStream = new NamedPipeServerStream("console_log", PipeDirection.InOut, 1);
+                Console.WriteLine(" CONSOLE WAITING FOR CONNECTION ");
+
+                Task.Delay(60000).ContinueWith((state) =>
+                {
+
+                    if (!Connected)
+                    {
+
+                        Console.WriteLine("failed to connect after 60 seconds.. shutting down");
+                        System.Environment.Exit(1);
+                    }
+                });
+
+
+                Console.ResetColor();
+                Program.ServerStream.WaitForConnection();
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine("ERROR: {0}", e.Message);
+                Console.WriteLine("Application cannot recover and has to exit, press any key to do so...");
+                Console.ReadKey(false);
+                System.Environment.Exit(1);
+            }
+
+            Connected = true;
+            Program.Running = true;
+
+            try
+            {
 
                 // Read the request from the client. Once the client has
                 // written to the pipe its security token will be available.
@@ -56,7 +71,7 @@ namespace ConsoleLogger
                         continue;
                     else
                     {
-
+                        MessageReceived = true;
                         ServerData data;
                         try
                         {
@@ -84,7 +99,7 @@ namespace ConsoleLogger
                             Console.ForegroundColor = ConsoleColor.White;
                             break;
                         }
-                           
+
                         if (data.message.Contains("general"))
                             Console.ForegroundColor = ConsoleColor.DarkGray;
                         else if (data.message.Contains("window"))
@@ -99,28 +114,35 @@ namespace ConsoleLogger
                             Console.ForegroundColor = ConsoleColor.DarkYellow;
                         else if (data.message.Contains("scene"))
                             Console.ForegroundColor = ConsoleColor.DarkCyan;
-
+                        else if (data.message.Contains("inventory"))
+                            Console.ForegroundColor = ConsoleColor.Cyan;
 
                         Console.WriteLine(data.message);
                         Console.ResetColor();
-
-                        MsgCount++;
                     }
 
                 }
             }
             // Catch the IOException that is raised if the pipe is broken
             // or disconnected.
-            catch (IOException e)
+            catch (Exception e)
             {
 
                 Console.WriteLine("ERROR: {0}", e.Message);
             }
 
             Console.WriteLine("Awaiting reconnect...");
-            
-            if(Program.ServerStream.IsConnected)
-                Program.ServerStream.Close();
+
+            try
+            {
+                if (Program.ServerStream.IsConnected)
+                    Program.ServerStream.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: {0}", e.Message);
+            }
+
 
             goto reconnect;
         }
@@ -128,23 +150,23 @@ namespace ConsoleLogger
         public static void CheckForRecentMessages()
         {
 
-            //check every 60 seconds
+            //check every 60 seconds forever
             Task.Delay(60000).ContinueWith((state) =>
             {
 
-                if (MsgCount != 0 && MsgCount == LastCount)
-                {
+                if (Program.Running)
+                    Program.CheckForRecentMessages();
 
-                    Console.WriteLine("no message in the last 60 seconds... Closing connection");
-
-                    if (Program.ServerStream.IsConnected)
-                        Program.ServerStream.Close();
-
+                if (!Connected)
                     return;
-                }
 
-                LastCount = MsgCount;
-                Program.CheckForRecentMessages();
+                if (!MessageReceived && Program.Running)
+                {
+                    Console.WriteLine("Not recieved a message in 60 seconds, stopping listen loop");
+                    Program.Running = false;
+                }
+                else
+                    MessageReceived = false;
             });
         }
     }

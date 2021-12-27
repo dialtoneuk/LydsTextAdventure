@@ -6,6 +6,7 @@ namespace LydsTextAdventure
     {
 
         protected Camera camera;
+        protected Player player;
         protected WorldTitleScreen world;
 
         public SceneMenu(string name, List<Command> commands = null) : base(name, commands)
@@ -23,16 +24,14 @@ namespace LydsTextAdventure
                     foreach(Window window in WindowManager.GetOpenWindows())
                     {
 
-                        foreach(GuiElement element in window.guiElements)
-                            if(GuiElement.IsInsideOf(pos, element))
-                                element.OnClick();
-                    }
+                        for (int i = 0; i < window.guiElements.Count; i++) { GuiElement element = window.guiElements[i]; if(GuiElement.IsInsideOf(pos, element))
+                                element.OnClick(); } }
 
                     foreach(Entity entity in EntityManager.GetVisibleEntities())
                     {
 
                             if(Entity.IsMouseOver(pos, entity))
-                                entity.OnClick();
+                                entity.OnClick(this.player);
                     }
                 }, "q")
             };
@@ -41,6 +40,9 @@ namespace LydsTextAdventure
 
         public override void Before()
         {
+
+            this.player = new Player();
+            this.player.SetVisible(false);
 
             this.world = new WorldTitleScreen();
             this.world.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);

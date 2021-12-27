@@ -12,18 +12,18 @@ namespace LydsTextAdventure
         private static List<Entity> VisibleEntities;
         private static List<Entity> AliveEntities;
 
-        private static int SceneCount = 0;
+        private static int EntityCount = 0;
 
         public static void RegisterEntity(Entity entity)
         {
-
-            entity.SetIndex(EntityManager.SceneCount);
+            entity.SetIndex(EntityManager.EntityCount);
             entity.SetWorld(WorldManager.CurrentWorld);
 
-            if(!Entities.TryAdd(EntityManager.SceneCount, entity))
+            if (!Entities.TryAdd(EntityManager.EntityCount, entity))
                 Program.DebugLog("entity " + entity.ToString() + " FAILED TO CREATE!", "entity_manager");
 
-            EntityManager.SceneCount = EntityManager.SceneCount + 1;
+            EntityManager.EntityCount = EntityCount + 1;
+
         }
 
         public static void DestroyAllEntities()
@@ -35,7 +35,7 @@ namespace LydsTextAdventure
             }
 
             EntityManager.Entities = new Dictionary<int, Entity>();
-            EntityManager.SceneCount = 0;
+            EntityManager.EntityCount = 0;
             EntityManager.VisibleEntities = null;
             EntityManager.AliveEntities = null;
         }
@@ -91,7 +91,7 @@ namespace LydsTextAdventure
         {
 
             List<Entity> result = new List<Entity>();
-            foreach( KeyValuePair<int, Entity> entity in EntityManager.Entities)
+            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
                 if (entity.Value.GetName() == name && !entity.Value.IsDestroyed())
@@ -112,7 +112,9 @@ namespace LydsTextAdventure
                     continue;
 
                 entity.Value.Destroy();
-                Entities.Remove(entity.Key);
+                entity.Value.SetVisible(false);
+                entity.Value.SetDisabled(true);
+                entity.Value.isMarkedForDeletion = true;
                 break;
             }
         }
@@ -123,9 +125,10 @@ namespace LydsTextAdventure
             //updates disabled entities not seen by the camera last frame
             Camera.UpdateDisabled();
 
-            foreach (Entity entity in EntityManager.GetVisibleEntities())
+            List<Entity> list = EntityManager.GetVisibleEntities();
+            for (int i = 0; i < list.Count; i++)
             {
-
+                Entity entity = list[i];
                 if (entity.IsDisabled())
                     continue;
 
@@ -186,9 +189,10 @@ namespace LydsTextAdventure
                 range = 1;
 
             List<Entity> result = new List<Entity>();
-            foreach (Entity entity in EntityManager.GetAliveEntities())
+            List<Entity> list = EntityManager.GetAliveEntities();
+            for (int i = 0; i < list.Count; i++)
             {
-
+                Entity entity = list[i];
                 if (entity.position.x > position.x - range && entity.position.x < position.x + range)
                     if (entity.position.y > position.y - range && entity.position.y < position.y + range)
                     {
@@ -211,11 +215,19 @@ namespace LydsTextAdventure
                 return EntityManager.VisibleEntities;
 
             List<Entity> result = new List<Entity>();
-            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
+
+            for (int i = 0; i < EntityCount; i++)
             {
 
-                if (entity.Value.IsVisible() && !entity.Value.IsDestroyed())
-                    result.Add(entity.Value);
+                if (!EntityManager.Entities.TryGetValue(i, out Entity entity))
+                {
+                    Program.DebugLog("failed to read entity at index [" + i + "]", "entity_manager");
+                    continue;
+                }
+
+
+                if (entity.IsVisible() && !entity.IsDestroyed())
+                    result.Add(entity);
             }
 
             EntityManager.VisibleEntities = result;
@@ -229,11 +241,20 @@ namespace LydsTextAdventure
                 return EntityManager.AliveEntities;
 
             List<Entity> result = new List<Entity>();
-            foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
+
+            //uses a for loop since the Entities dictionary could be updated from a different thread
+            for (int i = 0; i < EntityCount; i++)
             {
 
-                if (!entity.Value.IsDestroyed())
-                    result.Add(entity.Value);
+                if (!EntityManager.Entities.TryGetValue(i, out Entity entity))
+                {
+                    Program.DebugLog("failed to read entity at index [" + i + "]", "entity_manager");
+                    continue;
+                }
+
+                if (!entity.IsDestroyed() && !entity.isMarkedForDeletion)
+                    result.Add(entity);
+
             }
 
             EntityManager.AliveEntities = result;

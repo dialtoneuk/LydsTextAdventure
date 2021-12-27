@@ -6,7 +6,7 @@
         protected string text;
         protected bool writeOver = false;
 
-        public EntityMovingText(string name = "") : base(name)
+        public EntityMovingText()
         {
 
             this.SetSpeed(5);

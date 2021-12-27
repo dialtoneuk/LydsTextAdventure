@@ -5,8 +5,11 @@
 
         protected Player player = null;
 
+        protected GuiGroup group = new GuiGroup();
+
         //gui elements
         protected GuiLabel health = new GuiLabel();
+        protected GuiLabel armour = new GuiLabel();
         protected GuiLabel playerPosition = new GuiLabel();
         protected GuiLabel name = new GuiLabel();
         protected GuiLabel input = new GuiLabel();
@@ -16,18 +19,17 @@
         {
 
             this.SetName("player_statistics");
-
-            this.health.SetPosition(1, 2);
-            this.playerPosition.SetPosition(1, 3);
-            this.name.SetPosition(1, 4);
-            this.input.SetPosition(1, 5);
-            this.lastCommand.SetPosition(1, 6);
-
-            this.SetSize(40, 8);
             this.SetTitle("Player Statistics");
+            this.SetSize(40, 8);
             this.Show();
 
-            this.RegisterElements(this.health, this.name, this.playerPosition, this.input, this.lastCommand);
+            this.group.SetPosition(1, 1);
+            this.group.DockType = GuiElement.Dock.FILL;
+
+            //register them
+            this.RegisterElements(this.group, this.health, this.armour, this.name, this.playerPosition, this.input, this.lastCommand);
+            //add it to the group
+            this.group.AddElements(this.guiElements.ToArray());
         }
 
         public void SetPlayer(Player player)
@@ -49,6 +51,7 @@
             {
 
                 this.health.SetText("hp: " + this.player.GetHealth().ToString());
+                this.armour.SetText("armour: XXXXXX");
                 this.playerPosition.SetText("position: " + this.player.position.ToString());
                 this.name.SetText("name: " + this.player.GetName());
             }

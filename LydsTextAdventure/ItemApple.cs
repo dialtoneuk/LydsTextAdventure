@@ -7,9 +7,10 @@ namespace LydsTextAdventure
     public class ItemApple : Item
     {
 
-        public ItemApple(string name = "Apple", bool isCraftable = true, bool isTradable = true) : base(name, isCraftable, isTradable)
+        public ItemApple()
         {
 
+            this.name = "Apple";
             this.value = 10.0f; //how much it is worth
         }
     }

@@ -9,8 +9,27 @@ namespace LydsTextAdventure
         public Window window;
         public readonly Position position = new Position(0, 0);
 
-        private int width;
-        private int height;
+        private int[] dockPadding = new int[]
+        {
+            1,
+            1,
+            1,
+            1
+        };
+
+        private int width = 1;
+        private int height = 1;
+
+        public enum Dock
+        {
+
+            NO_DOCK,
+            LEFT,
+            RIGHT,
+            TOP,
+            BOTTOM,
+            FILL
+        }
 
         private string name;
 
@@ -18,6 +37,19 @@ namespace LydsTextAdventure
         public bool isDisbled = false;
         public bool isHovering = false;
         public bool isAwaitingOutput = false;
+
+        public Dock DockType
+        {
+            get;
+            set;
+        }
+
+        public GuiGroup Group
+        {
+
+            get;
+            set;
+        }
 
         public int Width
         {
@@ -35,6 +67,8 @@ namespace LydsTextAdventure
         public GuiElement(Window window = null, GuiElement parent = null, Position position = null)
         {
 
+            this.DockType = Dock.NO_DOCK;
+
             if (position != null)
                 position.SetPosition(position);
 
@@ -50,8 +84,50 @@ namespace LydsTextAdventure
             return this.GetType().ToString();
         }
 
+        public void DockInsideRectangle(Rectangle container)
+        {
+
+            switch (this.DockType)
+            {
+
+                case Dock.FILL:
+                    this.width = container.Width - (dockPadding[0] + dockPadding[1]);
+                    this.height = container.Height - (dockPadding[1] + dockPadding[2]);
+                    break;
+                case Dock.LEFT:
+                    this.width = (container.Width / 2) - (dockPadding[2] + dockPadding[3]);
+                    this.height = container.Height - (dockPadding[1] + dockPadding[2]);
+                    break;
+                case Dock.RIGHT:
+                    this.width = (container.Width / 2) - (dockPadding[2]);
+                    this.position.x = (container.Width / 2) - dockPadding[2];
+                    this.height = container.Height - (dockPadding[1] + dockPadding[2]);
+                    break;
+                case Dock.BOTTOM:
+                    this.width = (container.Width) - (dockPadding[2] + dockPadding[3]);
+                    this.position.y = (container.Height / 2) - (dockPadding[0]);
+                    this.height = (container.Height / 2) - (dockPadding[1]);
+                    break;
+                case Dock.TOP:
+                    this.width = (container.Width) - (dockPadding[2] + dockPadding[3]);
+                    this.height = (container.Height / 2) - (dockPadding[0] + dockPadding[1]);
+                    break;
+            }
+
+        }
+
+        public void SetDockPadding(int top, int down = 1, int left = 1, int right = 1)
+        {
+
+            dockPadding[0] = top;
+            dockPadding[1] = down;
+            dockPadding[2] = left;
+            dockPadding[3] = right;
+        }
+
         public virtual void Update()
         {
+
 
 
         }

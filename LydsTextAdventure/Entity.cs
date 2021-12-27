@@ -14,7 +14,11 @@ namespace LydsTextAdventure
         public World world;
         public readonly string id = Guid.NewGuid().ToString();
 
-        private string name;
+        public string name
+        {
+            get;
+            protected set;
+        }
 
         public bool visible = true;
         public bool destroyed = false;
@@ -22,6 +26,7 @@ namespace LydsTextAdventure
         public bool isStatic = false;
         public bool disabled = false;
         public bool alwaysOn = false;
+        public bool isMarkedForDeletion = false;
         public bool isSolid = true;
         public bool isHovering = false;
         public bool drawTexture = true;
@@ -31,17 +36,6 @@ namespace LydsTextAdventure
         public int sleepTime = 0;
         public int health = 0;
         public int countPosition = -1;
-
-        public Entity(string name)
-        {
-
-            if (name != "")
-                this.name = name;
-            else
-                this.name = this.GetType().ToString();
-
-            EntityManager.RegisterEntity(this);
-        }
 
         public static bool IsMouseOver(Position position, Entity entity)
         {
@@ -54,8 +48,6 @@ namespace LydsTextAdventure
 
             return false;
         }
-
-
 
         public bool IsSolid()
         {
@@ -118,6 +110,18 @@ namespace LydsTextAdventure
         {
 
             return this.drawTexture;
+        }
+
+        //will try and create an Entity from its type
+        public static Entity CreateEntity(Type type)
+        {
+
+            var inst = Activator.CreateInstance(type);
+
+            if (!inst.GetType().IsSubclassOf(typeof(Entity)))
+                throw new ApplicationException("invalid type created as it is not a subclass of item");
+
+            return (Entity)inst;
         }
 
         public void SetDrawTexture(bool val)
@@ -201,11 +205,11 @@ namespace LydsTextAdventure
         {
 
 #if DEBUG
-           
+
 #endif
         }
 
-        public virtual void OnClick()
+        public virtual void OnClick(Player player)
         {
 
 #if DEBUG

@@ -12,13 +12,12 @@
         {
 
             this.SetName("console");
-
-            this.console.SetPosition(1, 1);
-            this.console.SetSize(79, 14);
-
             this.SetTitle("Console");
             this.Show();
             this.SetSize(80, 16);
+
+            this.console.SetPosition(1, 1);
+            this.console.DockType = GuiElement.Dock.FILL;
 
             this.RegisterElements(this.console);
         }

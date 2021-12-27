@@ -3,13 +3,19 @@
     public class Player : Entity
     {
 
-        protected PlayerInventory inventory = new PlayerInventory();
+        private PlayerInventory inventory = new PlayerInventory();
 
         public Player()
         {
 
             this.SetHealth(100); //default health
             this.texture = new Texture('@');
+        }
+
+        public PlayerInventory Inventory
+        {
+            get => this.inventory;
+            private set => this.inventory = value;
         }
 
         public override void Draw(int x, int y, Camera camera)

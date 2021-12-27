@@ -117,11 +117,12 @@ namespace LydsTextAdventure
             //then update windows
             WindowManager.UpdateWindows();
 
-            //recache visible and alive entities (helps performance with multiple cameras)
-            if (Program.GetTick() % 248 == 0)
+
+            if (Program.GetTick() % 512 == 0)
             {
-                EntityManager.GetVisibleEntities(true); //caches which helps with multiple cameras
-                EntityManager.GetAliveEntities(true); //caches
+
+                EntityManager.GetAliveEntities(true);
+                EntityManager.GetVisibleEntities(true);
             }
         }
     }

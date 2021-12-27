@@ -12,6 +12,7 @@ namespace LydsTextAdventure
         public Texture texture;
 
         public bool isSolid = false;
+        public bool isPlantable = false;
 
         public Tile(Texture texture = null)
         {

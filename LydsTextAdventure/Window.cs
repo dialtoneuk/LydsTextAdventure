@@ -127,6 +127,9 @@ namespace LydsTextAdventure
 
                 element.Update();
 
+                if (element.DockType != GuiElement.Dock.NO_DOCK)
+                    element.DockInsideRectangle((element.Group == null ? this.GetRectangle() : element.Group.GetRectangle()));
+
                 //is hovering over
                 if (GuiElement.IsInsideOf(InputController.GetMousePosition(), element))
                 {

@@ -14,13 +14,9 @@ namespace LydsTextAdventure
         public const float DEEP_WATER_LEVEL = 0.00005f;
 
         public const int MAX_NUTRIENTS = 12;
-        public const int DEFAULT_NUTRIENTS = 1;
-        public const int TREE_MODIFIER = 4;
-        public const int BUSH_MODIFIER = 6;
-        public const int TREE_SPAWN_CHANCE = 25;
-        public const int BUSH_SPAWN_CHANCE = 15;
-        public const int APPLE_TREE_CHANCE = 45;
-        public const int OAK_TREE_CHANCE = 25;
+        public const int NUTRIENT_MODIFIER = 4;
+        public const int FOLIAGE_CHANCE = 30;
+        public const int MIN_NUTRIENTS = -4;
         public const int MAX_ENTITIES_PER_CHUNK = 128;
 
         private int worldStartX;
@@ -40,7 +36,7 @@ namespace LydsTextAdventure
         public int WorldStartX
         {
             get => this.worldStartX;
-            private  set => this.worldStartX = value;
+            private set => this.worldStartX = value;
         }
         public int WorldWidth
         {
@@ -59,9 +55,11 @@ namespace LydsTextAdventure
         }
 
         protected Dictionary<Tuple<int, int>, Chunk> chunks;
+
+        public readonly Biome Biome = new Biome();
         private int chunkId = 0;
 
-        public WorldChunks(int width = 6, int height = 6) : base( width, height )
+        public WorldChunks(int width = 6, int height = 6) : base(width, height)
         {
 
 
@@ -84,11 +82,11 @@ namespace LydsTextAdventure
             int chunkX = x / Chunk.CHUNK_WIDTH;
             int chunkY = y / Chunk.CHUNK_HEIGHT;
 
-            if (x > ( this.WorldWidth * Chunk.CHUNK_WIDTH ) || y > ( this.WorldHeight * Chunk.CHUNK_HEIGHT)
+            if (x > (this.WorldWidth * Chunk.CHUNK_WIDTH) || y > (this.WorldHeight * Chunk.CHUNK_HEIGHT)
                 || !this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
                 return null;
 
-    
+
             return this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(x, y);
         }
 
@@ -110,20 +108,15 @@ namespace LydsTextAdventure
                     int chunkX = realx / Chunk.CHUNK_WIDTH;
                     int chunkY = realy / Chunk.CHUNK_HEIGHT;
 
-                    if(chunkX < this.WorldStartX || chunkY < this.WorldStartY || realx > (this.WorldWidth * Chunk.CHUNK_WIDTH) || realy > (this.WorldHeight * Chunk.CHUNK_HEIGHT))
-                    {
+                    if (chunkX < this.WorldStartX || chunkY < this.WorldStartY || realx > (this.WorldWidth * Chunk.CHUNK_WIDTH) || realy > (this.WorldHeight * Chunk.CHUNK_HEIGHT))
                         return false;
-                    }
-                
-                    if(!this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY))){
-                        return false;
-                    }
 
-                    if(this.chunks[new Tuple<int,int>(chunkX, chunkY)].GetTileFromWorldPosition(realx, realy).IsHard() )
-                    {
+                    if (!this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
                         return false;
-                    }
 
+                    if (this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(realx, realy).IsHard())
+
+                        return false;
                 }
 
             return true;
@@ -147,7 +140,7 @@ namespace LydsTextAdventure
                         });
 
                         Chunk chunk = this.chunks[new Tuple<int, int>(playerChunkX + x, playerChunkY + y)];
-                        this.UpdateChunk(ref chunk);
+                        this.UpdateChunk(chunk);
                     }
         }
 
@@ -169,7 +162,8 @@ namespace LydsTextAdventure
             {
                 WorldHeight++;
                 WorldStartY = y;
-            } else
+            }
+            else
             {
                 WorldHeight++;
             }
@@ -185,12 +179,12 @@ namespace LydsTextAdventure
             if (type == null)
                 type = typeof(TileDeepWater);
 
-            for (int x = 0 - range; x <=  range; x++)
+            for (int x = 0 - range; x <= range; x++)
             {
                 for (int y = 0 - range; y <= range; y++)
                 {
 
-                    Tile tile = this.GetTile((startx + x), ( starty + y));
+                    Tile tile = this.GetTile((startx + x), (starty + y));
 
                     if (tile == null)
                         continue;
@@ -201,6 +195,12 @@ namespace LydsTextAdventure
             }
 
             return false;
+        }
+
+        private bool IsTilePlantable(Chunk chunk, int x, int y)
+        {
+
+            return chunk.chunkData[x, y].isPlantable == true;
         }
 
         public void InitializeChunk(int x, int y, bool isSpawn = false)
@@ -223,11 +223,13 @@ namespace LydsTextAdventure
                         continue;
                     }
 
-                    if(startX + x < 0 || startY + y < 0)
+                    if (startX + x < 0 || startY + y < 0)
                     {
                         chunk.chunkData[_x, _y] = new TileWorldBorder();
                         continue;
-                    } else if(startX + x == 0 || startY + y == 0 ) {
+                    }
+                    else if (startX + x == 0 || startY + y == 0)
+                    {
                         chunk.chunkData[_x, _y] = new TileWater();
                         continue;
                     }
@@ -237,7 +239,7 @@ namespace LydsTextAdventure
                     //add water
                     if (val < WATER_LEVEL && val > DEEP_WATER_LEVEL)
                         chunk.chunkData[_x, _y] = new TileWater();
-                    else if(val < DEEP_WATER_LEVEL)
+                    else if (val < DEEP_WATER_LEVEL)
                         chunk.chunkData[_x, _y] = new TileDeepWater();
 
                     //add stone
@@ -251,12 +253,11 @@ namespace LydsTextAdventure
 
             //this is used later to spawn stuff like trees and plants
             chunk.chunkNutrients = (int)Math.Floor(this.noise.GetPerlin((x) + this.WorldWidth, (y) + this.WorldHeight) * this.WorldOctaves);
-
             //how metals spawn
             chunk.chunkOre = (int)Math.Floor(this.noise.GetPerlin((x / 2) + this.WorldWidth, (y / 2) + this.WorldHeight) * this.WorldOctaves);
+            //how mobs
+            chunk.chunkDanger = (int)Math.Floor(this.noise.GetPerlin((x * 2) + this.WorldWidth, (y * 2) + this.WorldHeight) * this.WorldOctaves);
 
-            //how metals spawn
-            chunk.chunkDanger = (int)Math.Floor(this.noise.GetPerlin((x * 2) + this.WorldWidth,(y * 2) + this.WorldHeight) * this.WorldOctaves);
             //set again
             this.chunks[new Tuple<int, int>(x, y)] = chunk;
 
@@ -266,7 +267,8 @@ namespace LydsTextAdventure
         private bool CheckType(Type type, Type[] types)
         {
             bool found = false;
-            foreach(Type t in types){
+            foreach (Type t in types)
+            {
                 if (t == type)
                     found = true;
             }
@@ -280,7 +282,7 @@ namespace LydsTextAdventure
             return this.IsNearTypes(realx, realy, new Type[] { type }, width);
         }
 
-        private bool IsNearTypes(int realx, int realy, Type[] types, int width=2)
+        private bool IsNearTypes(int realx, int realy, Type[] types, int width = 2)
         {
 
             bool found = false;
@@ -294,7 +296,38 @@ namespace LydsTextAdventure
             return found;
         }
 
-        public void UpdateChunk(ref Chunk chunk)
+
+        public void UpdateFreshChunk(Chunk chunk)
+        {
+
+            int nutrientRate = Math.Min(MAX_NUTRIENTS, Math.Max(MIN_NUTRIENTS, chunk.chunkNutrients));
+            int entityCount = 0;
+
+            Type[] types = Biome.GetFoliageTypes(nutrientRate);
+
+            if (types.Length == 0)
+                return;
+
+            for (int x = 0; x < Chunk.CHUNK_WIDTH; x++)
+            {
+                for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++)
+                {
+                    if (!this.Biome.CanSeed(nutrientRate, FOLIAGE_CHANCE + (nutrientRate * NUTRIENT_MODIFIER)) || !this.IsTilePlantable(chunk, x, y))
+                        continue;
+
+                    if (entityCount > MAX_ENTITIES_PER_CHUNK)
+                        break;
+
+                    Entity foliage = Entity.CreateEntity(types[Biome.biomeRandom.Next(0, types.Length - 1)]);
+                    foliage.position.x = chunk.GetX(x);
+                    foliage.position.y = chunk.GetY(y);
+
+                    entityCount++;
+                }
+            }
+        }
+
+        public void UpdateChunk(Chunk chunk)
         {
 
             for (int _x = 0; _x < Chunk.CHUNK_WIDTH; _x++)
@@ -312,12 +345,12 @@ namespace LydsTextAdventure
                     }) && this.IsNearTypes(realX, realY, new Type[]{
                         typeof(TileWater),
                         typeof(TileDeepWater)
-                    }, 3))
+                    }, 2))
                     {
                         chunk.chunkData[_x, _y] = new TileSand();
                     }
 
-                    if(this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]{
+                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]{
                         typeof(TileGrass),
                         typeof(TileSpawnGrass)
                     }) && this.IsNearTypes(realX, realY, typeof(TileStone)))
@@ -325,7 +358,7 @@ namespace LydsTextAdventure
                         chunk.chunkData[_x, _y] = new TileDirt();
                     }
 
-                    if(this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]{
+                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]{
                         typeof(TileStone)
                     }) && this.IsNearTypes(realX, realY, typeof(TileLava)))
                     {
@@ -333,7 +366,7 @@ namespace LydsTextAdventure
                     }
 
                     //make obsidian
-                    if(this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]
+                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]
                     {
                         typeof(TileLava)
                     }) && this.IsNearTypes(realX, realY, new Type[]{
@@ -350,60 +383,7 @@ namespace LydsTextAdventure
             if (chunk.fresh)
             {
 
-                int nutrientRate = Math.Min(WorldChunks.MAX_NUTRIENTS, Math.Max(chunk.chunkNutrients, WorldChunks.DEFAULT_NUTRIENTS));
-                int treeCount = Math.Abs(nutrientRate) * TREE_MODIFIER;
-                int bushCount = Math.Abs(nutrientRate) * BUSH_MODIFIER;
-                int entityCount = 0;
-
-                Random r = new Random();
-
-                for (int _x = Chunk.CHUNK_WIDTH - 1; _x >= 0; _x--)
-                {
-
-                    //adds a bit of noise
-                    int mod = r.Next(-1, 3);
-                    int modEquals;
-
-                    for (int _y = Chunk.CHUNK_HEIGHT - 1; _y >= 0; _y--)
-                    {
-
-                        modEquals = r.Next(0, 1);
-
-                        if (mod > 0 && _x % mod == modEquals)
-                            continue;
-
-                        if (entityCount >= MAX_ENTITIES_PER_CHUNK)
-                            break;
-
-                        //place trees
-                        if ((chunk.chunkData[_x, _y].GetType() == typeof(TileGrass) || chunk.chunkData[_x, _y].GetType() == typeof(TileSpawnGrass)) && treeCount > 0 && r.Next(0, 100) < TREE_SPAWN_CHANCE + (nutrientRate * TREE_MODIFIER))
-                        {
-
-                            int chance = r.Next(0, 100);
-
-                            //decide which tree to place
-                            Entity tree;
-                            if (chance > APPLE_TREE_CHANCE && chance > OAK_TREE_CHANCE)
-                                tree = new EntityTree();
-                            else if (chance < OAK_TREE_CHANCE)
-                                tree = new EntityOakTree();
-                            else
-                                tree = new EntityAppleTree();
-
-                            tree.position.SetPosition(new Position((chunk.chunkX * Chunk.CHUNK_WIDTH) + _x, (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y));
-                            treeCount--;
-                        }
-                        else if ((chunk.chunkData[_x, _y].GetType() == typeof(TileGrass) || chunk.chunkData[_x, _y].GetType() == typeof(TileSpawnGrass)) && bushCount > 0 && r.Next(0, 100) < BUSH_SPAWN_CHANCE + (nutrientRate * BUSH_MODIFIER))
-                        {
-                            EntityBush bush = new EntityBush();
-                            bush.position.SetPosition(new Position((chunk.chunkX * Chunk.CHUNK_WIDTH) + _x, (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y));
-                            bushCount--;
-                        }
-
-                        entityCount++;
-                    }
-                }
-
+                this.UpdateFreshChunk(chunk);
                 //spawn plants here
                 chunk.fresh = false;
             }
@@ -417,14 +397,14 @@ namespace LydsTextAdventure
             foreach (KeyValuePair<Tuple<int, int>, Chunk> pair in this.chunks)
             {
                 Chunk chunk = this.chunks[pair.Key];
-                this.UpdateChunk(ref chunk);
+                this.UpdateChunk(chunk);
             }
         }
 
         public bool IsRendered(int x, int y)
         {
 
-             return this.chunks.TryGetValue(new Tuple<int, int>(x, y), out Chunk _);
+            return this.chunks.TryGetValue(new Tuple<int, int>(x, y), out Chunk _);
         }
 
         public override char[,] Draw(int startx, int starty, int width, int height)
@@ -443,15 +423,15 @@ namespace LydsTextAdventure
                     int actualy = y + starty;
                     int chunkX = actualx / Chunk.CHUNK_WIDTH;
                     int chunkY = actualy / Chunk.CHUNK_HEIGHT;
-                                 
 
-                    if (actualy <= ((WorldStartY) * Chunk.CHUNK_HEIGHT) || actualx <= ((WorldStartX) * Chunk.CHUNK_WIDTH) || chunkX >= (WorldStartX + WorldWidth) 
+
+                    if (actualy <= ((WorldStartY) * Chunk.CHUNK_HEIGHT) || actualx <= ((WorldStartX) * Chunk.CHUNK_WIDTH) || chunkX >= (WorldStartX + WorldWidth)
                         || chunkY >= (WorldStartY + WorldHeight) || !this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
                         result[x, y] = ' ';
-                    else if(this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)) && !this.chunks[new Tuple<int, int>(chunkX, chunkY)].IsReady())
+                    else if (this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)) && !this.chunks[new Tuple<int, int>(chunkX, chunkY)].IsReady())
                         result[x, y] = 'L';
                     else
-                        result[x, y] = this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(actualx, actualy).texture.character;          
+                        result[x, y] = this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(actualx, actualy).texture.character;
                 }
             }
             return result;
@@ -459,16 +439,12 @@ namespace LydsTextAdventure
 
         public override Position GetInitialSpawnPoint()
         {
-            
-            for(int x = (WorldStartX * Chunk.CHUNK_WIDTH); x < (this.WorldWidth * Chunk.CHUNK_WIDTH); x++)
-                for(int y = (WorldStartY * Chunk.CHUNK_HEIGHT); y < (this.WorldHeight * Chunk.CHUNK_HEIGHT); y++)
-                {
 
-                    if(this.IsAreaValid(x - 16, y - 16, 16, 16))
-                    {
-                        return new Position(x + 2, y + 2);
-                    }
-                }
+            for (int x = (WorldStartX * Chunk.CHUNK_WIDTH); x < (this.WorldWidth * Chunk.CHUNK_WIDTH); x++)
+                for (int y = (WorldStartY * Chunk.CHUNK_HEIGHT); y < (this.WorldHeight * Chunk.CHUNK_HEIGHT); y++)
+                    if (this.IsAreaValid(x - 16, y - 16, 16, 16))
+                        return new Position(x, y);
+
 
             throw new ApplicationException("no start position found");
         }
@@ -479,8 +455,8 @@ namespace LydsTextAdventure
 
             this.WorldWidth = this.width * 2;
             this.WorldHeight = this.height * 2;
-            this.WorldStartX = 0;
-            this.WorldStartY = 0;
+            this.WorldStartX = 1;
+            this.WorldStartY = 1;
 
             //first lets just generate the spawn chunks
             //2 padding for smoothing

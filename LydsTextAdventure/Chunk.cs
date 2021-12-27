@@ -7,7 +7,8 @@ namespace LydsTextAdventure
     public class Chunk
     {
 
-        public Tile[,] chunkData {
+        public Tile[,] chunkData
+        {
             get;
         }
 
@@ -46,6 +47,18 @@ namespace LydsTextAdventure
                     this.chunkData[x, y] = defaultTile;
         }
 
+        public int GetX(int startx)
+        {
+
+            return (this.chunkX * CHUNK_WIDTH) + startx;
+        }
+
+        public int GetY(int starty)
+        {
+
+            return (this.chunkY * CHUNK_HEIGHT) + starty;
+        }
+
         public bool IsReady()
         {
 
@@ -57,8 +70,8 @@ namespace LydsTextAdventure
 
             char[,] result = new char[CHUNK_WIDTH, CHUNK_HEIGHT];
 
-            for(int x = 0; x < CHUNK_WIDTH; x++)
-                for(int y = 0; y < CHUNK_HEIGHT; y++)
+            for (int x = 0; x < CHUNK_WIDTH; x++)
+                for (int y = 0; y < CHUNK_HEIGHT; y++)
                 {
                     result[x, y] = this.chunkData[x, y].texture.character;
                 }
@@ -76,7 +89,7 @@ namespace LydsTextAdventure
         {
             int _x = x - (this.chunkX * Chunk.CHUNK_WIDTH);
             int _y = y - (this.chunkY * Chunk.CHUNK_WIDTH);
-            return this.chunkData[Math.Abs(_x),Math.Abs(_y)];
+            return this.chunkData[Math.Abs(_x), Math.Abs(_y)];
         }
     }
 }

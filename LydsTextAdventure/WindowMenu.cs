@@ -34,7 +34,7 @@
             this.exitGame.SetOnClick((button) =>
             {
 
-                Program.SetState(Program.State.SHUTDOWN);
+                Program.Stop();
             });
 
             this.menuText.SetPosition(18, 2);
@@ -49,7 +49,7 @@
             this.Show();
             this.SetSize(60, 20);
 
-            this.SetPosition(1,1);
+            this.SetPosition(1, 1);
 
             //various buttons
             this.RegisterElements(newGame, exitGame, settings, menuText);
