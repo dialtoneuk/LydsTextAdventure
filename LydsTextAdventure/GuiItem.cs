@@ -25,20 +25,20 @@ namespace LydsTextAdventure
         public override void Draw(int x, int y, Camera camera = null, Window window = null)
         {
 
-            Surface.DrawBox(x, y, this.Width, this.Height, window.GetRectangle());
+            Surface.DrawBox(x, y, this.Width, this.Height, window.GetRectangle(), Buffer.Types.GUI_BUFFER, false);
 
             if (this.item != null)
             {
-                Surface.DrawText(x + 2 + (this.Width / 2 - 2), y + this.Height / 2 - 1, item.Icon.ToString(), window.GetRectangle());
+                Surface.DrawText(x + 2 + (this.Width / 2 - 2), y + this.Height / 2 - 1, item.Icon.ToString(), window.GetRectangle(false));
 
                 if (this.isHovering)
-                    Surface.DrawText(x + 2, y + this.Height / 2, (item.isTradable ? "T" : "NT") + " / " + (item.isCraftable ? "C" : "NC"), window.GetRectangle());
+                    Surface.DrawText(x + 2, y + this.Height / 2, (item.isTradable ? "T" : "NT") + " / " + (item.isCraftable ? "C" : "NC"), window.GetRectangle(false));
 
                 Surface.DrawText(x + 2, y + this.Height / 2 + 1, item.Name
-                    + new string(Surface.BlankChars(this.Width - item.Name.Length - (6 + (item.ItemQuantity.ToString().Length)))) + "[" + item.ItemQuantity + "]", window.GetRectangle());
+                    + new string(Surface.BlankChars(this.Width - item.Name.Length - (6 + (item.ItemQuantity.ToString().Length)))) + "[" + item.ItemQuantity + "]", window.GetRectangle(false));
             }
             else
-                Surface.DrawText(x + 2, y + this.Height / 2 + 1, "empty", window.GetRectangle());
+                Surface.DrawText(x + 2, y + this.Height / 2 + 1, "empty", window.GetRectangle(false));
         }
     }
 }

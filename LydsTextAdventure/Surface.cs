@@ -57,7 +57,7 @@ namespace LydsTextAdventure
 
             Buffer.SetCursorPosition(x, y);
 
-            if (x + chars.Length > rectangle.Width)
+            if (x + chars.Length > rectangle.Width + rectangle.StartX)
             {
 
                 int a = (x + chars.Length) - (rectangle.Width);
@@ -73,7 +73,7 @@ namespace LydsTextAdventure
                 Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
         }
 
-        public static void DrawBox(int x, int y, int w, int h, Rectangle rectangle = null, Buffer.Types type = Buffer.Types.GUI_BUFFER)
+        public static void DrawBox(int x, int y, int w, int h, Rectangle rectangle = null, Buffer.Types type = Buffer.Types.GUI_BUFFER, bool doubleBorder = true)
         {
 
             int rw = Buffer.WindowWidth;
@@ -105,10 +105,18 @@ namespace LydsTextAdventure
                     if (y + iy > sy + rh)
                         continue;
 
-                    if (ix == 0 || ix == w - 1)
-                        Buffer.Write("|", type);
+                    if (ix == 0 && iy == 0)
+                        Buffer.Write((doubleBorder ? "╔" : "┌"), type);
+                    else if (ix == w - 1 && iy == 0)
+                        Buffer.Write((doubleBorder ? "╗" : "┐"), type);
+                    else if (ix == w - 1 && iy == h - 1)
+                        Buffer.Write((doubleBorder ? "╝" : "┘"), type);
+                    else if (ix == 0 && iy == h - 1)
+                        Buffer.Write((doubleBorder ? "╚" : "└"), type);
+                    else if (ix == 0 || ix == w - 1)
+                        Buffer.Write((doubleBorder ? "║" : "│"), type);
                     else if (iy == 0 || iy == h - 1)
-                        Buffer.Write("-", type);
+                        Buffer.Write((doubleBorder ? "═" : "─"), type);
                     else
                         Buffer.Write(' ', type);
                 }

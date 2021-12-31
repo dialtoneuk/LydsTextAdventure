@@ -8,7 +8,7 @@
 
             this.isSolid = true;
             this.isFluid = true;
-            this.texture = new Texture('_', System.ConsoleColor.DarkBlue);
+            this.texture = new Texture('▒', System.ConsoleColor.DarkBlue);
         }
     }
 }

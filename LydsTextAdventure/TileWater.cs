@@ -6,9 +6,9 @@
         public TileWater()
         {
 
-            this.isSolid = true;
+            this.isSolid = false;
             this.isFluid = true;
-            this.texture = new Texture('_', System.ConsoleColor.Blue);
+            this.texture = new Texture('░', System.ConsoleColor.Blue);
         }
     }
 }

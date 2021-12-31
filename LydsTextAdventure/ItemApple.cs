@@ -10,8 +10,10 @@ namespace LydsTextAdventure
         public ItemApple()
         {
 
+            this.MaxQuantity = 6;
             this.Name = "Apple";
             this.Value = 10.0f; //how much it is worth
+            this.Icon = 'A';
         }
     }
 }

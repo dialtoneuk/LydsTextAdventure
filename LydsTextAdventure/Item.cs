@@ -16,6 +16,7 @@ namespace LydsTextAdventure
 
         public bool isCraftable = true;
         public bool isTradable = true;
+        public bool isUnstackable = false;
         public float Value
         {
             get;
@@ -48,6 +49,9 @@ namespace LydsTextAdventure
 
         public bool TryMerge(Item item)
         {
+
+            if (this.isUnstackable)
+                return false;
 
             if (this.GetType() != item.GetType())
                 return false;

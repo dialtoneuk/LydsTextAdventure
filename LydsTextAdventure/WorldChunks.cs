@@ -8,10 +8,10 @@ namespace LydsTextAdventure
     class WorldChunks : World
     {
 
-        public const float WATER_LEVEL = 0.0035f;
+        public const float WATER_LEVEL = 0.06f;
         public const float STONE_LEVEL = 0.45f;
         public const float LAVA_LEVEL = 0.63f;
-        public const float DEEP_WATER_LEVEL = 0.00005f;
+        public const float DEEP_WATER_LEVEL = 0.001f;
 
         public const int MAX_NUTRIENTS = 12;
         public const int NUTRIENT_MODIFIER = 4;
@@ -147,14 +147,14 @@ namespace LydsTextAdventure
                     if (!this.chunks[new Tuple<int, int>(chunkX, chunkY)].TryGetTileFromWorldPosition(realx, realy, out Tile tile))
                         return false;
 
-                    if (tile.IsHard())
+                    if (tile.isFluid || tile.isSolid)
                         return false;
                 }
 
             return true;
         }
 
-        public async void CreateChunksAroundPlayer(Player player, int renderDistance = 4)
+        public void CreateChunksAroundPlayer(Player player, int renderDistance = 4)
         {
 
             int playerChunkX = player.position.x / Chunk.CHUNK_WIDTH;
@@ -468,9 +468,15 @@ namespace LydsTextAdventure
         public override Position GetInitialSpawnPoint()
         {
 
+            return this.GetInitialSpawnPoint(16);
+        }
+
+        public Position GetInitialSpawnPoint(int radius = 20)
+        {
+
             for (int x = (WorldStartX * Chunk.CHUNK_WIDTH); x < (WorldStartX * Chunk.CHUNK_WIDTH) + (this.WorldWidth * Chunk.CHUNK_WIDTH); x++)
                 for (int y = (WorldStartY * Chunk.CHUNK_HEIGHT); y < (WorldStartY * Chunk.CHUNK_HEIGHT) + (this.WorldHeight * Chunk.CHUNK_HEIGHT); y++)
-                    if (this.IsAreaValid(x - 16, y - 16, 16, 16))
+                    if (this.IsAreaValid(x - radius, y - radius, radius, radius))
                         return new Position(x, y);
 
 

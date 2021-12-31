@@ -13,6 +13,8 @@ namespace LydsTextAdventure
             this.rewards = new Type[]
             {
                   typeof(ItemWood),
+                  typeof(ItemWood),
+                  typeof(ItemWood),
                   typeof(ItemStick)
             };
             this.texture = new Texture('|');

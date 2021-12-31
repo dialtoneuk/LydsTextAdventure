@@ -12,7 +12,8 @@ namespace LydsTextAdventure
 
             this.Name = "Stick";
             this.Value = 10.0f; //how much it is worth
-            this.MaxQuantity = 16;
+            this.MaxQuantity = 512; //carry a lot of stick
+            this.Icon = '/';
         }
     }
 }

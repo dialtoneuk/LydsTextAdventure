@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LydsTextAdventure
+﻿namespace LydsTextAdventure
 {
     class WindowInventory : Window
     {
 
-        protected GuiGroup group = new GuiGroup();
+        protected GuiList group = new GuiList();
         protected Player player;
 
         public override void Initialize()
@@ -43,31 +39,12 @@ namespace LydsTextAdventure
 
                 this.group.RemoveElements();
 
-                int count = 0;
-
                 foreach (Item item in this.player.Inventory.items)
                 {
 
                     GuiItem _i = new GuiItem();
-
-                    //look one ahead and see if it is out of the current windows rectangle
-                    if (this.GetRectangle(false).IsInsideRectangle(this.position.x, this.position.y + ((count + 1) * _i.Height)))
-                    {
-
-                        _i.SetItem(item);
-                        this.group.AddElements(_i);
-                        count++;
-                    }
-                    else
-                    {
-
-                        //if it is, put this label here saying some items are hidden
-                        GuiLabel label = new GuiLabel();
-                        label.SetText("-[Items Hidden]"); //looks nice
-                        this.group.AddElements(label);
-                        break;
-                    }
-
+                    _i.SetItem(item);
+                    this.group.AddElements(_i);
                 }
             }
 

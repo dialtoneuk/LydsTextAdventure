@@ -21,11 +21,5 @@ namespace LydsTextAdventure
             if (texture != null)
                 this.texture = texture;
         }
-
-        public bool IsHard()
-        {
-
-            return this.isSolid;
-        }
     }
 }

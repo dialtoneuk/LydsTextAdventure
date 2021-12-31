@@ -20,7 +20,7 @@
 
             this.SetName("player_statistics");
             this.SetTitle("Player Statistics");
-            this.SetSize(40, 8);
+            this.SetSize(40, 9);
             this.Show();
 
             this.group.SetPosition(1, 1);

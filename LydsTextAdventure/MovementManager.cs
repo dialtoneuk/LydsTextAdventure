@@ -50,7 +50,7 @@ namespace LydsTextAdventure
                     return false;
             }
 
-            return tile.IsHard() == false;
+            return tile.isSolid == false;
         }
     }
 }

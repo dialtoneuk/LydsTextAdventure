@@ -7,8 +7,8 @@ namespace LydsTextAdventure
     public class GuiGroup : GuiElement
     {
 
-        private bool shouldDraw = false;
-        private bool shouldUpdate = false;
+        protected bool shouldDraw = false;
+        protected bool shouldUpdate = false;
         protected List<GuiElement> groupElements = new List<GuiElement>();
 
         public void AddElements(params GuiElement[] elements)
