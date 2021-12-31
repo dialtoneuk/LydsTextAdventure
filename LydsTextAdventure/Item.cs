@@ -7,22 +7,33 @@ namespace LydsTextAdventure
     public class Item
     {
 
-        public string name;
-        public bool isCraftable = true;
-        public bool isTradable = true;
-        public float value = 0;
-        public string id = Guid.NewGuid().ToString();
-
-        public int ItemQuantity { get; private set; } = 1;
-        public int MaxQuantity { get; private set; } = 32;
-
-        public int ItemQuality { get; private set; } = 1;
-
-        public Item()
+        public string Name
         {
 
-            this.name = "Default Item";
+            get;
+            protected set;
+        } = "Default Item";
+
+        public bool isCraftable = true;
+        public bool isTradable = true;
+        public float Value
+        {
+            get;
+            protected set;
         }
+
+        public readonly string id = Guid.NewGuid().ToString();
+
+        public char Icon
+        {
+            get;
+            protected set;
+        } = '?';
+
+        public int ItemQuantity { get; protected set; } = 1;
+        public int MaxQuantity { get; protected set; } = 32;
+
+        public int ItemQuality { get; protected set; } = 1;
         //will try and create an Item from its type
         public static Item CreateItem(Type type)
         {
@@ -45,7 +56,7 @@ namespace LydsTextAdventure
                 return false;
 
             this.ItemQuantity += item.ItemQuantity;
-            Program.DebugLog("merged item " + this.name + "[" + this.ItemQuantity + "]", "inventory");
+            Program.DebugLog("merged item " + this.Name + "[" + this.ItemQuantity + "]", "inventory");
             return true;
         }
 

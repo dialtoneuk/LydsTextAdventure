@@ -83,7 +83,7 @@ namespace LydsTextAdventure
                     return;
 
                 items.Add(item);
-                Program.DebugLog("added item " + item.name + "[" + item.ItemQuantity + "]", "inventory");
+                Program.DebugLog("added item " + item.Name + "[" + item.ItemQuantity + "]", "inventory");
             };
 
             if (this.HasItem(item.GetType()))

@@ -5,8 +5,18 @@ namespace LydsTextAdventure
     public class GuiElement
     {
 
-        public GuiElement parent;
-        public Window window;
+        public GuiElement Parent
+        {
+            get;
+            set;
+        }
+
+        public Window Window
+        {
+            get;
+            set;
+        }
+
         public readonly Position position = new Position(0, 0);
 
         private int[] dockPadding = new int[]
@@ -72,8 +82,8 @@ namespace LydsTextAdventure
             if (position != null)
                 position.SetPosition(position);
 
-            this.parent = parent;
-            this.window = window;
+            this.Parent = parent;
+            this.Window = window;
 
             if (window != null)
                 window.RegisterElement(this);
@@ -204,8 +214,8 @@ namespace LydsTextAdventure
 
             int x = this.position.x;
 
-            if (this.parent != null)
-                x = this.parent.position.x + x;
+            if (this.Parent != null)
+                x = this.Parent.position.x + x;
 
             return x;
         }
@@ -215,8 +225,8 @@ namespace LydsTextAdventure
 
             int y = this.position.y;
 
-            if (this.parent != null)
-                y = this.parent.position.y + y;
+            if (this.Parent != null)
+                y = this.Parent.position.y + y;
 
             return y;
         }
@@ -224,29 +234,29 @@ namespace LydsTextAdventure
         public int GetX()
         {
 
-            if (this.window == null)
+            if (this.Window == null)
                 return this.GetLeft();
 
-            return this.window.position.x + this.GetLeft();
+            return this.Window.position.x + this.GetLeft();
         }
 
         public int GetY()
         {
 
-            if (this.window == null)
+            if (this.Window == null)
                 return this.GetTop();
 
-            return this.window.position.y + this.GetTop();
+            return this.Window.position.y + this.GetTop();
         }
 
         public Position GetPosition()
         {
 
-            if (this.parent == null)
+            if (this.Parent == null)
                 return new Position(this.position.x, this.position.y);
 
 
-            if (this.window == null)
+            if (this.Window == null)
                 return new Position(this.GetLeft(), this.GetTop());
 
             return new Position(this.GetX(), this.GetY());

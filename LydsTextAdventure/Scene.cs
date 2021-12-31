@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LydsTextAdventure
 {
-    abstract class Scene
+    public abstract class Scene
     {
 
         public readonly string sceneName;
         private List<Command> sceneCommands;
+        private bool hasUpdated = false;
 
         public Scene(string name, List<Command> commands = null)
         {
@@ -52,7 +54,11 @@ namespace LydsTextAdventure
         public void Load()
         {
 
-            Program.DebugLog("base load called");
+            Program.DebugLog("running before");
+
+            this.Before();
+
+            Program.DebugLog("loading commands");
 
             List<Command> commands = this.LoadCommands();
 
@@ -68,8 +74,6 @@ namespace LydsTextAdventure
             foreach (Command command in this.sceneCommands)
                 if (CommandManager.IsCommandUnique(command))
                     CommandManager.Add(command);
-
-            this.Before();
 
             return;
         }
@@ -108,17 +112,22 @@ namespace LydsTextAdventure
         public virtual void Update()
         {
 
-            //Update the world
-            WorldManager.UpdateWorlds();
+            //only on even ticks
+            if (Program.GetTick() % 2 == 0)
+                //Update the world
+                WorldManager.UpdateWorlds();
 
-            //then update entities
+            //update entites
             EntityManager.UpdateEntities();
 
-            //then update windows
-            WindowManager.UpdateWindows();
+            //only on even ticks
+            if (Program.GetTick() % 2 == 0)
+                //then update windows
+                WindowManager.UpdateWindows();
 
-            //cache alive and visible entities;
-            EntityManager.CacheEntities();
+            if (Program.GetTick() % 1024 == 0)
+                //cache alive and visible entities
+                EntityManager.CacheEntities();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace LydsTextAdventure
     public class Chunk
     {
 
-        public Tile[,] chunkData
+        public Dictionary<Tuple<int, int>, Tile> chunkData
         {
             get;
         }
@@ -40,11 +40,11 @@ namespace LydsTextAdventure
             this.chunkX = chunkX;
             this.chunkY = chunkY;
             this.chunkId = chunkId;
-            this.chunkData = new Tile[CHUNK_WIDTH, CHUNK_HEIGHT];
+            this.chunkData = new Dictionary<Tuple<int, int>, Tile>();
 
             for (int x = 0; x < CHUNK_WIDTH; x++)
                 for (int y = 0; y < CHUNK_HEIGHT; y++)
-                    this.chunkData[x, y] = defaultTile;
+                    this.chunkData[new Tuple<int, int>(x, y)] = defaultTile;
         }
 
         public int GetX(int startx)
@@ -73,7 +73,7 @@ namespace LydsTextAdventure
             for (int x = 0; x < CHUNK_WIDTH; x++)
                 for (int y = 0; y < CHUNK_HEIGHT; y++)
                 {
-                    result[x, y] = this.chunkData[x, y].texture.character;
+                    result[x, y] = this.chunkData[new Tuple<int, int>(x, y)].texture.character;
                 }
 
             return result;
@@ -89,7 +89,22 @@ namespace LydsTextAdventure
         {
             int _x = x - (this.chunkX * Chunk.CHUNK_WIDTH);
             int _y = y - (this.chunkY * Chunk.CHUNK_WIDTH);
-            return this.chunkData[Math.Abs(_x), Math.Abs(_y)];
+            return this.chunkData[new Tuple<int, int>(_x, _y)];
+        }
+
+
+        public bool TryGetTileFromWorldPosition(int x, int y, out Tile value)
+        {
+            int _x = x - (this.chunkX * Chunk.CHUNK_WIDTH);
+            int _y = y - (this.chunkY * Chunk.CHUNK_WIDTH);
+            return this.chunkData.TryGetValue(new Tuple<int, int>(_x, _y), out value);
+        }
+
+        public void SetTileFromWorldPosition(Tile tile, int x, int y)
+        {
+            int _x = x - (this.chunkX * Chunk.CHUNK_WIDTH);
+            int _y = y - (this.chunkY * Chunk.CHUNK_WIDTH);
+            this.chunkData[new Tuple<int, int>(_x, _y)] = tile;
         }
     }
 }

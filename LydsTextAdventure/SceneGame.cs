@@ -9,80 +9,37 @@ namespace LydsTextAdventure
 
         protected WorldChunks world;
         protected Player player;
+        protected InputManager inputManager = new InputManager();
         protected Camera camera;
 
-        public SceneGame(string name, List<Command> commands = null) : base(name, commands)
-        {
-        }
+        public SceneGame(string name, List<Command> commands = null) : base(name, commands) { }
 
         protected override List<Command> LoadCommands()
         {
 
-            //scene commands
-            return new List<Command>(){
-                new Command("down", () => {
-                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y + 1));
-                }, "s"),
-                new Command("up", () => {
-                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x, this.player.position.y - 1));
-                }, "w"),
-                new Command("left", () => {
-                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x - 1, this.player.position.y));
-                }, "a"),
-                new Command("right", () => {
-                    MovementManager.MoveEntity( this.player, new Position(this.player.position.x + 1, this.player.position.y));
-                }, "d"),
-                new Command("position", () =>
-                {
-                    Program.DebugLog(this.player.position.ToString());
-                }, "p"),
-                new Command("no_clip", () =>
-                {
+            List<Command> commands = new List<Command>();
 
-                    this.player.SetSolid(!this.player.isSolid);
-                    Program.DebugLog("Noclip toggled");
-                }, "n"),
+            commands.AddRange(inputManager.GetInteractionCommands());
+            commands.AddRange(inputManager.GetMovementCommands());
 
-                //Move this somewhere it can be inside its own class/area so its easy to add into every scene where its needed
-                new Command("click", () =>
-                {
+#if DEBUG
+            Program.DebugLog("added cheat commands");
+            commands.AddRange(inputManager.GetCheatCommands());
+#endif
 
-                    //gui elements
-                    Position pos = InputController.GetMousePosition();
-                    foreach(Window window in WindowManager.GetOpenWindows())
-                    {
-
-                        foreach(GuiElement element in window.guiElements)
-                            if(GuiElement.IsInsideOf(pos, element))
-                            {
-                                element.OnClick();
-                                break;
-                            }
-                    }
-
-                    //must ignore cache and get the latest alive entities
-                    List<Entity> list = EntityManager.GetAliveEntities(true);
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        Entity entity = list[i];
-
-                        if(Entity.IsMouseOver(pos, entity))
-                        {
-                            entity.OnClick(this.player);
-                            break;
-                        }
-                    }
-                }, "q", ConsoleKey.Q)
-            };
+            return commands;
         }
 
         public override void Before()
         {
 
+            this.player = new Player();
+
+            //link input manager
+            inputManager.SetPlayer(this.player);
+
             this.world = new WorldChunks(8, 8);
             this.world.GenerateWorld();
-
-            this.player = new Player();
 
             for (int i = 0; i < 10; i++)
             {
@@ -95,18 +52,22 @@ namespace LydsTextAdventure
 
             this.camera = new Camera(this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(79, 41);
+            this.camera.SetSize(Buffer.WindowWidth - 48, 41);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
             WindowPlayerStatistics stats = new WindowPlayerStatistics();
             stats.SetPlayer(this.player);
-            stats.SetPosition(80, 0);
+            stats.SetPosition(Buffer.WindowWidth - 48, 0);
 
             WindowInventory inventory = new WindowInventory();
             inventory.SetPlayer(this.player);
-            inventory.SetPosition(80, 9);
+            inventory.SetPosition(Buffer.WindowWidth - 48, 9);
+
+            WindowConsole console = new WindowConsole();
+            console.SetSize(Buffer.WindowWidth - 8, 20);
+            console.SetPosition(0, 41);
 
             base.Before();
         }

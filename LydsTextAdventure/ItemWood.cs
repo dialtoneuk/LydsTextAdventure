@@ -10,8 +10,9 @@ namespace LydsTextAdventure
         public ItemWood()
         {
 
-            this.name = "Wood";
-            this.value = 1.0f; //how much it is worth
+            this.Name = "Wood";
+            this.Value = 1.0f; //how much it is worth
+            this.Icon = '=';
         }
     }
 }

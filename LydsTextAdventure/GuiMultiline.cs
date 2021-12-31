@@ -29,10 +29,11 @@ namespace LydsTextAdventure
         public override void Draw(int x, int y, Camera camera = null, Window window = null)
         {
 
+            Rectangle rect = (window == null ? this.GetRectangle() : window.GetRectangle());
             int _y = 0;
             foreach (string str in this.strings)
                 if (str != null && _y < this.Height)
-                    Surface.DrawText(x, y + _y++, str, this.GetRectangle());
+                    Surface.DrawText(x, y + _y++, str, rect);
 
             base.Draw(x, y, camera, window);
         }

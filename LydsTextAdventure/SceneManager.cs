@@ -34,6 +34,7 @@ namespace LydsTextAdventure
         public static void StartScene(Scene scene)
         {
 
+            Program.HookManager.CallHook("PreLoad", HookManager.Groups.Scene, scene);
             Program.DebugLog("loading scene " + scene.sceneName, "scene_manager");
 
             CommandManager.Clear();
@@ -53,8 +54,10 @@ namespace LydsTextAdventure
             Program.DebugLog("calling scene load", "scene_manager");
             scene.Load();
 
+            Program.HookManager.CallHook("PreStart", HookManager.Groups.Scene, scene);
             Program.DebugLog("calling scene start", "scene_manager");
             scene.Start();
+            Program.HookManager.CallHook("Start", HookManager.Groups.Scene, scene);
 
             SceneManager.CurrentScene = scene;
         }
@@ -68,15 +71,23 @@ namespace LydsTextAdventure
         public static void UpdateScene()
         {
 
+            Program.HookManager.CallHook("PreUpdate", HookManager.Groups.Scene);
+
             if (SceneManager.CurrentScene != null)
                 SceneManager.CurrentScene.Update();
+
+            Program.HookManager.CallHook("Update", HookManager.Groups.Scene);
         }
 
         public static void DrawScene()
         {
 
+            Program.HookManager.CallHook("PreDraw", HookManager.Groups.Scene);
+
             if (SceneManager.CurrentScene != null)
                 SceneManager.CurrentScene.Draw();
+
+            Program.HookManager.CallHook("Draw", HookManager.Groups.Scene);
         }
 
         public static void AddScene(Scene scene)

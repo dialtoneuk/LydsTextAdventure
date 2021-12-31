@@ -7,38 +7,16 @@ namespace LydsTextAdventure
 
         protected Camera camera;
         protected Player player;
+        protected InputManager inputManager = new InputManager();
         protected WorldTitleScreen world;
 
-        public SceneMenu(string name, List<Command> commands = null) : base(name, commands)
-        {
-        }
+        public SceneMenu(string name, List<Command> commands = null) : base(name, commands) { }
 
         protected override List<Command> LoadCommands()
         {
-
-            return new List<Command>(){
-                new Command("click", () =>
-                {
-
-                    Position pos = InputController.GetMousePosition();
-                    foreach(Window window in WindowManager.GetOpenWindows())
-                    {
-
-                        for (int i = 0; i < window.guiElements.Count; i++) { GuiElement element = window.guiElements[i]; if(GuiElement.IsInsideOf(pos, element))
-                                element.OnClick(); } }
-
-                    List<Entity> list = EntityManager.GetVisibleEntities(true);
-
-                    for (int i = 0; i < list.Count; i++)
-                    {
-
-                        Entity entity = list[i];
-
-                        if(Entity.IsMouseOver(pos, entity))
-                                entity.OnClick(this.player);
-                    }
-                }, "q")
-            };
+            List<Command> commands = new List<Command>();
+            commands.AddRange(inputManager.GetInteractionCommands());
+            return commands;
         }
 
 
@@ -46,7 +24,8 @@ namespace LydsTextAdventure
         {
 
             this.player = new Player();
-            this.player.SetVisible(false);
+            this.player.isVisible = false;
+            this.inputManager.SetPlayer(this.player);
 
             this.world = new WorldTitleScreen();
             this.world.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);
@@ -59,7 +38,7 @@ namespace LydsTextAdventure
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
-            WindowMenu menu = new WindowMenu();
+            _ = new WindowMenu();
 
             base.Before();
         }

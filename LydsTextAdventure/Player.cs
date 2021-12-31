@@ -21,7 +21,7 @@
         public override void Draw(int x, int y, Camera camera)
         {
 
-            Surface.DrawText(x, y + 1, "hp: " + this.health.ToString(), camera.GetViewRectangle());
+            Surface.DrawText(x, y + 1, "hp: " + this.Health.ToString(), camera.GetViewRectangle());
 
             base.Draw(x, y, camera);
         }

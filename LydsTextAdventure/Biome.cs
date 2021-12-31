@@ -11,9 +11,9 @@ namespace LydsTextAdventure
         public Dictionary<Tuple<float, float>, Type[]> biomeFoliage;
         public Random biomeRandom = new Random();
 
-        public const int SEED_CHANCE = 50;
-        public const int SEED_MAX_DISTANCE = 15;
-        public const int SEED_MIN_DISTANCE = 2;
+        public const int SEED_CHANCE = 10;
+        public const int SEED_MAX_DISTANCE = 30;
+        public const int SEED_MIN_DISTANCE = 10;
 
         public int lastDistance = 0;
 

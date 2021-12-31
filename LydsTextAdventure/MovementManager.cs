@@ -23,10 +23,10 @@ namespace LydsTextAdventure
         public static bool CanMove(Entity entity, Position position, World world = null)
         {
 
-            if (world == null && entity.world == null)
+            if (world == null && entity.World == null)
                 world = WorldManager.CurrentWorld;
             else
-                world = entity.world;
+                world = entity.World;
 
             Tile tile = world.GetTile(position.x, position.y);
 
@@ -36,7 +36,7 @@ namespace LydsTextAdventure
             if (tile.GetType() == typeof(TileWorldBorder))
                 return false;
 
-            if (!entity.IsSolid())
+            if (!entity.isSolid)
                 return true;
 
             List<Entity> entities = EntityManager.GetEntitiesAroundPosition(position);

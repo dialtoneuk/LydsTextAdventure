@@ -30,6 +30,8 @@ namespace LydsTextAdventure
             input.text = "";
             input.keys = new List<ConsoleKeyInfo>();
 
+            Program.HookManager.CallHook("InputStart", HookManager.Groups.Input);
+
             while (true)
             {
 
@@ -46,19 +48,24 @@ namespace LydsTextAdventure
                 {
                     input.text = key.Key.ToString();
                     input.keys.Add(key);
+                    Program.HookManager.CallHook("GetKey", HookManager.Groups.Input, key);
                     break;
                 }
                 else
                 {
+
                     input.text += key.Key.ToString();
+                    Program.HookManager.CallHook("InputAppended", HookManager.Groups.Input, input.text);
                 }
 
+                Program.HookManager.CallHook("KeysAppended", HookManager.Groups.Input, key);
                 input.keys.Add(key);
             }
 
 
             InputController.IsRunning = false;
             InputController.LastKeyboardInput = input;
+            Program.HookManager.CallHook("InputEnd", HookManager.Groups.Input, input);
             return input;
         }
     }

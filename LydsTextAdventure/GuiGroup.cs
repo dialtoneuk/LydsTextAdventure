@@ -21,6 +21,8 @@ namespace LydsTextAdventure
                     continue;
 
                 element.Group = this;
+                element.Parent = this;
+                element.Window = this.Window;
                 groupElements.Add(element);
             }
         }
@@ -59,7 +61,22 @@ namespace LydsTextAdventure
                 currentElement.SetPosition(this.position.x, this.position.y + y);
 
                 if (this.shouldUpdate)
+                {
+
                     currentElement.Update();
+
+                    //is hovering over
+                    if (GuiElement.IsInsideOf(InputController.GetMousePosition(), currentElement))
+                    {
+
+                        currentElement.isHovering = true;
+                        currentElement.OnHover();
+                    }
+                    else
+                    {
+                        currentElement.isHovering = false;
+                    }
+                }
             }
 
             base.Update();

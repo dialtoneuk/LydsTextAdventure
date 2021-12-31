@@ -5,7 +5,7 @@
         public EntityBush()
         {
 
-            this.name = "Bush";
+            this.Name = "Bush";
             this.texture = new Texture('b');
             this.isStatic = true;
         }

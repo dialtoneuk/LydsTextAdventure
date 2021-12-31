@@ -10,8 +10,9 @@ namespace LydsTextAdventure
         public ItemStick()
         {
 
-            this.name = "Stick";
-            this.value = 10.0f; //how much it is worth
+            this.Name = "Stick";
+            this.Value = 10.0f; //how much it is worth
+            this.MaxQuantity = 16;
         }
     }
 }

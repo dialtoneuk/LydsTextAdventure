@@ -38,11 +38,11 @@ namespace LydsTextAdventure
                 this.cameraPosition = new Position(0, 0);
 
             //creates the view buffer
-            this.temporaryBuffer = new char[this.width, this.height];
+            this.temporaryBuffer = new char[this.Width, this.Height];
 
             //cameras are not solids
-            this.SetSolid(false);
-            this.SetDrawTexture(false);
+            this.isSolid = false;
+            this.shouldDrawTexture = false;
             this.SetSize(32, 32);
             //sets the name of this camera
 
@@ -53,7 +53,7 @@ namespace LydsTextAdventure
         public Rectangle GetViewRectangle()
         {
 
-            return new Rectangle(this.width, this.height);
+            return new Rectangle(this.Width, this.Height);
         }
         public static void UpdateDisabled()
         {
@@ -73,8 +73,13 @@ namespace LydsTextAdventure
             List<Entity> list = EntityManager.GetAliveEntities();
             for (int i1 = 0; i1 < list.Count; i1++)
             {
+
                 Entity ent = list[i1];
-                if (ent.IsAlwaysOn() && ent.IsDisabled() && ent.isStatic)
+
+                if (ent == null)
+                    continue;
+
+                if (ent.isAlwaysOn && ent.isDisabled && ent.isStatic)
                 {
                     ent.SetDisabled(false);
                     continue;
@@ -140,11 +145,11 @@ namespace LydsTextAdventure
         public void SetSize(int width, int height)
         {
 
-            this.width = width;
-            this.height = height;
+            this.Width = width;
+            this.Height = height;
 
             //recreates the view buffer
-            this.temporaryBuffer = new char[this.width, this.height];
+            this.temporaryBuffer = new char[this.Width, this.Height];
         }
 
         public override void Update(int tick)
@@ -159,17 +164,17 @@ namespace LydsTextAdventure
         public virtual void UpdateBuffer(List<Entity> entities)
         {
 
-            if (this.world != null)
-                this.UpdateBuffer(this.world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height), entities);
+            if (this.World != null)
+                this.UpdateBuffer(this.World.Draw(this.cameraPosition.x, this.cameraPosition.y, this.Width, this.Height), entities);
         }
 
         public virtual void UpdateBuffer(char[,] data, List<Entity> entities)
         {
 
-            for (int x = 0; x < this.width; x++)
+            for (int x = 0; x < this.Width; x++)
             {
 
-                for (int y = 0; y < this.height; y++)
+                for (int y = 0; y < this.Height; y++)
                 {
 
                     this.temporaryBuffer[x, y] = data[x, y];
@@ -183,21 +188,21 @@ namespace LydsTextAdventure
         public Position GetViewCenter()
         {
 
-            return new Position(this.cameraPosition.x + this.width / 2, this.cameraPosition.y + this.height / 2);
+            return new Position(this.cameraPosition.x + this.Width / 2, this.cameraPosition.y + this.Height / 2);
         }
 
         public virtual void UpdateBuffer()
         {
 
-            if (this.world != null || this.world.IsDisabled())
+            if (this.World != null || this.World.IsDisabled())
             {
 
-                char[,] worldData = this.world.Draw(this.cameraPosition.x, this.cameraPosition.y, this.width, this.height);
+                char[,] worldData = this.World.Draw(this.cameraPosition.x, this.cameraPosition.y, this.Width, this.Height);
 
-                for (int x = 0; x < this.width; x++)
+                for (int x = 0; x < this.Width; x++)
                 {
 
-                    for (int y = 0; y < this.height; y++)
+                    for (int y = 0; y < this.Height; y++)
                     {
 
                         if (x >= worldData.GetLength(0) || y >= worldData.GetLength(1))
@@ -221,7 +226,7 @@ namespace LydsTextAdventure
             for (int i = 0; i < entities.Count; i++)
             {
                 Entity entity = entities[i];
-                if (!entity.IsVisible() || entity.IsDestroyed())
+                if (!entity.isVisible || entity.isDestroyed)
                     continue;
 
                 if (!entity.ShouldDrawTexture())
@@ -230,10 +235,10 @@ namespace LydsTextAdventure
                 int x = entity.position.x - (this.cameraPosition.x);
                 int y = entity.position.y - (this.cameraPosition.y);
 
-                if (x < 0 || x >= this.width)
+                if (x < 0 || x >= this.Width)
                     continue;
 
-                if (y < 0 || y >= this.height)
+                if (y < 0 || y >= this.Height)
                     continue;
 
                 //draw entity texture
@@ -253,7 +258,7 @@ namespace LydsTextAdventure
         public void CleanBuffer()
         {
 
-            this.temporaryBuffer = new char[this.width, this.height];
+            this.temporaryBuffer = new char[this.Width, this.Height];
         }
 
         public override void Draw(int posx, int posy, Camera camera)
@@ -277,12 +282,12 @@ namespace LydsTextAdventure
                     int x = entity.position.x - (this.cameraPosition.x);
                     int y = entity.position.y - (this.cameraPosition.y);
 
-                    if (x < 0 || x >= this.width)
+                    if (x < 0 || x >= this.Width)
                     {
                         continue;
                     }
 
-                    if (y < 0 || y >= this.height)
+                    if (y < 0 || y >= this.Height)
                     {
                         continue;
                     }
@@ -305,8 +310,8 @@ namespace LydsTextAdventure
             if (this.owner == null)
                 throw new ApplicationException("invalid owner");
 
-            return new Position(this.owner.position.x - (int)Math.Floor((decimal)(this.width / 2) - 1),
-                this.owner.position.y - (int)Math.Floor((decimal)(this.height / 2)) - 1);
+            return new Position(this.owner.position.x - (int)Math.Floor((decimal)(this.Width / 2) - 1),
+                this.owner.position.y - (int)Math.Floor((decimal)(this.Height / 2)) - 1);
         }
     }
 }

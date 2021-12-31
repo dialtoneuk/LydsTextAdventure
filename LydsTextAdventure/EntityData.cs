@@ -19,7 +19,7 @@ namespace LydsTextAdventure
 
             this.x = entity.position.x;
             this.y = entity.position.y;
-            this.name = entity.GetName();
+            this.name = entity.Name;
             this.health = entity.GetHealth();
             this.type = entity.GetType();
         }

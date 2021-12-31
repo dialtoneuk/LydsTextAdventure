@@ -15,9 +15,10 @@ namespace LydsTextAdventure
 
         public const int MAX_NUTRIENTS = 12;
         public const int NUTRIENT_MODIFIER = 4;
-        public const int FOLIAGE_CHANCE = 30;
+        public const int FOLIAGE_CHANCE = 25;
         public const int MIN_NUTRIENTS = -4;
-        public const int MAX_ENTITIES_PER_CHUNK = 128;
+        public const int MAX_ENTITIES_PER_CHUNK = 92;
+        public const int WORLD_START_POS = 912;
 
         private int worldStartX;
         private int worldWidth;
@@ -82,12 +83,44 @@ namespace LydsTextAdventure
             int chunkX = x / Chunk.CHUNK_WIDTH;
             int chunkY = y / Chunk.CHUNK_HEIGHT;
 
-            if (x > (this.WorldWidth * Chunk.CHUNK_WIDTH) || y > (this.WorldHeight * Chunk.CHUNK_HEIGHT)
-                || !this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
+            if (!this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
                 return null;
 
 
-            return this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(x, y);
+            if (!this.chunks[new Tuple<int, int>(chunkX, chunkY)].TryGetTileFromWorldPosition(x, y, out Tile tile))
+                return null;
+
+            return tile;
+        }
+
+        public bool TryGetTile(int x, int y, out Tile tile)
+        {
+            int chunkX = x / Chunk.CHUNK_WIDTH;
+            int chunkY = y / Chunk.CHUNK_HEIGHT;
+
+            if (!this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
+            {
+                tile = null;
+                return false;
+            }
+
+
+            if (!this.chunks[new Tuple<int, int>(chunkX, chunkY)].TryGetTileFromWorldPosition(x, y, out tile))
+                return false;
+
+            return true;
+        }
+
+        public void SetTile(Tile tile, int x, int y)
+        {
+
+            int chunkX = x / Chunk.CHUNK_WIDTH;
+            int chunkY = y / Chunk.CHUNK_HEIGHT;
+
+            if (!this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
+                return;
+
+            this.chunks[new Tuple<int, int>(chunkX, chunkY)].SetTileFromWorldPosition(tile, x, y);
         }
 
         public bool IsAreaValid(int startx, int starty, Rectangle rect)
@@ -108,14 +141,13 @@ namespace LydsTextAdventure
                     int chunkX = realx / Chunk.CHUNK_WIDTH;
                     int chunkY = realy / Chunk.CHUNK_HEIGHT;
 
-                    if (chunkX < this.WorldStartX || chunkY < this.WorldStartY || realx > (this.WorldWidth * Chunk.CHUNK_WIDTH) || realy > (this.WorldHeight * Chunk.CHUNK_HEIGHT))
-                        return false;
-
                     if (!this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
                         return false;
 
-                    if (this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(realx, realy).IsHard())
+                    if (!this.chunks[new Tuple<int, int>(chunkX, chunkY)].TryGetTileFromWorldPosition(realx, realy, out Tile tile))
+                        return false;
 
+                    if (tile.IsHard())
                         return false;
                 }
 
@@ -133,11 +165,7 @@ namespace LydsTextAdventure
                     if (!this.IsRendered(playerChunkX + x, playerChunkY + y))
                     {
                         this.CreateChunk(playerChunkX + x, playerChunkY + y);
-
-                        await Task.Run(() =>
-                        {
-                            this.InitializeChunk(playerChunkX + x, playerChunkY + y);
-                        });
+                        this.InitializeChunk(playerChunkX + x, playerChunkY + y);
 
                         Chunk chunk = this.chunks[new Tuple<int, int>(playerChunkX + x, playerChunkY + y)];
                         this.UpdateChunk(chunk);
@@ -200,7 +228,7 @@ namespace LydsTextAdventure
         private bool IsTilePlantable(Chunk chunk, int x, int y)
         {
 
-            return chunk.chunkData[x, y].isPlantable == true;
+            return chunk.chunkData[new Tuple<int, int>(x, y)].isPlantable == true;
         }
 
         public void InitializeChunk(int x, int y, bool isSpawn = false)
@@ -216,21 +244,14 @@ namespace LydsTextAdventure
                 for (int _y = 0; _y < Chunk.CHUNK_HEIGHT; _y++)
                 {
 
-
                     if (isSpawn)
                     {
-                        chunk.chunkData[_x, _y] = new TileSpawnGrass();
-                        continue;
-                    }
-
-                    if (startX + x < 0 || startY + y < 0)
-                    {
-                        chunk.chunkData[_x, _y] = new TileWorldBorder();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileSpawnGrass();
                         continue;
                     }
                     else if (startX + x == 0 || startY + y == 0)
                     {
-                        chunk.chunkData[_x, _y] = new TileWater();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileWater();
                         continue;
                     }
 
@@ -238,17 +259,17 @@ namespace LydsTextAdventure
 
                     //add water
                     if (val < WATER_LEVEL && val > DEEP_WATER_LEVEL)
-                        chunk.chunkData[_x, _y] = new TileWater();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileWater();
                     else if (val < DEEP_WATER_LEVEL)
-                        chunk.chunkData[_x, _y] = new TileDeepWater();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileDeepWater();
 
                     //add stone
                     if (val > WATER_LEVEL + STONE_LEVEL)
-                        chunk.chunkData[_x, _y] = new TileStone();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileStone();
 
                     //add lava last
                     if (val > LAVA_LEVEL)
-                        chunk.chunkData[_x, _y] = new TileLava();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileLava();
                 }
 
             //this is used later to spawn stuff like trees and plants
@@ -337,7 +358,7 @@ namespace LydsTextAdventure
                     int realX = (chunk.chunkX * Chunk.CHUNK_WIDTH) + _x;
                     int realY = (chunk.chunkY * Chunk.CHUNK_HEIGHT) + _y;
 
-                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]
+                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]
                     {
                         typeof(TileGrass),
                         typeof(TileSpawnGrass),
@@ -347,26 +368,26 @@ namespace LydsTextAdventure
                         typeof(TileDeepWater)
                     }, 2))
                     {
-                        chunk.chunkData[_x, _y] = new TileSand();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileSand();
                     }
 
-                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]{
+                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]{
                         typeof(TileGrass),
                         typeof(TileSpawnGrass)
                     }) && this.IsNearTypes(realX, realY, typeof(TileStone)))
                     {
-                        chunk.chunkData[_x, _y] = new TileDirt();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileDirt();
                     }
 
-                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]{
+                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]{
                         typeof(TileStone)
                     }) && this.IsNearTypes(realX, realY, typeof(TileLava)))
                     {
-                        chunk.chunkData[_x, _y] = new TileMagma();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileMagma();
                     }
 
                     //make obsidian
-                    if (this.CheckType(chunk.chunkData[_x, _y].GetType(), new Type[]
+                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]
                     {
                         typeof(TileLava)
                     }) && this.IsNearTypes(realX, realY, new Type[]{
@@ -376,7 +397,7 @@ namespace LydsTextAdventure
                         typeof(TileDeepWater)
                     }, 1))
                     {
-                        chunk.chunkData[_x, _y] = new TileObsidian();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileObsidian();
                     }
                 }
 
@@ -431,7 +452,14 @@ namespace LydsTextAdventure
                     else if (this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)) && !this.chunks[new Tuple<int, int>(chunkX, chunkY)].IsReady())
                         result[x, y] = 'L';
                     else
-                        result[x, y] = this.chunks[new Tuple<int, int>(chunkX, chunkY)].GetTileFromWorldPosition(actualx, actualy).texture.character;
+                    {
+
+                        if (!this.chunks[new Tuple<int, int>(chunkX, chunkY)].TryGetTileFromWorldPosition(actualx, actualy, out Tile tile))
+                            result[x, y] = ' ';
+                        else
+                            result[x, y] = tile.texture.character;
+                    }
+
                 }
             }
             return result;
@@ -440,33 +468,49 @@ namespace LydsTextAdventure
         public override Position GetInitialSpawnPoint()
         {
 
-            for (int x = (WorldStartX * Chunk.CHUNK_WIDTH); x < (this.WorldWidth * Chunk.CHUNK_WIDTH); x++)
-                for (int y = (WorldStartY * Chunk.CHUNK_HEIGHT); y < (this.WorldHeight * Chunk.CHUNK_HEIGHT); y++)
+            for (int x = (WorldStartX * Chunk.CHUNK_WIDTH); x < (WorldStartX * Chunk.CHUNK_WIDTH) + (this.WorldWidth * Chunk.CHUNK_WIDTH); x++)
+                for (int y = (WorldStartY * Chunk.CHUNK_HEIGHT); y < (WorldStartY * Chunk.CHUNK_HEIGHT) + (this.WorldHeight * Chunk.CHUNK_HEIGHT); y++)
                     if (this.IsAreaValid(x - 16, y - 16, 16, 16))
                         return new Position(x, y);
 
 
-            throw new ApplicationException("no start position found");
+            return new Position(WORLD_START_POS, WORLD_START_POS);
         }
 
         //sets up the spawn area
         public override void GenerateWorld()
         {
 
-            this.WorldWidth = this.width * 2;
-            this.WorldHeight = this.height * 2;
-            this.WorldStartX = 1;
-            this.WorldStartY = 1;
+            this.WorldWidth = this.width * 4;
+            this.WorldHeight = this.height * 4;
+            this.WorldStartX = WORLD_START_POS;
+            this.WorldStartY = WORLD_START_POS;
 
             //first lets just generate the spawn chunks
             //2 padding for smoothing
             for (int x = -2; x < this.width + 2; x++)
+            {
+
+                int realX = x + WORLD_START_POS;
+
+
+                if (realX < this.worldStartX)
+                    this.worldStartX = realX;
+
                 for (int y = -2; y < this.height + 2; y++)
                 {
 
-                    this.chunks[new Tuple<int, int>(x, y)] = new Chunk(x, y, chunkId++);
-                    this.InitializeChunk(x, y, false);
+
+                    int realY = y + WORLD_START_POS;
+
+
+                    if (realY < this.worldStartY)
+                        this.worldStartY = realY;
+
+                    this.chunks[new Tuple<int, int>(realX, realY)] = new Chunk(realX, realY, chunkId++);
+                    this.InitializeChunk(realX, realY, false);
                 }
+            }
 
             this.UpdateChunks();
         }

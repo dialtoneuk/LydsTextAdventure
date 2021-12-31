@@ -1,98 +1,176 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace LydsTextAdventure
+﻿namespace LydsTextAdventure
 {
+    using System;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Defines the <see cref="Entity" />.
+    /// </summary>
     public class Entity
     {
-
+        /// <summary>
+        /// Defines the MaxSpeed.
+        /// </summary>
         public const int MaxSpeed = 1000;
+
+        /// <summary>
+        /// Defines the MaxHealth.
+        /// </summary>
         public const int MaxHealth = 5042;
 
+        /// <summary>
+        /// Defines the position.
+        /// </summary>
         public readonly Position position = new Position(0, 0);
-        public Texture texture = new Texture();
-        public World world;
-        public readonly string id = Guid.NewGuid().ToString();
 
-        public string name
+        /// <summary>
+        /// Defines the texture.
+        /// </summary>
+        public Texture texture = new Texture();
+
+        /// <summary>
+        /// Gets or sets the world.
+        /// </summary>
+        public World World
         {
-            get;
-            protected set;
+            get; set;
         }
 
-        public bool visible = true;
-        public bool destroyed = false;
+        /// <summary>
+        /// Defines the id.
+        /// </summary>
+        public readonly string id = Guid.NewGuid().ToString();
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name
+        {
+            get; protected set;
+        }
+
+        /// <summary>
+        /// Defines the visible.
+        /// </summary>
+        public bool isVisible = true;
+
+        /// <summary>
+        /// Defines the destroyed.
+        /// </summary>
+        public bool isDestroyed = false;
+
+        /// <summary>
+        /// Defines the isWaiting.
+        /// </summary>
         public bool isWaiting = false;
+
+        /// <summary>
+        /// Defines the isStatic.
+        /// </summary>
         public bool isStatic = false;
-        public bool disabled = false;
-        public bool alwaysOn = false;
+
+        /// <summary>
+        /// Defines the disabled.
+        /// </summary>
+        public bool isDisabled = false;
+
+        /// <summary>
+        /// Defines the alwaysOn.
+        /// </summary>
+        public bool isAlwaysOn = false;
+
+        /// <summary>
+        /// Defines the isMarkedForDeletion.
+        /// </summary>
         public bool isMarkedForDeletion = false;
+
+        /// <summary>
+        /// Defines the isSolid.
+        /// </summary>
         public bool isSolid = true;
+
+        /// <summary>
+        /// Defines the isHovering.
+        /// </summary>
         public bool isHovering = false;
-        public bool drawTexture = true;
 
-        public int width = 1;
-        public int height = 1;
-        public int sleepTime = 0;
-        public int health = 0;
-        public int countPosition = -1;
+        /// <summary>
+        /// Defines the drawTexture.
+        /// </summary>
+        public bool shouldDrawTexture = true;
 
+        /// <summary>
+        /// Gets or sets the Width.
+        /// </summary>
+        public int Width { get; protected set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the Height.
+        /// </summary>
+        public int Height { get; protected set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the Health.
+        /// </summary>
+        public int Health { get; protected set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the countPosition.
+        /// </summary>
+        public int CountPosition { get; protected set; } = -1;
+
+        /// <summary>
+        /// The IsMouseOver.
+        /// </summary>
+        /// <param name="position">The position<see cref="Position"/>.</param>
+        /// <param name="entity">The entity<see cref="Entity"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
         public static bool IsMouseOver(Position position, Entity entity)
         {
 
             Position screenPosition = EntityManager.GetMainCamera().GetScreenPosition(entity);
 
-            if (position.x > screenPosition.x - Math.Max(0, entity.width) && position.x < screenPosition.x + Math.Max(0, entity.width))
-                if (position.y < screenPosition.y + Math.Max(0, entity.height) && position.y > screenPosition.y - Math.Max(0, entity.height))
+            if (position.x > screenPosition.x - Math.Max(0, entity.Width) && position.x < screenPosition.x + Math.Max(0, entity.Width))
+                if (position.y < screenPosition.y + Math.Max(0, entity.Height) && position.y > screenPosition.y - Math.Max(0, entity.Height))
                     return true;
 
             return false;
         }
 
-        public bool IsSolid()
-        {
-
-            return this.isSolid;
-        }
-
-        public void SetSolid(bool val)
-        {
-
-            this.isSolid = val;
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Entity"/> class.
+        /// </summary>
         public Entity()
         {
 
-            this.name = this.GetType().ToString();
+            this.Name = this.GetType().ToString();
             EntityManager.RegisterEntity(this);
         }
 
-        public void SetWorld(World world)
-        {
-
-            this.world = world;
-        }
-
-        public World GetWorld()
-        {
-
-            return this.world;
-        }
-
+        /// <summary>
+        /// The SetIndex.
+        /// </summary>
+        /// <param name="position">The position<see cref="int"/>.</param>
         public void SetIndex(int position)
         {
 
-            if (this.countPosition == -1 && position >= 0)
-                this.countPosition = position;
+            if (this.CountPosition == -1 && position >= 0)
+                this.CountPosition = position;
         }
 
+        /// <summary>
+        /// The RemoveEntity.
+        /// </summary>
         public void RemoveEntity()
         {
 
             EntityManager.RemoveEntity(this.id);
         }
 
+        /// <summary>
+        /// The Wait.
+        /// </summary>
+        /// <param name="miliseconds">The miliseconds<see cref="int"/>.</param>
         public virtual void Wait(int miliseconds)
         {
 
@@ -106,13 +184,22 @@ namespace LydsTextAdventure
             });
         }
 
+        /// <summary>
+        /// The ShouldDrawTexture.
+        /// </summary>
+        /// <returns>The <see cref="bool"/>.</returns>
         public virtual bool ShouldDrawTexture()
         {
 
-            return this.drawTexture;
+            return this.shouldDrawTexture;
         }
 
         //will try and create an Entity from its type
+        /// <summary>
+        /// The CreateEntity.
+        /// </summary>
+        /// <param name="type">The type<see cref="Type"/>.</param>
+        /// <returns>The <see cref="Entity"/>.</returns>
         public static Entity CreateEntity(Type type)
         {
 
@@ -124,139 +211,127 @@ namespace LydsTextAdventure
             return (Entity)inst;
         }
 
-        public void SetDrawTexture(bool val)
-        {
-
-            this.drawTexture = val;
-        }
-
-        public void SetVisible(bool val)
-        {
-
-            this.visible = val;
-        }
-
-        public bool IsAlwaysOn()
-        {
-
-            return this.alwaysOn;
-        }
-
-        public bool IsDisabled()
-        {
-
-            return this.disabled;
-        }
-
-        public string GetName()
-        {
-
-            return this.name;
-        }
-
+        /// <summary>
+        /// The SetName.
+        /// </summary>
+        /// <param name="name">The name<see cref="string"/>.</param>
         public void SetName(string name)
         {
 
-            this.name = name;
+            this.Name = name;
         }
 
+        /// <summary>
+        /// The OnColision.
+        /// </summary>
+        /// <param name="entity">The entity<see cref="Entity"/>.</param>
         public virtual void OnColision(Entity entity)
         {
-
         }
 
+        /// <summary>
+        /// The OnPlayerColision.
+        /// </summary>
+        /// <param name="player">The player<see cref="Player"/>.</param>
         public virtual void OnPlayerColision(Player player)
         {
-
         }
 
-        public void SetAlwaysOn(bool val)
-        {
-
-            this.alwaysOn = val;
-        }
-
+        /// <summary>
+        /// The SetDisabled.
+        /// </summary>
+        /// <param name="val">The val<see cref="bool"/>.</param>
         public void SetDisabled(bool val)
         {
 
-            this.disabled = val;
-
+            this.isDisabled = val;
         }
 
+        /// <summary>
+        /// The Destroy.
+        /// </summary>
         public virtual void Destroy()
         {
 
             Program.DebugLog("entity " + this.ToString() + " destroyed", "entity");
         }
 
+        /// <summary>
+        /// The ToString.
+        /// </summary>
+        /// <returns>The <see cref="string"/>.</returns>
         public override string ToString()
         {
 
-            return this.id + ":" + this.name + ":" + this.GetType().ToString() + "[" + this.countPosition + "]";
+            return this.id + ":" + this.Name + ":" + this.GetType().ToString() + "[" + this.CountPosition + "]";
         }
 
+        /// <summary>
+        /// The Update.
+        /// </summary>
+        /// <param name="tick">The tick<see cref="int"/>.</param>
         public virtual void Update(int tick)
         {
-
-            //does nothing
         }
 
+        /// <summary>
+        /// The OnHover.
+        /// </summary>
         public virtual void OnHover()
         {
-
-#if DEBUG
-
-#endif
         }
 
+        /// <summary>
+        /// The OnClick.
+        /// </summary>
+        /// <param name="player">The player<see cref="Player"/>.</param>
         public virtual void OnClick(Player player)
         {
-
-#if DEBUG
-
-#endif
         }
 
+        /// <summary>
+        /// The Draw.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <param name="y">The y<see cref="int"/>.</param>
+        /// <param name="camera">The camera<see cref="Camera"/>.</param>
         public virtual void Draw(int x, int y, Camera camera)
         {
 
-#if DEBUG
-            Surface.DrawText(x, y + 1, this.name, camera.GetViewRectangle());
 
-            if (this.isHovering)
-                Surface.Write(x + 1, y + 2, "[ Hovering! ]");
-#endif
         }
 
+        /// <summary>
+        /// The GetTexture.
+        /// </summary>
+        /// <returns>The <see cref="Texture"/>.</returns>
         public Texture GetTexture()
         {
 
             return this.texture;
         }
 
-
+        /// <summary>
+        /// The GetHealth.
+        /// </summary>
+        /// <returns>The <see cref="int"/>.</returns>
         public virtual int GetHealth()
         {
 
-            return this.health;
+            return this.Health;
         }
 
+        /// <summary>
+        /// The SetHealth.
+        /// </summary>
+        /// <param name="health">The health<see cref="int"/>.</param>
         public void SetHealth(int health)
         {
 
-            this.health = health;
-        }
+            if (health < 0)
+                health = 0;
 
-        public bool IsVisible()
-        {
-
-            return this.visible;
-        }
-
-        public bool IsDestroyed()
-        {
-
-            return this.destroyed;
+            this.Health = health;
         }
     }
 }

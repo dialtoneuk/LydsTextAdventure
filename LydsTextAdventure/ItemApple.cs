@@ -10,8 +10,8 @@ namespace LydsTextAdventure
         public ItemApple()
         {
 
-            this.name = "Apple";
-            this.value = 10.0f; //how much it is worth
+            this.Name = "Apple";
+            this.Value = 10.0f; //how much it is worth
         }
     }
 }

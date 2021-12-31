@@ -15,7 +15,7 @@ namespace LydsTextAdventure
         public EntityTree()
         {
 
-            this.name = "Tree";
+            this.Name = "Tree";
             this.texture = new Texture('^');
             this.isStatic = true;
             this.isSolid = false;

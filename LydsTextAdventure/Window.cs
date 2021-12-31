@@ -155,7 +155,7 @@ namespace LydsTextAdventure
         {
 
             Program.DebugLog("element registered: " + element.ToString(), "window");
-            element.window = this;
+            element.Window = this;
             this.guiElements.Add(element);
         }
 

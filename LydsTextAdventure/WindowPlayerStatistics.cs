@@ -53,7 +53,7 @@
                 this.health.SetText("hp: " + this.player.GetHealth().ToString());
                 this.armor.SetText("armor: XXXXXX");
                 this.playerPosition.SetText("position: " + this.player.position.ToString());
-                this.name.SetText("name: " + this.player.GetName());
+                this.name.SetText("name: " + this.player.Name);
             }
 
             this.input.SetText("mouse pos: " + ConsoleManager.GetMousePosition());

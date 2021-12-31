@@ -33,6 +33,7 @@ namespace LydsTextAdventure
             this.player = player;
         }
 
+        //TODO: Put this into a call or something which isn't everyframe but when stuff is updated???
         public override void Update()
         {
 

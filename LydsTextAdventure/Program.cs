@@ -27,6 +27,7 @@ namespace LydsTextAdventure
         }
 
         public static DebugLogger DebugLogger;
+        public static HookManager HookManager = new HookManager();
 
         public static Command LastCommand
         {

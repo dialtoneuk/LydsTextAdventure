@@ -17,7 +17,7 @@ namespace LydsTextAdventure
         public static void RegisterEntity(Entity entity)
         {
             entity.SetIndex(EntityManager.EntityCount);
-            entity.SetWorld(WorldManager.CurrentWorld);
+            entity.World = WorldManager.CurrentWorld;
 
             if (!Entities.TryAdd(EntityManager.EntityCount, entity))
                 Program.DebugLog("entity " + entity.ToString() + " FAILED TO CREATE!", "entity_manager");
@@ -51,7 +51,7 @@ namespace LydsTextAdventure
                 if (!EntityManager.Entities.TryGetValue(i, out Entity entity))
                     continue;
 
-                if (entity.GetType() == type && !entity.IsDestroyed())
+                if (entity.GetType() == type && !entity.isDestroyed)
                     result.Add(entity);
             }
 
@@ -81,7 +81,7 @@ namespace LydsTextAdventure
             foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
-                if (entity.Value.GetType() == type && !entity.Value.IsDestroyed())
+                if (entity.Value.GetType() == type && !entity.Value.isDestroyed)
                     return entity.Value;
             }
 
@@ -95,7 +95,7 @@ namespace LydsTextAdventure
             foreach (KeyValuePair<int, Entity> entity in EntityManager.Entities)
             {
 
-                if (entity.Value.GetName() == name && !entity.Value.IsDestroyed())
+                if (entity.Value.Name == name && !entity.Value.isDestroyed)
                     result.Add(entity.Value);
             }
 
@@ -113,7 +113,7 @@ namespace LydsTextAdventure
                     continue;
 
                 entity.Value.Destroy();
-                entity.Value.SetVisible(false);
+                entity.Value.isVisible = false;
                 entity.Value.SetDisabled(true);
                 entity.Value.isMarkedForDeletion = true;
                 break;
@@ -125,12 +125,14 @@ namespace LydsTextAdventure
 
             //updates disabled entities not seen by the camera last frame
             Camera.UpdateDisabled();
-
+            //then get the visible entities
             List<Entity> list = EntityManager.GetVisibleEntities();
+
+            //then update them
             for (int i = 0; i < list.Count; i++)
             {
                 Entity entity = list[i];
-                if (entity.IsDisabled())
+                if (entity.isDisabled)
                     continue;
 
                 if (entity.GetType() != typeof(Camera))
@@ -198,7 +200,7 @@ namespace LydsTextAdventure
                     if (entity.position.y > position.y - range && entity.position.y < position.y + range)
                     {
 
-                        if (solidsOnly && !entity.IsSolid())
+                        if (solidsOnly && !entity.isSolid)
                             continue;
 
                         result.Add(entity);
@@ -227,7 +229,7 @@ namespace LydsTextAdventure
                 }
 
 
-                if (entity.IsVisible() && !entity.IsDestroyed())
+                if (entity.isVisible && !entity.isDestroyed)
                     result.Add(entity);
             }
 
@@ -250,10 +252,10 @@ namespace LydsTextAdventure
                     continue;
                 }
 
-                if (!entity.IsDestroyed() && !entity.isMarkedForDeletion)
+                if (!entity.isDestroyed && !entity.isMarkedForDeletion)
                     AliveEntities.Add(entity);
 
-                if (entity.IsVisible() && !entity.IsDestroyed() && !entity.isMarkedForDeletion)
+                if (entity.isVisible && !entity.isDestroyed && !entity.isMarkedForDeletion)
                     VisibleEntities.Add(entity);
             }
         }
@@ -276,7 +278,7 @@ namespace LydsTextAdventure
                     continue;
                 }
 
-                if (!entity.IsDestroyed() && !entity.isMarkedForDeletion)
+                if (!entity.isDestroyed && !entity.isMarkedForDeletion)
                     result.Add(entity);
             }
 
