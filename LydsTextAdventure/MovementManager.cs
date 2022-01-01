@@ -39,7 +39,7 @@ namespace LydsTextAdventure
             if (!entity.isSolid)
                 return true;
 
-            List<Entity> entities = EntityManager.GetEntitiesAroundPosition(position);
+            List<Entity> entities = EntityManager.GetVisibleEntitiesAroundPosition(position);
 
             foreach (Entity ent in entities)
             {

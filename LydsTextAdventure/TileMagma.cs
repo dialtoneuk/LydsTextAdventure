@@ -7,7 +7,7 @@
         {
 
             this.isSolid = false;
-            this.texture = new Texture('M', System.ConsoleColor.DarkYellow);
+            this.texture = new Texture('▒', System.ConsoleColor.DarkYellow);
         }
     }
 }

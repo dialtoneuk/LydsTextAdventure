@@ -145,7 +145,7 @@ namespace LydsTextAdventure
                     else
                         entity.isHovering = false;
 
-                if (!entity.isWaiting && !entity.isStatic)
+                if (!entity.isWaiting && !entity.isStatic && !entity.isMarkedForDeletion)
                 {
                     entity.Update(Program.GetTick());
                 }
@@ -185,14 +185,26 @@ namespace LydsTextAdventure
             return entities.FirstOrDefault();
         }
 
+        public static List<Entity> GetVisibleEntitiesAroundPosition(Position position, int range = 1, bool solidsOnly = true)
+        {
+
+            return (EntityManager.GetEntities(position, range, solidsOnly, EntityManager.GetVisibleEntities()));
+        }
+
+
         public static List<Entity> GetEntitiesAroundPosition(Position position, int range = 1, bool solidsOnly = true)
+        {
+
+            return (EntityManager.GetEntities(position, range, solidsOnly, EntityManager.GetAliveEntities()));
+        }
+
+        public static List<Entity> GetEntities(Position position, int range, bool solidsOnly, List<Entity> list)
         {
 
             if (range <= 0)
                 range = 1;
 
             List<Entity> result = new List<Entity>();
-            List<Entity> list = EntityManager.GetAliveEntities();
             for (int i = 0; i < list.Count; i++)
             {
                 Entity entity = list[i];
@@ -229,7 +241,7 @@ namespace LydsTextAdventure
                 }
 
 
-                if (entity.isVisible && !entity.isDestroyed)
+                if (entity.isVisible && !entity.isDestroyed && !entity.isMarkedForDeletion)
                     result.Add(entity);
             }
 

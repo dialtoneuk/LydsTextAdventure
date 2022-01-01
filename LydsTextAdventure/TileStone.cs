@@ -7,7 +7,7 @@
         {
 
             this.isSolid = true;
-            this.texture = new Texture('S', System.ConsoleColor.Green);
+            this.texture = new Texture('█', System.ConsoleColor.Green);
         }
     }
 }

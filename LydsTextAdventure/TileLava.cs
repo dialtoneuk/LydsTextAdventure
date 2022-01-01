@@ -8,7 +8,7 @@
 
             this.isPlantable = false;
             this.isSolid = false;
-            this.texture = new Texture('L', System.ConsoleColor.Red);
+            this.texture = new Texture('▓', System.ConsoleColor.Red);
         }
     }
 }

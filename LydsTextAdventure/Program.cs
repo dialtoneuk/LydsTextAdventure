@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
@@ -65,6 +66,9 @@ namespace LydsTextAdventure
             //load game
             Program.LoadGame();
 
+            //start menu scene
+            SceneManager.StartScene(INITIAL_SCENE);
+
             //start gameloop
             Program.GameLoop();
         }
@@ -94,101 +98,129 @@ namespace LydsTextAdventure
             Scenes.RegisterScenes();
         }
 
+        public static void ReintroduceInputThread()
+        {
+
+            //get the input
+            if (InputController.IsAwaitingInput && !InputController.IsRunning)
+            {
+
+                Task.Factory.StartNew(() =>
+                {
+                    InputController.KeyboardInput input = InputController.GetKeyboardInput();
+                    Command command = CommandManager.GetCommand(input.text);
+
+                    if (command == null)
+                    {
+
+                        if (input.keys.Count == 0)
+                            return;
+
+                        command = CommandManager.GetCommandByConsoleKey(input.keys[0].Key);
+
+                        if (command == null)
+                        {
+                            Program.DebugLog("invalid command:" + input.text);
+                            return;
+                        }
+
+                    }
+
+                    command.Execute();
+                    Program.LastCommand = command;
+                });
+            }
+        }
+
         public static void GameLoop()
         {
 
-
-            //start menu scene
-            SceneManager.StartScene(INITIAL_SCENE);
+            if (ProgramState == State.RUNNING)
+                throw new ApplicationException("state already running");
 
             //set state to running
             ProgramState = State.RUNNING;
 
-            //game loop
-            while (!ProgramState.Equals(State.SHUTDOWN))
+            //start in a new thread
+            Task.Factory.StartNew(() =>
             {
-
-                Console.CursorVisible = false;
-                Buffer.Clear();
-
-                if (InputController.IsAwaitingInput && !InputController.IsRunning)
+                //game loop
+                while (!ProgramState.Equals(State.SHUTDOWN))
                 {
 
-                    Task.Factory.StartNew(() =>
+                    Console.CursorVisible = false;
+
+                    Buffer.Clear();
+
+                    //check dat input thread
+                    Program.ReintroduceInputThread();
+
+                    //process this frame below!
+
+                    //update then draw scene
+                    if (SceneManager.IsSceneActive())
                     {
-                        InputController.KeyboardInput input = InputController.GetKeyboardInput();
-                        Command command = CommandManager.GetCommand(input.text);
 
-                        if (command == null)
-                        {
+                        //update the scene and wait until it is done.
+                        SceneManager.UpdateScene();
 
-                            if (input.keys.Count == 0)
-                                return;
-
-                            command = CommandManager.GetCommandByConsoleKey(input.keys[0].Key);
-
-                            if (command == null)
-                            {
-                                Program.DebugLog("invalid command:" + input.text);
-                                return;
-                            }
-
-                        }
-
-                        command.Execute();
-                        Program.LastCommand = command;
-                    });
-                }
-
-                //update then draw scene but only on even ticks (this helps with smoothness)
-                if (SceneManager.IsSceneActive())
-                {
-
-                    SceneManager.UpdateScene();
-                    //Draw the scene
-                    SceneManager.DrawScene();
-                }
-
-                //takes all of our draw data and adds it to the buffer
-                Buffer.PrepareBuffer();
-                //Draws the buffer for the next frame
-                Buffer.DrawBuffer();
+                        //then draw the scene
+                        SceneManager.DrawScene();
+                    }
 
 #if DEBUG
+                    //send alive to console
+                    if (Program.Tick % 1024 == 0)
+                        Program.DebugLog("check alive");
 
-                if (Program.Tick % 1024 == 0)
-                    Program.DebugLog("check alive");
-
-                //send console messages every 1 ticks as if its to fast it will throw exception
-                if (Program.Tick % 1 == 0 && Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)
-                {
-                    //increments the post position by one if it is less than the stack position and sends that message to the console
-                    Program.DebugLogger.WriteLine(Program.DebugLogger.DebugLog[Program.DebugLogger.LastPosition++]);
-                }
+                    //send console messages every 1 ticks as if its to fast it will throw exception
+                    if (Program.Tick % 1 == 0 && Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)
+                    {
+                        //increments the post position by one if it is less than the stack position and sends that message to the console
+                        Program.DebugLogger.WriteLine(Program.DebugLogger.DebugLog[Program.DebugLogger.LastPosition++]);
+                    }
 
 #endif
 
-                //reset tick if we are over 8192
-                if (Program.Tick >= Program.MAX_TICK)
-                {
+                    //reset tick if we are over 8192
+                    if (Program.Tick >= Program.MAX_TICK)
+                    {
 
-                    Program.Clear();
-                    Program.DebugLog("screen cleaned");
-                    Program.Tick = 0;
+                        Program.Clear();
+                        Program.DebugLog("screen cleaned");
+                        Program.Tick = 0;
+                    }
+                    else
+                        Program.Tick++;
+
+                    //prepare the last loops buffer data
+                    Buffer.PrepareBuffer();
+                    //Draw it
+                    Buffer.DrawBuffer();
                 }
-                else
-                    Program.Tick++;
-            }
 
-#if DEBUG
-            Program.DebugLogger.WriteShutdown();
-#endif
+                //shutdown if we escape the loop
+                Program.Shutdown();
+            });
+
+            //sleep this thread
+            Thread.Sleep(Timeout.Infinite);
         }
 
         public static void Stop()
         {
 
             ProgramState = State.SHUTDOWN;
+        }
+
+        public static void Shutdown()
+        {
+
+#if DEBUG
+            Program.DebugLogger.WriteShutdown();
+#endif
+
+            System.Environment.Exit(0);
         }
 
         public static void Clear()

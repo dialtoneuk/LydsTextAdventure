@@ -7,6 +7,7 @@ namespace LydsTextAdventure
     {
 
         public static Scene CurrentScene;
+        private static bool isReady = false;
 
         protected static List<Scene> Scenes = new List<Scene>();
 
@@ -34,6 +35,11 @@ namespace LydsTextAdventure
         public static void StartScene(Scene scene)
         {
 
+
+            if (SceneManager.CurrentScene != null)
+                throw new ApplicationException("scene not ended");
+
+            SceneManager.isReady = false;
             Program.HookManager.CallHook("PreLoad", HookManager.Groups.Scene, scene);
             Program.DebugLog("loading scene " + scene.sceneName, "scene_manager");
 
@@ -43,14 +49,13 @@ namespace LydsTextAdventure
             WindowManager.ClearWindows();
             Buffer.CleanBuffer();
 
-            if (SceneManager.CurrentScene != null)
-                throw new ApplicationException("scene not ended");
 
 #if DEBUG
             Program.RegisterDebugCommands();
             Program.DebugLog("registered debug commands");
 #endif
 
+            SceneManager.CurrentScene = scene;
             Program.DebugLog("calling scene load", "scene_manager");
             scene.Load();
 
@@ -59,13 +64,14 @@ namespace LydsTextAdventure
             scene.Start();
             Program.HookManager.CallHook("Start", HookManager.Groups.Scene, scene);
 
-            SceneManager.CurrentScene = scene;
+            //scene is now ready and starting
+            SceneManager.isReady = true;
         }
 
         public static bool IsSceneActive()
         {
 
-            return (SceneManager.CurrentScene != null);
+            return (SceneManager.isReady == true);
         }
 
         public static void UpdateScene()

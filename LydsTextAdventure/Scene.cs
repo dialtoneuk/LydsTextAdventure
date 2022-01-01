@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LydsTextAdventure
@@ -8,7 +9,7 @@ namespace LydsTextAdventure
 
         public readonly string sceneName;
         private List<Command> sceneCommands;
-        private bool hasUpdated = false;
+        private List<Entity> sceneCameras = new List<Entity>();
 
         public Scene(string name, List<Command> commands = null)
         {
@@ -86,14 +87,36 @@ namespace LydsTextAdventure
             return;
         }
 
+        public void FindSceneCameras()
+        {
+
+            this.sceneCameras = EntityManager.GetEntitiesByType(typeof(Camera));
+        }
+
+        public void AddSceneCamera(Camera camera)
+        {
+
+            foreach (Entity ent in this.sceneCameras)
+                if (ent.id == camera.id)
+                    throw new ApplicationException("invaid");
+
+            this.sceneCameras.Add(camera);
+        }
+
+        public List<Entity> GetSceneCameras()
+        {
+
+            return this.sceneCameras;
+        }
+
         public virtual void Draw()
         {
 
             //draws all the cameras in the scene
-            foreach (Entity entity in EntityManager.GetEntitiesByType(typeof(Camera)))
+            List<Entity> list = this.sceneCameras;
+            for (int i = 0; i < list.Count; i++)
             {
-
-                Camera camera = (Camera)entity;
+                Camera camera = (Camera)list[i];
                 camera.Draw(camera.position.x, camera.position.y, camera);
             }
 
@@ -125,7 +148,7 @@ namespace LydsTextAdventure
                 //then update windows
                 WindowManager.UpdateWindows();
 
-            if (Program.GetTick() % 1024 == 0)
+            if (Program.GetTick() % 512 == 0)
                 //cache alive and visible entities
                 EntityManager.CacheEntities();
         }

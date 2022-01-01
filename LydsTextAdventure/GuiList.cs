@@ -8,8 +8,6 @@ namespace LydsTextAdventure
     class GuiList : GuiGroup
     {
 
-        public bool isSubtractive = false;
-
         public override void Update()
         {
 
@@ -32,11 +30,7 @@ namespace LydsTextAdventure
                 if (count > maxCount)
                 {
                     y = this.position.y;
-
-                    if (isSubtractive)
-                        x -= lastLargestWidth;
-                    else
-                        x += lastLargestWidth;
+                    x += lastLargestWidth;
 
                     count = 0;
                 }

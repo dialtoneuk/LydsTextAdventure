@@ -90,7 +90,7 @@ namespace LydsTextAdventure
                     }
 
                     //must ignore cache and get the latest alive entities
-                    List<Entity> list = EntityManager.GetAliveEntities(true);
+                    List<Entity> list = EntityManager.GetVisibleEntities();
                     for (int i = 0; i < list.Count; i++)
                     {
                         Entity entity = list[i];

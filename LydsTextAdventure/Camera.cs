@@ -13,7 +13,7 @@ namespace LydsTextAdventure
         }
 
         //holds a list of all of our cameras
-        private static List<Camera> cameras = new List<Camera>();
+        private static List<Entity> cameras = new List<Entity>();
 
         protected Entity owner;
         protected bool mainCamera = false;
@@ -47,7 +47,8 @@ namespace LydsTextAdventure
             //sets the name of this camera
 
             Program.DebugLog("Camera has been created", "camera");
-            cameras.Add(this);
+            SceneManager.CurrentScene.AddSceneCamera(this);
+            cameras = SceneManager.CurrentScene.GetSceneCameras();
         }
 
         public Rectangle GetViewRectangle()
@@ -79,7 +80,7 @@ namespace LydsTextAdventure
                 if (ent == null)
                     continue;
 
-                if (ent.isAlwaysOn && ent.isDisabled && ent.isStatic)
+                if (ent.isAlwaysOn && ent.isDisabled)
                 {
                     ent.SetDisabled(false);
                     continue;
