@@ -462,6 +462,7 @@ namespace LydsTextAdventure
 
                 }
             }
+
             return result;
         }
 

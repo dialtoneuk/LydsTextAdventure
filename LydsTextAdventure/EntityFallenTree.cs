@@ -19,11 +19,11 @@ namespace LydsTextAdventure
             Random rand = new Random();
 
             if (rand.Next(1, 100) > 50)
-                this.texture = new Texture('†');
+                this.texture = new Texture('†', ConsoleColor.DarkYellow);
             else if (rand.Next(1, 100) > 50)
-                this.texture = new Texture('\\');
+                this.texture = new Texture('\\', ConsoleColor.DarkYellow);
             else
-                this.texture = new Texture('/');
+                this.texture = new Texture('/', ConsoleColor.DarkYellow);
 
 
             this.isStatic = true;

@@ -12,6 +12,12 @@ namespace LydsTextAdventure
             CENTER_ON_OWNER
         }
 
+        public struct TempBuffer
+        {
+            public char texture;
+            public ConsoleColor colour;
+        }
+
         //holds a list of all of our cameras
         private static List<Entity> cameras = new List<Entity>();
 
@@ -20,7 +26,7 @@ namespace LydsTextAdventure
 
         public readonly Position cameraPosition;
 
-        private char[,] temporaryBuffer;
+        private TempBuffer[,] temporaryBuffer;
         private Camera.Perspective perspective;
         private List<Entity> renderEntities;
         private readonly List<Entity> renderedEntities = new List<Entity>();
@@ -38,7 +44,7 @@ namespace LydsTextAdventure
                 this.cameraPosition = new Position(0, 0);
 
             //creates the view buffer
-            this.temporaryBuffer = new char[this.Width, this.Height];
+            this.temporaryBuffer = new TempBuffer[this.Width, this.Height];
 
             //cameras are not solids
             this.isSolid = false;
@@ -150,7 +156,7 @@ namespace LydsTextAdventure
             this.Height = height;
 
             //recreates the view buffer
-            this.temporaryBuffer = new char[this.Width, this.Height];
+            this.temporaryBuffer = new TempBuffer[this.Width, this.Height];
         }
 
         public override void Update(int tick)
@@ -178,7 +184,7 @@ namespace LydsTextAdventure
                 for (int y = 0; y < this.Height; y++)
                 {
 
-                    this.temporaryBuffer[x, y] = data[x, y];
+                    this.temporaryBuffer[x, y].texture = data[x, y];
                 }
             }
 
@@ -211,7 +217,16 @@ namespace LydsTextAdventure
                             continue;
                         }
 
-                        this.temporaryBuffer[x, y] = worldData[x, y];
+                        Tile tile = this.World.GetTile(this.cameraPosition.x + x, this.cameraPosition.y + y);
+                        ConsoleColor colour;
+
+                        if (tile == null)
+                            colour = ConsoleColor.Black;
+                        else
+                            colour = tile.texture.color;
+
+                        this.temporaryBuffer[x, y].texture = worldData[x, y];
+                        this.temporaryBuffer[x, y].colour = colour;
                     }
                 }
             }
@@ -242,8 +257,9 @@ namespace LydsTextAdventure
                 if (y < 0 || y >= this.Height)
                     continue;
 
-                //draw entity texture
-                this.temporaryBuffer[x, y] = entity.GetTexture().character;
+                //draw entity texture + colour                        
+                this.temporaryBuffer[x, y].texture = entity.GetTexture().character;
+                this.temporaryBuffer[x, y].colour = entity.GetTexture().color;
             }
         }
 
@@ -259,7 +275,7 @@ namespace LydsTextAdventure
         public void CleanBuffer()
         {
 
-            this.temporaryBuffer = new char[this.Width, this.Height];
+            this.temporaryBuffer = new TempBuffer[this.Width, this.Height];
         }
 
         public override void Draw(int posx, int posy, Camera camera)

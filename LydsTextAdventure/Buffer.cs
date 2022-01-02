@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
+using System.Globalization;
+using System.IO;
+using static LydsTextAdventure.ConsoleManager;
 
 namespace LydsTextAdventure
 {
@@ -11,11 +15,13 @@ namespace LydsTextAdventure
             DRAW_BUFFER,
             ENTITY_BUFFER,
             GUI_BUFFER,
-            WORLD_BUFFER
+            WORLD_BUFFER,
+            COLOUR_BUFFER
         }
 
         private static int cursorTop;
         private static int cursorLeft;
+        private static SafeFileHandle handle;
 
         private static int cursorSavedLeft;
         private static int cursorSavedTop;
@@ -28,6 +34,7 @@ namespace LydsTextAdventure
         private static char[,] entityBuffer;
         private static char[,] guiBuffer;
         private static char[,] worldBuffer;
+        private static ConsoleColor[,] colourBuffer;
 
         public static int WindowWidth
         {
@@ -46,7 +53,8 @@ namespace LydsTextAdventure
             Buffer.entityBuffer = new char[width, height];
             Buffer.guiBuffer = new char[width, height];
             Buffer.worldBuffer = new char[width, height];
-
+            Buffer.colourBuffer = new ConsoleColor[width, height];
+            Buffer.handle = ConsoleManager.CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             Buffer.Width = width;
             Buffer.Height = height;
         }
@@ -100,6 +108,7 @@ namespace LydsTextAdventure
             Buffer.entityBuffer = new char[Buffer.Width, Buffer.Height];
             Buffer.guiBuffer = new char[Buffer.Width, Buffer.Height];
             Buffer.worldBuffer = new char[Buffer.Width, Buffer.Height];
+            Buffer.colourBuffer = new ConsoleColor[Buffer.Width, Buffer.Height];
         }
 
         public static int CursorTop()
@@ -112,6 +121,19 @@ namespace LydsTextAdventure
         {
 
             return Buffer.cursorLeft;
+        }
+
+
+        public static void Write(char str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER, ConsoleColor colour = ConsoleColor.White)
+        {
+
+            Buffer.WriteToBuffer(new char[] { str }, type, false, false, colour);
+        }
+
+        public static void WriteLine(string str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER, ConsoleColor colour = ConsoleColor.White)
+        {
+
+            Buffer.WriteToBuffer(str.ToCharArray(), type, false, false, colour);
         }
 
         public static void Write(char str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER)
@@ -195,7 +217,40 @@ namespace LydsTextAdventure
         public static void DrawBuffer()
         {
 
+            if (Buffer.handle.IsInvalid)
+                return;
+
+            CharInfo[] buffer = new CharInfo[Buffer.Width * Buffer.Height];
+            SmallRect rect = new SmallRect() { Left = 0, Top = 0, Right = (short)Buffer.Width, Bottom = (short)Buffer.Height };
+
+            int len = 0;
+
+            for (int y = 0; y < Buffer.Height; y++)
+            {
+
+                for (int x = 0; x < Buffer.Width; x++)
+                {
+
+
+                    buffer[len].Attributes = (short)(0 + (int)Buffer.colourBuffer[x, y]);
+                    int code = (int)Buffer.drawBuffer[x, y];
+                    buffer[len].Char.UnicodeChar = (ushort)Buffer.processBuffer[x, y];
+                    len++;
+                }
+            }
+
+            bool b = ConsoleManager.WriteConsoleOutputW(Buffer.handle, buffer,
+                       new Coord() { X = (short)Buffer.Width, Y = (short)Buffer.Height },
+                       new Coord() { X = 0, Y = 0 },
+                       ref rect);
+        }
+
+        /**
+        public static void DrawBuffer()
+        {
+
             Console.SetCursorPosition(0, 0);
+
 
             for (int y = 0; y < Buffer.Height; y++)
             {
@@ -211,6 +266,7 @@ namespace LydsTextAdventure
                 Console.Write(line);
             }
         }
+        **/
 
         public static void AddToBuffer(Buffer.Types type, char[,] data, int startx = 0, int starty = 0)
         {
@@ -222,6 +278,20 @@ namespace LydsTextAdventure
 
                     Buffer.SetCursorPosition(startx + x, starty + y);
                     Buffer.Write(data[x, y], type);
+                }
+            }
+        }
+
+        public static void AddToBuffer(Buffer.Types type, Camera.TempBuffer[,] data, int startx = 0, int starty = 0)
+        {
+
+            for (int y = 0; y < data.GetLength(1); y++)
+            {
+                for (int x = 0; x < data.GetLength(0); x++)
+                {
+
+                    Buffer.SetCursorPosition(startx + x, starty + y);
+                    Buffer.Write(data[x, y].texture, type, data[x, y].colour);
                 }
             }
         }
@@ -298,7 +368,7 @@ namespace LydsTextAdventure
             return Buffer.guiBuffer;
         }
 
-        private static void WriteToBuffer(char[] input, Buffer.Types type, bool newline = false, bool returnCursor = false)
+        private static void WriteToBuffer(char[] input, Buffer.Types type, bool newline = false, bool returnCursor = false, ConsoleColor colour = ConsoleColor.White)
         {
 
             if (returnCursor)
@@ -309,6 +379,8 @@ namespace LydsTextAdventure
             foreach (char c in input)
             {
                 Buffer.GetBuffer(type)[Buffer.cursorLeft, Buffer.cursorTop] = c;
+                Buffer.colourBuffer[Buffer.cursorLeft, Buffer.cursorTop] = colour;
+
 
                 if (Buffer.Width - 1 > Buffer.cursorLeft)
                     Buffer.cursorLeft++;

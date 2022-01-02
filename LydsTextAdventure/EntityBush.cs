@@ -6,7 +6,7 @@
         {
 
             this.Name = "Bush";
-            this.texture = new Texture('b');
+            this.texture = new Texture('b', System.ConsoleColor.Blue);
             this.isStatic = true;
         }
 

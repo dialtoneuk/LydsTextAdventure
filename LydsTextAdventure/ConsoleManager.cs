@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace LydsTextAdventure
@@ -15,6 +17,60 @@ namespace LydsTextAdventure
 
         const uint ENABLE_QUICK_EDIT = 0x0040;
         const int STD_INPUT_HANDLE = -10;
+
+        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern SafeFileHandle CreateFile(
+        string fileName,
+        [MarshalAs(UnmanagedType.U4)] uint fileAccess,
+        [MarshalAs(UnmanagedType.U4)] uint fileShare,
+        IntPtr securityAttributes,
+        [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
+        [MarshalAs(UnmanagedType.U4)] int flags,
+        IntPtr template);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool WriteConsoleOutputW(
+          SafeFileHandle hConsoleOutput,
+          CharInfo[] lpBuffer,
+          Coord dwBufferSize,
+          Coord dwBufferCoord,
+          ref SmallRect lpWriteRegion);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Coord
+        {
+            public short X;
+            public short Y;
+
+            public Coord(short X, short Y)
+            {
+                this.X = X;
+                this.Y = Y;
+            }
+        };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SmallRect
+        {
+            public short Left;
+            public short Top;
+            public short Right;
+            public short Bottom;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct CharUnion
+        {
+            [FieldOffset(0)] public ushort UnicodeChar;
+            [FieldOffset(0)] public byte AsciiChar;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct CharInfo
+        {
+            [FieldOffset(0)] public CharUnion Char;
+            [FieldOffset(2)] public short Attributes;
+        }
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
