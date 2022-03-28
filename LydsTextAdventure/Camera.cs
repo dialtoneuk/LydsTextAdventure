@@ -172,7 +172,7 @@ namespace LydsTextAdventure
         {
 
             if (this.World != null)
-                this.UpdateBuffer(this.World.Draw(this.cameraPosition.x, this.cameraPosition.y, this.Width, this.Height), entities);
+                this.UpdateBuffer(entities);
         }
 
         public virtual void UpdateBuffer(char[,] data, List<Entity> entities)
@@ -204,7 +204,7 @@ namespace LydsTextAdventure
             if (this.World != null || this.World.IsDisabled())
             {
 
-                char[,] worldData = this.World.Draw(this.cameraPosition.x, this.cameraPosition.y, this.Width, this.Height);
+                TempBuffer[,] worldData = this.World.Draw(this.cameraPosition.x, this.cameraPosition.y, this.Width, this.Height);
 
                 for (int x = 0; x < this.Width; x++)
                 {
@@ -225,7 +225,7 @@ namespace LydsTextAdventure
                         else
                             colour = tile.texture.color;
 
-                        this.temporaryBuffer[x, y].texture = worldData[x, y];
+                        this.temporaryBuffer[x, y].texture = worldData[x, y].texture;
                         this.temporaryBuffer[x, y].colour = colour;
                     }
                 }

@@ -10,6 +10,19 @@ namespace LydsTextAdventure
         public readonly List<GuiElement> guiElements = new List<GuiElement>();
         public Camera camera = null;
 
+        public ConsoleColor BorderColour
+        {
+            get;
+            set;
+        } = ConsoleColor.White;
+
+        public bool BorderDouble
+        {
+
+            get;
+            set;
+        } = true;
+
         public string title = "Default Window";
         private string name = "default_window";
         public readonly string id = Guid.NewGuid().ToString();
@@ -180,7 +193,7 @@ namespace LydsTextAdventure
             if (this.drawDefault)
             {
 
-                Surface.DrawBox(this.position.x, this.position.y, this.width, this.height);
+                Surface.DrawBox(this.position.x, this.position.y, this.width, this.height, this.GetRectangle(false), Buffer.Types.GUI_BUFFER, this.BorderDouble, this.BorderColour);
                 Surface.Write(this.position.x + 2, this.position.y, "[" + this.title + "]");
             }
 

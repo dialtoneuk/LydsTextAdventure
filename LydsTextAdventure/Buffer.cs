@@ -36,6 +36,22 @@ namespace LydsTextAdventure
         private static char[,] worldBuffer;
         private static ConsoleColor[,] colourBuffer;
 
+        private static Hook fpsHook;
+
+        private static int lastSecond = 0;
+
+        public static int DrawnFrames
+        {
+            get;
+            private set;
+        } = 0;
+
+        public static int FPS
+        {
+            get;
+            private set;
+        } = 0;
+
         public static int WindowWidth
         {
             get => Buffer.Width;
@@ -43,6 +59,19 @@ namespace LydsTextAdventure
         public static int WindowHeight
         {
             get => Buffer.Height;
+        }
+
+        public static void CreateHook()
+        {
+
+            if (fpsHook != null)
+                throw new ApplicationException("fpsHook already initialized");
+
+            //add a hook to basically update the FPS
+            fpsHook = new Hook("ClockTick", HookManager.Groups.Global, (object[] obj) =>
+            {
+                Buffer.FPS = Buffer.DrawnFrames;
+            });
         }
 
         public static void Create(int width, int height)
@@ -58,6 +87,7 @@ namespace LydsTextAdventure
             Buffer.Width = width;
             Buffer.Height = height;
         }
+
 
         public static char ReadBuffer(int x, int y, Buffer.Types type)
         {
@@ -123,6 +153,11 @@ namespace LydsTextAdventure
             return Buffer.cursorLeft;
         }
 
+        public static void Write(char[] str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER, ConsoleColor colour = ConsoleColor.White)
+        {
+
+            Buffer.WriteToBuffer(str, type, false, false, colour);
+        }
 
         public static void Write(char str, Buffer.Types type = Buffer.Types.ENTITY_BUFFER, ConsoleColor colour = ConsoleColor.White)
         {
@@ -217,6 +252,13 @@ namespace LydsTextAdventure
         public static void DrawBuffer()
         {
 
+            if (lastSecond != Program.Clock)
+            {
+                lastSecond = Program.Clock;
+                DrawnFrames = 0;
+            }
+
+            //invalid
             if (Buffer.handle.IsInvalid)
                 return;
 
@@ -239,10 +281,14 @@ namespace LydsTextAdventure
                 }
             }
 
-            bool b = ConsoleManager.WriteConsoleOutputW(Buffer.handle, buffer,
+            if (!ConsoleManager.WriteConsoleOutputW(Buffer.handle, buffer,
                        new Coord() { X = (short)Buffer.Width, Y = (short)Buffer.Height },
                        new Coord() { X = 0, Y = 0 },
-                       ref rect);
+                       ref rect))
+                return;
+
+            //increment draws
+            DrawnFrames++;
         }
 
         /**
@@ -299,58 +345,22 @@ namespace LydsTextAdventure
         public static void PrepareBuffer()
         {
 
-            //clean process buffer
-            for (int y = 0; y < Buffer.Height; y++)
-            {
-                for (int x = 0; x < Buffer.Width; x++)
-                {
-
-                    Buffer.processBuffer[x, y] = ' ';
-                }
-            }
-
             //do the world 
             for (int x = 0; x < Buffer.Width; x++)
             {
 
                 for (int y = 0; y < Buffer.Height; y++)
                 {
+                    Buffer.processBuffer[x, y] = ' ';
 
                     if (Buffer.worldBuffer[x, y] != '\0')
                         Buffer.processBuffer[x, y] = Buffer.worldBuffer[x, y];
-                }
-            }
-
-            //do any entities
-            for (int x = 0; x < Buffer.Width; x++)
-            {
-
-                for (int y = 0; y < Buffer.Height; y++)
-                {
 
                     if (Buffer.entityBuffer[x, y] != '\0')
                         Buffer.processBuffer[x, y] = Buffer.entityBuffer[x, y];
-                }
-            }
-
-            //do any gui elements
-            for (int x = 0; x < Buffer.Width; x++)
-            {
-
-                for (int y = 0; y < Buffer.Height; y++)
-                {
 
                     if (Buffer.guiBuffer[x, y] != '\0')
                         Buffer.processBuffer[x, y] = Buffer.guiBuffer[x, y];
-                }
-            }
-
-            //add it to the draw buffer
-            for (int x = 0; x < Buffer.Width; x++)
-            {
-
-                for (int y = 0; y < Buffer.Height; y++)
-                {
 
                     Buffer.drawBuffer[x, y] = Buffer.processBuffer[x, y];
                 }

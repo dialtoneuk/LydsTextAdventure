@@ -18,7 +18,6 @@ namespace LydsTextAdventure
             };
 
             this.texture = new Texture('O', ConsoleColor.Green);
-            this.isStatic = true;
         }
     }
 }

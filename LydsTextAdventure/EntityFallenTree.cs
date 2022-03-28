@@ -24,9 +24,6 @@ namespace LydsTextAdventure
                 this.texture = new Texture('\\', ConsoleColor.DarkYellow);
             else
                 this.texture = new Texture('/', ConsoleColor.DarkYellow);
-
-
-            this.isStatic = true;
         }
     }
 }

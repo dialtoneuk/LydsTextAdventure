@@ -57,8 +57,11 @@ namespace LydsTextAdventure
 
         protected Dictionary<Tuple<int, int>, Chunk> chunks;
 
-        public readonly Biome Biome = new Biome();
+        protected Biome Biome;
+        protected List<Biome> Biomes = new List<Biome>();
+
         private int chunkId = 0;
+        private int sinceLastBiome = 0;
 
         public WorldChunks(int width = 6, int height = 6) : base(width, height)
         {
@@ -73,6 +76,13 @@ namespace LydsTextAdventure
             this.noise.SetNoiseType(FastNoise.NoiseType.Perlin);
             this.noise.SetFrequency(0.019f);
             this.noise.SetFractalGain(1.0f);
+
+            this.Biomes = new List<Biome>
+            {
+                new Biome(),
+                new BiomeApocolypse(),
+                new BiomeMushrooms()
+            };
 
             this.chunks = new Dictionary<Tuple<int, int>, Chunk>();
         }
@@ -172,8 +182,18 @@ namespace LydsTextAdventure
                     }
         }
 
+        public void PickNextBiome()
+        {
+            Random rand = new Random();
+            Biome = this.Biomes[rand.Next(0, this.Biomes.Count)];
+            sinceLastBiome = rand.Next(1, 100);
+        }
+
         public void CreateChunk(int x, int y)
         {
+
+            if (Biome == null || sinceLastBiome-- <= 0)
+                this.PickNextBiome();
 
             if (x < WorldStartX)
             {
@@ -197,7 +217,7 @@ namespace LydsTextAdventure
             }
 
             //create new chunk
-            this.chunks[new Tuple<int, int>(x, y)] = new Chunk(x, y, chunkId);
+            this.chunks[new Tuple<int, int>(x, y)] = new Chunk(x, y, chunkId, Biome);
             chunkId = chunkId + 1;
         }
 
@@ -247,6 +267,7 @@ namespace LydsTextAdventure
                     if (isSpawn)
                     {
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileSpawnGrass();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)].texture.color = Biome.GetGrassColour();
                         continue;
                     }
                     else if (startX + x == 0 || startY + y == 0)
@@ -259,9 +280,16 @@ namespace LydsTextAdventure
 
                     //add water
                     if (val < WATER_LEVEL && val > DEEP_WATER_LEVEL)
+                    {
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileWater();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)].texture.color = Biome.GetWaterColour();
+                    }
                     else if (val < DEEP_WATER_LEVEL)
+                    {
+
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileDeepWater();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)].texture.color = Biome.GetWaterColour(); //work it from the background colour
+                    }
 
                     //add stone
                     if (val > WATER_LEVEL + STONE_LEVEL)
@@ -269,10 +297,13 @@ namespace LydsTextAdventure
 
                     //add lava last
                     if (val > LAVA_LEVEL)
-                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileLava();
+                        if (Biome.GenerateMagma())
+                            chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileLava();
+                        else
+                            chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileStone();
                 }
 
-            //this is used later to spawn stuff like trees and plants
+            //this is used later to spawn stuff like trees and plants                                                                                                                                             
             chunk.chunkNutrients = (int)Math.Floor(this.noise.GetPerlin((x) + this.WorldWidth, (y) + this.WorldHeight) * this.WorldOctaves);
             //how metals spawn
             chunk.chunkOre = (int)Math.Floor(this.noise.GetPerlin((x / 2) + this.WorldWidth, (y / 2) + this.WorldHeight) * this.WorldOctaves);
@@ -346,6 +377,8 @@ namespace LydsTextAdventure
                     entityCount++;
                 }
             }
+
+            Program.DebugLog(String.Format("done generating foliage + details with chunk {0}", chunk.chunkId));
         }
 
         public void UpdateChunk(Chunk chunk)
@@ -404,6 +437,9 @@ namespace LydsTextAdventure
             if (chunk.fresh)
             {
 
+                if (Biome == null || sinceLastBiome-- <= 0)
+                    this.PickNextBiome();
+
                 this.UpdateFreshChunk(chunk);
                 //spawn plants here
                 chunk.fresh = false;
@@ -428,10 +464,10 @@ namespace LydsTextAdventure
             return this.chunks.TryGetValue(new Tuple<int, int>(x, y), out Chunk _);
         }
 
-        public override char[,] Draw(int startx, int starty, int width, int height)
+        public override Camera.TempBuffer[,] Draw(int startx, int starty, int width, int height)
         {
 
-            char[,] result = new char[width, height];
+            Camera.TempBuffer[,] result = new Camera.TempBuffer[width, height];
 
             for (int x = 0; x < width; x++)
             {
@@ -448,16 +484,20 @@ namespace LydsTextAdventure
 
                     if (actualy <= ((WorldStartY) * Chunk.CHUNK_HEIGHT) || actualx <= ((WorldStartX) * Chunk.CHUNK_WIDTH) || chunkX >= (WorldStartX + WorldWidth)
                         || chunkY >= (WorldStartY + WorldHeight) || !this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)))
-                        result[x, y] = ' ';
+                        result[x, y].texture = ' ';
                     else if (this.chunks.ContainsKey(new Tuple<int, int>(chunkX, chunkY)) && !this.chunks[new Tuple<int, int>(chunkX, chunkY)].IsReady())
-                        result[x, y] = 'L';
+                        result[x, y].texture = 'L';
                     else
                     {
 
                         if (!this.chunks[new Tuple<int, int>(chunkX, chunkY)].TryGetTileFromWorldPosition(actualx, actualy, out Tile tile))
-                            result[x, y] = ' ';
+                            result[x, y].texture = ' ';
                         else
-                            result[x, y] = tile.texture.character;
+                        {
+
+                            result[x, y].texture = tile.texture.character;
+                            result[x, y].colour = tile.texture.color;
+                        }
                     }
 
                 }
@@ -493,6 +533,9 @@ namespace LydsTextAdventure
             this.WorldStartX = WORLD_START_POS;
             this.WorldStartY = WORLD_START_POS;
 
+            if (Biome == null || sinceLastBiome-- <= 0)
+                this.PickNextBiome();
+
             //first lets just generate the spawn chunks
             //2 padding for smoothing
             for (int x = -2; x < this.width + 2; x++)
@@ -510,11 +553,10 @@ namespace LydsTextAdventure
 
                     int realY = y + WORLD_START_POS;
 
-
                     if (realY < this.worldStartY)
                         this.worldStartY = realY;
 
-                    this.chunks[new Tuple<int, int>(realX, realY)] = new Chunk(realX, realY, chunkId++);
+                    this.chunks[new Tuple<int, int>(realX, realY)] = new Chunk(realX, realY, chunkId++, Biome);
                     this.InitializeChunk(realX, realY, false);
                 }
             }

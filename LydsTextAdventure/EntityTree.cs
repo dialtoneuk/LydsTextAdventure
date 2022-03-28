@@ -16,8 +16,7 @@ namespace LydsTextAdventure
         {
 
             this.Name = "Tree";
-            this.texture = new Texture('^');
-            this.isStatic = true;
+            this.texture = new Texture('^', ConsoleColor.Green);
             this.isSolid = false;
             this.randomSeed = new Random().Next(10, 10000);
         }

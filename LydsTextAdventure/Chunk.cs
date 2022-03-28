@@ -28,19 +28,20 @@ namespace LydsTextAdventure
 
         private bool ready = false;
 
-        public const int CHUNK_WIDTH = 15;
-        public const int CHUNK_HEIGHT = 15;
+        public const int CHUNK_WIDTH = 31;
+        public const int CHUNK_HEIGHT = 31;
 
         //the default tile we create chunks with
-        public static readonly Tile defaultTile = new TileGrass();
+        public readonly Tile defaultTile = new TileGrass();
 
-        public Chunk(int chunkX, int chunkY, int chunkId)
+        public Chunk(int chunkX, int chunkY, int chunkId, Biome biome)
         {
 
             this.chunkX = chunkX;
             this.chunkY = chunkY;
             this.chunkId = chunkId;
             this.chunkData = new Dictionary<Tuple<int, int>, Tile>();
+            defaultTile.texture.color = biome.GetGrassColour();
 
             for (int x = 0; x < CHUNK_WIDTH; x++)
                 for (int y = 0; y < CHUNK_HEIGHT; y++)

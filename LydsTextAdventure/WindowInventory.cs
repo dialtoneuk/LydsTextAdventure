@@ -12,6 +12,8 @@
             this.SetName("player_inventory");
             this.SetTitle("Player Inventory");
             this.SetSize(40, 32);
+            this.BorderColour = System.ConsoleColor.Blue;
+            this.BorderDouble = false;
             this.Show();
 
             this.group.SetPosition(1, 1);

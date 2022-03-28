@@ -16,7 +16,6 @@ namespace LydsTextAdventure
                   typeof(ItemApple)
             };
             this.texture = new Texture('A', ConsoleColor.Red);
-            this.isStatic = true;
         }
     }
 }

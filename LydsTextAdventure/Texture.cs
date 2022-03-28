@@ -7,7 +7,11 @@ namespace LydsTextAdventure
     {
 
         public readonly Char character;
-        public readonly ConsoleColor color;
+        public ConsoleColor color
+        {
+            get;
+            set;
+        }
 
         public Texture(Char character = '?', ConsoleColor color = ConsoleColor.White)
         {

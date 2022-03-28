@@ -111,10 +111,10 @@ namespace LydsTextAdventure
             });
         }
 
-        public virtual char[,] Draw(int startx, int starty, int width, int height)
+        public virtual Camera.TempBuffer[,] Draw(int startx, int starty, int width, int height)
         {
 
-            char[,] result = new char[width, height];
+            Camera.TempBuffer[,] result = new Camera.TempBuffer[width, height];
 
             for (int x = 0; x < width; x++)
             {
@@ -126,11 +126,12 @@ namespace LydsTextAdventure
 
                     if (actualy < 0 || actualx < 0 || actualy >= this.height || actualx >= this.width)
                     {
-                        result[x, y] = ' ';
+                        result[x, y].texture = ' ';
                     }
                     else
                     {
-                        result[x, y] = this.world[actualx, actualy].texture.character;
+                        result[x, y].texture = this.world[actualx, actualy].texture.character;
+                        result[x, y].colour = this.world[actualx, actualy].texture.color;
                     }
                 }
             }

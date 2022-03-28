@@ -11,16 +11,17 @@ namespace LydsTextAdventure
         public Dictionary<Tuple<float, float>, Type[]> biomeFoliage;
         public Random biomeRandom = new Random();
 
-        public const int SEED_CHANCE = 10;
-        public const int SEED_MAX_DISTANCE = 30;
-        public const int SEED_MIN_DISTANCE = 10;
+        public const int SEED_CHANCE = 2;
+        public const int SEED_MAX_DISTANCE = 60;
+        public const int SEED_MIN_DISTANCE = 20;
 
         public int lastDistance = 0;
 
         public Biome()
         {
 
-            this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>
+            if (this.biomeFoliage == null)
+                this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>
             {
                 {new Tuple<float,float>(-12, 0), new Type[]{
                     typeof(EntityDeadTree),
@@ -61,8 +62,25 @@ namespace LydsTextAdventure
             };
         }
 
+        public virtual bool GenerateMagma()
+        {
 
-        public bool CanSeed(int nutrientRate, int chanceModifier = 50)
+            return true;
+        }
+
+        public virtual ConsoleColor GetGrassColour()
+        {
+
+            return ConsoleColor.Green;
+        }
+
+        public virtual ConsoleColor GetWaterColour()
+        {
+
+            return ConsoleColor.Blue;
+        }
+
+        public bool CanSeed(int nutrientRate, int chanceModifier = 10)
         {
 
             bool canSeed = false;

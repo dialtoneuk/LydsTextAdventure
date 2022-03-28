@@ -45,7 +45,7 @@ namespace LydsTextAdventure
             Buffer.SetLastPosition();
         }
 
-        public static void DrawText(int x, int y, string str, Rectangle rectangle)
+        public static void DrawText(int x, int y, string str, Rectangle rectangle, ConsoleColor colour = ConsoleColor.White, Buffer.Types bufferType = Buffer.Types.GUI_BUFFER)
         {
 
 
@@ -67,13 +67,13 @@ namespace LydsTextAdventure
 
                 dchars = new char[chars.Length - a];
                 Array.Copy(chars, dchars, chars.Length - a);
-                Buffer.Write(dchars, Buffer.Types.GUI_BUFFER);
+                Buffer.Write(dchars, bufferType, colour);
             }
             else
-                Buffer.Write(chars, Buffer.Types.GUI_BUFFER);
+                Buffer.Write(chars, bufferType, colour);
         }
 
-        public static void DrawBox(int x, int y, int w, int h, Rectangle rectangle = null, Buffer.Types type = Buffer.Types.GUI_BUFFER, bool doubleBorder = true)
+        public static void DrawBox(int x, int y, int w, int h, Rectangle rectangle = null, Buffer.Types type = Buffer.Types.GUI_BUFFER, bool doubleBorder = true, ConsoleColor color = ConsoleColor.Blue)
         {
 
             int rw = Buffer.WindowWidth;
@@ -106,19 +106,19 @@ namespace LydsTextAdventure
                         continue;
 
                     if (ix == 0 && iy == 0)
-                        Buffer.Write((doubleBorder ? "╔" : "┌"), type);
+                        Buffer.Write((doubleBorder ? "╔" : "┌").ToCharArray(), type, color);
                     else if (ix == w - 1 && iy == 0)
-                        Buffer.Write((doubleBorder ? "╗" : "┐"), type);
+                        Buffer.Write((doubleBorder ? "╗" : "┐").ToCharArray(), type, color);
                     else if (ix == w - 1 && iy == h - 1)
-                        Buffer.Write((doubleBorder ? "╝" : "┘"), type);
+                        Buffer.Write((doubleBorder ? "╝" : "┘").ToCharArray(), type, color);
                     else if (ix == 0 && iy == h - 1)
-                        Buffer.Write((doubleBorder ? "╚" : "└"), type);
+                        Buffer.Write((doubleBorder ? "╚" : "└").ToCharArray(), type, color);
                     else if (ix == 0 || ix == w - 1)
-                        Buffer.Write((doubleBorder ? "║" : "│"), type);
+                        Buffer.Write((doubleBorder ? "║" : "│").ToCharArray(), type, color);
                     else if (iy == 0 || iy == h - 1)
-                        Buffer.Write((doubleBorder ? "═" : "─"), type);
+                        Buffer.Write((doubleBorder ? "═" : "─").ToCharArray(), type, color);
                     else
-                        Buffer.Write(' ', type);
+                        Buffer.Write(' ', type, color);
                 }
             }
         }

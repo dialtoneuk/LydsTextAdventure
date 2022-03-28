@@ -63,6 +63,7 @@ namespace LydsTextAdventure
                 if (cluster.Group == hook.Group)
                 {
                     cluster.hooks.Add(hook);
+                    Program.DebugLog(String.Format("hook registered n: {0} g: {1} id: {2} callname: {3}", hook.Name, hook.Group, hook.id, hook.CallName));
                     break;
                 }
         }

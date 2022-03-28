@@ -18,7 +18,6 @@ namespace LydsTextAdventure
                   typeof(ItemStick)
             };
             this.texture = new Texture('|', ConsoleColor.DarkRed);
-            this.isStatic = true;
         }
     }
 }

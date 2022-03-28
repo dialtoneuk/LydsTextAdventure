@@ -34,11 +34,12 @@ namespace LydsTextAdventure
         {
 
             this.player = new Player();
+            this.player.isSolid = false;
 
             //link input manager
             inputManager.SetPlayer(this.player);
 
-            this.world = new WorldChunks(8, 8);
+            this.world = new WorldChunks(4, 4);
             this.world.GenerateWorld();
 
             for (int i = 0; i < 10; i++)
@@ -52,21 +53,22 @@ namespace LydsTextAdventure
 
             this.camera = new Camera(this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize(Buffer.WindowWidth - 48, 41);
+            this.camera.SetSize((Buffer.WindowWidth - 48), 41);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
             WindowPlayerStatistics stats = new WindowPlayerStatistics();
             stats.SetPlayer(this.player);
-            stats.SetPosition(Buffer.WindowWidth - 48, 0);
+            stats.SetPosition((Buffer.WindowWidth - 48), 0);
 
             WindowInventory inventory = new WindowInventory();
             inventory.SetPlayer(this.player);
-            inventory.SetPosition(Buffer.WindowWidth - 48, 9);
+            inventory.SetPosition((Buffer.WindowWidth - 48), 9);
+            inventory.SetSize(40, 52);
 
             WindowConsole console = new WindowConsole();
-            console.SetSize(Buffer.WindowWidth - 8, 20);
+            console.SetSize((Buffer.WindowWidth - 48) / 2, 20);
             console.SetPosition(0, 41);
 
             base.Before();

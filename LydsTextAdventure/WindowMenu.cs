@@ -13,6 +13,7 @@
         {
 
             this.SetName("menu");
+            this.BorderColour = System.ConsoleColor.Green;
 
             this.newGame.SetPosition(2, 2);
             this.newGame.SetSize(15, 5);

@@ -135,20 +135,13 @@ namespace LydsTextAdventure
         public virtual void Update()
         {
 
-            //only on even ticks
-            if (Program.GetTick() % 2 == 0)
-                //Update the world
-                WorldManager.UpdateWorlds();
-
+            //update worlds
+            WorldManager.UpdateWorlds();
             //update entites
             EntityManager.UpdateEntities();
+            WindowManager.UpdateWindows();
 
-            //only on even ticks
-            if (Program.GetTick() % 2 == 0)
-                //then update windows
-                WindowManager.UpdateWindows();
-
-            if (Program.GetTick() % 512 == 0)
+            if (Program.GetTick() % 128 == 0)
                 //cache alive and visible entities
                 EntityManager.CacheEntities();
         }

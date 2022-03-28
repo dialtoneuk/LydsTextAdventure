@@ -23,6 +23,18 @@
 
             Surface.DrawText(x, y + 1, "hp: " + this.Health.ToString(), camera.GetViewRectangle());
 
+#if DEBUG
+
+            System.ConsoleColor color = System.ConsoleColor.Green;
+
+            if (Buffer.FPS <= 40)
+                color = System.ConsoleColor.Yellow;
+            else if (Buffer.FPS <= 20)
+                color = System.ConsoleColor.Red;
+
+            Surface.DrawText(x, y + 2, "fps: " + Buffer.FPS, camera.GetViewRectangle(), color);
+#endif
+
             base.Draw(x, y, camera);
         }
     }

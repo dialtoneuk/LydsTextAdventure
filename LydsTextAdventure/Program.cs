@@ -36,6 +36,11 @@ namespace LydsTextAdventure
         }
 
         private static int Tick = 0;
+        public static int Clock
+        {
+            get;
+            private set;
+        }
         //program state
         public static State ProgramState
         {
@@ -73,7 +78,7 @@ namespace LydsTextAdventure
             Program.GameLoop();
         }
 
-        public static void LoadGame()
+        private static void LoadGame()
         {
             //add default commands
             CommandManager.AddDefaultCommands();
@@ -98,14 +103,14 @@ namespace LydsTextAdventure
             Scenes.RegisterScenes();
         }
 
-        public static void ReintroduceInputThread()
+        private static void ReintroduceInputThread()
         {
 
             //get the input
             if (InputController.IsAwaitingInput && !InputController.IsRunning)
             {
 
-                Task.Factory.StartNew(() =>
+                Task.Run(() =>
                 {
                     InputController.KeyboardInput input = InputController.GetKeyboardInput();
                     Command command = CommandManager.GetCommand(input.text);
@@ -132,7 +137,7 @@ namespace LydsTextAdventure
             }
         }
 
-        public static void GameLoop()
+        private static void GameLoop()
         {
 
             if (ProgramState == State.RUNNING)
@@ -144,6 +149,9 @@ namespace LydsTextAdventure
             //start in a new thread
             Task.Factory.StartNew(() =>
             {
+
+
+
                 //game loop
                 while (!ProgramState.Equals(State.SHUTDOWN))
                 {
@@ -161,10 +169,8 @@ namespace LydsTextAdventure
                     if (SceneManager.IsSceneActive())
                     {
 
-                        //update the scene and wait until it is done.
+                        //update the scene, once the update hook is called, the application will then draw
                         SceneManager.UpdateScene();
-
-                        //then draw the scene
                         SceneManager.DrawScene();
                     }
 
@@ -203,8 +209,29 @@ namespace LydsTextAdventure
                 Program.Shutdown();
             });
 
+            //creates fps hook
+            Buffer.CreateHook();
+
+            Program.StartClock();
+
             //sleep this thread
             Thread.Sleep(Timeout.Infinite);
+        }
+
+        private static void StartClock()
+        {
+
+            if (!ProgramState.Equals(State.SHUTDOWN))
+                Task.Delay(1000).ContinueWith((task) =>
+                {
+
+                    HookManager.CallHook("ClockTick", HookManager.Groups.Global);
+
+                    //increment clock
+                    Program.Clock++;
+
+                    Program.StartClock();
+                });
         }
 
         public static void Stop()

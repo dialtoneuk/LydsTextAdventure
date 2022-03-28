@@ -14,6 +14,7 @@
             this.SetName("console");
             this.SetTitle("Console");
             this.Show();
+            this.BorderColour = System.ConsoleColor.Green;
             this.SetSize(80, 16);
 
             this.console.SetPosition(1, 1);
