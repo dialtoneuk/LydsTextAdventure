@@ -10,7 +10,7 @@ namespace LydsTextAdventure
         public readonly string sceneName;
         private List<Command> sceneCommands;
         private List<Entity> sceneCameras = new List<Entity>();
-
+        public Player player;
         public Scene(string name, List<Command> commands = null)
         {
 
@@ -132,6 +132,14 @@ namespace LydsTextAdventure
             return;
         }
 
+        public virtual void ThreadedUpdate()
+        {
+
+            //cache alive and visible entities every 10th tick
+            if (Program.GetTick() % 10 == 0)
+                EntityManager.CacheEntities();
+        }
+
         public virtual void Update()
         {
 
@@ -140,10 +148,6 @@ namespace LydsTextAdventure
             //update entites
             EntityManager.UpdateEntities();
             WindowManager.UpdateWindows();
-
-            if (Program.GetTick() % 128 == 0)
-                //cache alive and visible entities
-                EntityManager.CacheEntities();
         }
     }
 }

@@ -84,10 +84,12 @@ namespace LydsTextAdventure
                     {
 
                         if (this.GetCallName(name, group) == hook.CallName)
+                        {
+                            //Program.DebugLog(String.Format("hook called n: {0} g: {1} id: {2} callname: {3}", hook.Name, hook.Group, hook.id, hook.CallName));
                             hook.hookAction.Invoke(vs);
+                        }
                     }
                 }
-
         }
 
         private string GetCallName(string name, string group)

@@ -5,14 +5,15 @@ using System.Linq;
 namespace LydsTextAdventure
 {
 
-    public class BiomeMushrooms : Biome
+    public class BiomeWaterlands : Biome
     {
 
 
-        public BiomeMushrooms()
+        public BiomeWaterlands()
         {
 
-            this.fractalGain = 1.8f;
+            this.fractalGain = 0.25f;
+            this.WATER_LEVEL = 0.01f;
             this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>
             {
                 {new Tuple<float,float>(-12, 0), new Type[]{
@@ -81,12 +82,12 @@ namespace LydsTextAdventure
 
         public override ConsoleColor GetWaterColour()
         {
-            return ConsoleColor.Blue;
+            return ConsoleColor.DarkBlue;
         }
 
         public override ConsoleColor GetGrassColour()
         {
-            return ConsoleColor.Cyan;
+            return ConsoleColor.DarkGray;
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace LydsTextAdventure
 {
-    public class TileMagma : Tile
+    public class TileWoodFloor : Tile
     {
 
-        public TileMagma()
+        public TileWoodFloor()
         {
 
             this.isSolid = false;

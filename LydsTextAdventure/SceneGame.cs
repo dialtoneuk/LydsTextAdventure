@@ -8,7 +8,6 @@ namespace LydsTextAdventure
     {
 
         protected WorldChunks world;
-        protected Player player;
         protected InputManager inputManager = new InputManager();
         protected Camera camera;
 
@@ -34,7 +33,7 @@ namespace LydsTextAdventure
         {
 
             this.player = new Player();
-            this.player.isSolid = false;
+
 
             //link input manager
             inputManager.SetPlayer(this.player);
@@ -71,20 +70,29 @@ namespace LydsTextAdventure
             console.SetSize((Buffer.WindowWidth - 48) / 2, 20);
             console.SetPosition(0, 41);
 
+
+            WindowMap map = new WindowMap();
+            map.SetSize((Buffer.WindowWidth - 48) / 2, 20);
+            map.SetPosition((Buffer.WindowWidth - 48) / 2, 41);
+
             base.Before();
         }
 
         public override void Update()
         {
 
-            //create any new chunks around the player they haven't seen yet
-            this.world.CreateChunksAroundPlayer(this.player, 4);
-
             //render world and entities using this camera
             this.camera.UpdateBuffer();
 
             //then do the base updates
             base.Update();
+        }
+
+        public override void ThreadedUpdate()
+        {
+            this.world.CreateChunksAroundPlayer(this.player, 4);
+            this.world.UpdateChunk(this.world.chunks[new Tuple<int, int>((this.player.position.x / Chunk.CHUNK_WIDTH), (this.player.position.y / Chunk.CHUNK_HEIGHT))]);
+            base.ThreadedUpdate();
         }
 
 

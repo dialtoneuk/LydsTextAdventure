@@ -5,23 +5,25 @@ using System.Linq;
 namespace LydsTextAdventure
 {
 
-    public class BiomeApocolypse : Biome
+    public class BiomeFlatlands : Biome
     {
 
+        public new const int SEED_MIN_DISTANCE = 5;
+        public new const int SEED_MAX_DISTANCE = 20;
 
-        public BiomeApocolypse()
+
+        public BiomeFlatlands()
         {
 
-            this.fractalGain = 15f;
-            this.STONE_LEVEL = 0.25f;
-            this.LAVA_LEVEL = 0.05f;
+            this.nutrientRate = 4;
+            this.fractalGain = 0.8f;
             this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>
             {
                 {new Tuple<float,float>(-12, 0), new Type[]{
-                    typeof(EntityDeadTree),
+                    typeof(EntityOakTree),
+                    typeof(EntityPineTree),
                     typeof(EntityFallenTree),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
+                    typeof(EntityOakTree),
                     typeof(EntityBush),
                     typeof(EntityBush),
                 }},
@@ -32,6 +34,12 @@ namespace LydsTextAdventure
                     typeof(EntityFallenTree),
                     typeof(EntityBush),
                     typeof(EntityBush),
+                    typeof(EntityOakTree),
+                    typeof(EntityPineTree),
+                    typeof(EntityFallenTree),
+                    typeof(EntityOakTree),
+                    typeof(EntityBush),
+                    typeof(EntityBush),
                 }},
                 {new Tuple<float,float>(4,8), new Type[]{
                     typeof(EntityDeadTree),
@@ -40,13 +48,25 @@ namespace LydsTextAdventure
                     typeof(EntityFallenTree),
                     typeof(EntityBush),
                     typeof(EntityBush),
+                    typeof(EntityOakTree),
+                    typeof(EntityPineTree),
+                    typeof(EntityFallenTree),
+                    typeof(EntityOakTree),
+                    typeof(EntityBush),
+                    typeof(EntityBush),
                 }},
                 {new Tuple<float,float>(8, WorldChunks.MAX_NUTRIENTS), new Type[]{
                     typeof(EntityDeadTree),
                     typeof(EntityFallenTree),
                     typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
+                    typeof(EntityOakTree),
                     typeof(EntityBush),
+                    typeof(EntityOakTree),
+                    typeof(EntityPineTree),
+                    typeof(EntityOakTree),
+                    typeof(EntityFallenTree),
+                    typeof(EntityOakTree),
+                    typeof(EntityOakTree),
                     typeof(EntityBush),
                 }}
             };
@@ -55,17 +75,17 @@ namespace LydsTextAdventure
         public override bool GenerateMagma()
         {
 
-            return true;
+            return false;
         }
 
         public override ConsoleColor GetWaterColour()
         {
-            return ConsoleColor.DarkCyan;
+            return ConsoleColor.Cyan;
         }
 
         public override ConsoleColor GetGrassColour()
         {
-            return ConsoleColor.DarkYellow;
+            return ConsoleColor.DarkGreen;
         }
     }
 }

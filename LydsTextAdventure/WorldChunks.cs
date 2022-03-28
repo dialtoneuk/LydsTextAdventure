@@ -8,15 +8,11 @@ namespace LydsTextAdventure
     class WorldChunks : World
     {
 
-        public const float WATER_LEVEL = 0.06f;
-        public const float STONE_LEVEL = 0.45f;
-        public const float LAVA_LEVEL = 0.63f;
-        public const float DEEP_WATER_LEVEL = 0.001f;
 
-        public const int MAX_NUTRIENTS = 12;
-        public const int NUTRIENT_MODIFIER = 4;
-        public const int FOLIAGE_CHANCE = 25;
-        public const int MIN_NUTRIENTS = -4;
+        public const int MAX_NUTRIENTS = 14;
+        public const int NUTRIENT_MODIFIER = 2;
+        public const int FOLIAGE_CHANCE = 30;
+        public const int MIN_NUTRIENTS = -12;
         public const int MAX_ENTITIES_PER_CHUNK = 92;
         public const int WORLD_START_POS = 912;
 
@@ -55,7 +51,7 @@ namespace LydsTextAdventure
             private set => this.worldStartY = value;
         }
 
-        protected Dictionary<Tuple<int, int>, Chunk> chunks;
+        public Dictionary<Tuple<int, int>, Chunk> chunks;
 
         protected Biome Biome;
         protected List<Biome> Biomes = new List<Biome>();
@@ -70,18 +66,20 @@ namespace LydsTextAdventure
             Random random = new Random();
 
             this.WorldSeed = random.Next(777, 666666666);
-            this.WorldOctaves = random.Next(6, 18);
+            this.WorldOctaves = random.Next(6, 36);
             this.noise.SetSeed(this.WorldSeed);
             this.noise.SetFractalOctaves(this.WorldOctaves);
             this.noise.SetNoiseType(FastNoise.NoiseType.Perlin);
-            this.noise.SetFrequency(0.019f);
-            this.noise.SetFractalGain(1.0f);
+            this.noise.SetFrequency(0.035f);
 
             this.Biomes = new List<Biome>
             {
                 new Biome(),
                 new BiomeApocolypse(),
-                new BiomeMushrooms()
+                new BiomeMushrooms(),
+                new BiomeFlatlands()  ,
+                new BiomeGravels(),
+                new BiomeRadioactive()
             };
 
             this.chunks = new Dictionary<Tuple<int, int>, Chunk>();
@@ -178,15 +176,18 @@ namespace LydsTextAdventure
                         this.InitializeChunk(playerChunkX + x, playerChunkY + y);
 
                         Chunk chunk = this.chunks[new Tuple<int, int>(playerChunkX + x, playerChunkY + y)];
+                        chunk.fresh = true;
                         this.UpdateChunk(chunk);
                     }
         }
+
+
 
         public void PickNextBiome()
         {
             Random rand = new Random();
             Biome = this.Biomes[rand.Next(0, this.Biomes.Count)];
-            sinceLastBiome = rand.Next(1, 100);
+            sinceLastBiome = rand.Next(50, 100);
         }
 
         public void CreateChunk(int x, int y)
@@ -264,6 +265,8 @@ namespace LydsTextAdventure
                 for (int _y = 0; _y < Chunk.CHUNK_HEIGHT; _y++)
                 {
 
+                    this.noise.SetFractalGain(Biome.fractalGain);
+
                     if (isSpawn)
                     {
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileSpawnGrass();
@@ -279,12 +282,12 @@ namespace LydsTextAdventure
                     float val = this.noise.GetPerlin(startX + _x, startY + _y);
 
                     //add water
-                    if (val < WATER_LEVEL && val > DEEP_WATER_LEVEL)
+                    if (val < Biome.WATER_LEVEL && val > Biome.DEEP_WATER_LEVEL)
                     {
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileWater();
                         chunk.chunkData[new Tuple<int, int>(_x, _y)].texture.color = Biome.GetWaterColour();
                     }
-                    else if (val < DEEP_WATER_LEVEL)
+                    else if (val < Biome.DEEP_WATER_LEVEL)
                     {
 
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileDeepWater();
@@ -292,11 +295,11 @@ namespace LydsTextAdventure
                     }
 
                     //add stone
-                    if (val > WATER_LEVEL + STONE_LEVEL)
+                    if (val > Biome.WATER_LEVEL + Biome.STONE_LEVEL + 0.1f)
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileStone();
 
                     //add lava last
-                    if (val > LAVA_LEVEL)
+                    if (val > Biome.WATER_LEVEL + Biome.LAVA_LEVEL + Biome.STONE_LEVEL + 0.05f)
                         if (Biome.GenerateMagma())
                             chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileLava();
                         else
@@ -304,11 +307,11 @@ namespace LydsTextAdventure
                 }
 
             //this is used later to spawn stuff like trees and plants                                                                                                                                             
-            chunk.chunkNutrients = (int)Math.Floor(this.noise.GetPerlin((x) + this.WorldWidth, (y) + this.WorldHeight) * this.WorldOctaves);
+            chunk.chunkNutrients = Biome.nutrientRate + (int)Math.Floor(this.noise.GetPerlin((x) + this.WorldWidth, (y) + this.WorldHeight) * this.WorldOctaves);
             //how metals spawn
-            chunk.chunkOre = (int)Math.Floor(this.noise.GetPerlin((x / 2) + this.WorldWidth, (y / 2) + this.WorldHeight) * this.WorldOctaves);
+            chunk.chunkOre = Biome.oreRate + (int)Math.Floor(this.noise.GetPerlin((x / 2) + this.WorldWidth, (y / 2) + this.WorldHeight) * this.WorldOctaves);
             //how mobs
-            chunk.chunkDanger = (int)Math.Floor(this.noise.GetPerlin((x * 2) + this.WorldWidth, (y * 2) + this.WorldHeight) * this.WorldOctaves);
+            chunk.chunkDanger = Biome.dangerRate + (int)Math.Floor(this.noise.GetPerlin((x * 2) + this.WorldWidth, (y * 2) + this.WorldHeight) * this.WorldOctaves);
 
             //set again
             this.chunks[new Tuple<int, int>(x, y)] = chunk;
@@ -364,6 +367,7 @@ namespace LydsTextAdventure
             {
                 for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++)
                 {
+
                     if (!this.Biome.CanSeed(nutrientRate, FOLIAGE_CHANCE + (nutrientRate * NUTRIENT_MODIFIER)) || !this.IsTilePlantable(chunk, x, y))
                         continue;
 
@@ -399,7 +403,7 @@ namespace LydsTextAdventure
                     }) && this.IsNearTypes(realX, realY, new Type[]{
                         typeof(TileWater),
                         typeof(TileDeepWater)
-                    }, 2))
+                    }, 1))
                     {
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileSand();
                     }
@@ -412,25 +416,40 @@ namespace LydsTextAdventure
                         chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileDirt();
                     }
 
-                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]{
-                        typeof(TileStone)
-                    }) && this.IsNearTypes(realX, realY, typeof(TileLava)))
+                    //make obsidian
+                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]
                     {
-                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileMagma();
+                        typeof(TileLava)
+                    }) && this.IsNearTypes(realX, realY, new Type[]{
+                        typeof(TileWater),
+                        typeof(TileDeepWater)
+                    }, 2))
+                    {
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileObsidian();
                     }
 
-                    //make obsidian
+                    //make volcanic rock
                     if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]
                     {
                         typeof(TileLava)
                     }) && this.IsNearTypes(realX, realY, new Type[]{
                         typeof(TileGrass),
                         typeof(TileDirt),
-                        typeof(TileWater),
-                        typeof(TileDeepWater)
+                        typeof(TileStone),
                     }, 1))
                     {
-                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileObsidian();
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileVolcanicRock();
+                    }
+
+                    //make volcanic rock
+                    if (this.CheckType(chunk.chunkData[new Tuple<int, int>(_x, _y)].GetType(), new Type[]
+                    {
+                        typeof(TileLava),
+                    }) && this.IsNearTypes(realX, realY, new Type[]{
+                        typeof(TileStone)
+                    }, 2))
+                    {
+                        chunk.chunkData[new Tuple<int, int>(_x, _y)] = new TileMagma();
                     }
                 }
 

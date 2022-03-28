@@ -9,7 +9,7 @@ namespace LydsTextAdventure
         public EntityDeadTree()
         {
 
-            this.Name = "DeadTree";
+            this.Name = "Dead Tree";
             this.rewards = new Type[]
             {
                   typeof(ItemWood),

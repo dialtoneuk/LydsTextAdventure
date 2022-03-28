@@ -8,7 +8,7 @@ namespace LydsTextAdventure
         public EntityOakTree()
         {
 
-            this.Name = "Name";
+            this.Name = "Oak Tree";
             this.rewards = new Type[]
             {
                 typeof(ItemWood),

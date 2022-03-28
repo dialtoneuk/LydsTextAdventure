@@ -16,8 +16,11 @@ namespace LydsTextAdventure
             ENTITY_BUFFER,
             GUI_BUFFER,
             WORLD_BUFFER,
-            COLOUR_BUFFER
+            COLOUR_BUFFER,
+            TOP_BUFFER
         }
+
+        public static bool isReady = false;
 
         private static int cursorTop;
         private static int cursorLeft;
@@ -34,6 +37,7 @@ namespace LydsTextAdventure
         private static char[,] entityBuffer;
         private static char[,] guiBuffer;
         private static char[,] worldBuffer;
+        private static char[,] topBuffer;
         private static ConsoleColor[,] colourBuffer;
 
         private static Hook fpsHook;
@@ -82,6 +86,7 @@ namespace LydsTextAdventure
             Buffer.entityBuffer = new char[width, height];
             Buffer.guiBuffer = new char[width, height];
             Buffer.worldBuffer = new char[width, height];
+            Buffer.topBuffer = new char[width, height];
             Buffer.colourBuffer = new ConsoleColor[width, height];
             Buffer.handle = ConsoleManager.CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             Buffer.Width = width;
@@ -104,6 +109,7 @@ namespace LydsTextAdventure
                 Buffer.Types.ENTITY_BUFFER => Buffer.entityBuffer,
                 Buffer.Types.DRAW_BUFFER => Buffer.drawBuffer,
                 Buffer.Types.WORLD_BUFFER => Buffer.worldBuffer,
+                Buffer.Types.TOP_BUFFER => Buffer.topBuffer,
                 _ => throw new ApplicationException("invalid buffer"),
             };
         }
@@ -138,6 +144,7 @@ namespace LydsTextAdventure
             Buffer.entityBuffer = new char[Buffer.Width, Buffer.Height];
             Buffer.guiBuffer = new char[Buffer.Width, Buffer.Height];
             Buffer.worldBuffer = new char[Buffer.Width, Buffer.Height];
+            Buffer.topBuffer = new char[Buffer.Width, Buffer.Height];
             Buffer.colourBuffer = new ConsoleColor[Buffer.Width, Buffer.Height];
         }
 
@@ -345,6 +352,8 @@ namespace LydsTextAdventure
         public static void PrepareBuffer()
         {
 
+            Buffer.isReady = false;
+
             //do the world 
             for (int x = 0; x < Buffer.Width; x++)
             {
@@ -359,12 +368,16 @@ namespace LydsTextAdventure
                     if (Buffer.entityBuffer[x, y] != '\0')
                         Buffer.processBuffer[x, y] = Buffer.entityBuffer[x, y];
 
+                    if (Buffer.topBuffer[x, y] != '\0')
+                        Buffer.processBuffer[x, y] = Buffer.topBuffer[x, y];
+
                     if (Buffer.guiBuffer[x, y] != '\0')
                         Buffer.processBuffer[x, y] = Buffer.guiBuffer[x, y];
-
                     Buffer.drawBuffer[x, y] = Buffer.processBuffer[x, y];
                 }
             }
+
+            Buffer.isReady = true;
         }
 
         public static char[,] EntityBuffer()
@@ -390,7 +403,6 @@ namespace LydsTextAdventure
             {
                 Buffer.GetBuffer(type)[Buffer.cursorLeft, Buffer.cursorTop] = c;
                 Buffer.colourBuffer[Buffer.cursorLeft, Buffer.cursorTop] = colour;
-
 
                 if (Buffer.Width - 1 > Buffer.cursorLeft)
                     Buffer.cursorLeft++;

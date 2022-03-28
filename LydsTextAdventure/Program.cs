@@ -10,9 +10,10 @@ namespace LydsTextAdventure
     {
 
 
-        public const int MAX_TICK = 8912;
+        public const int MAX_TICK = 8912 * 8912;
         public const int DEBUGGER_LOG_SIZE = 2048;
         public const string INITIAL_SCENE = "sceneMenu";
+        public const bool TURBO_MODE = false;
 
 #if DEBUG
         public const bool DEBUGGER_CONNECT_LOGGER = true;
@@ -156,24 +157,24 @@ namespace LydsTextAdventure
                 while (!ProgramState.Equals(State.SHUTDOWN))
                 {
 
-                    Console.CursorVisible = false;
-
-                    Buffer.Clear();
+                    Program.Tick++;
 
                     //check dat input thread
                     Program.ReintroduceInputThread();
 
-                    //process this frame below!
-
                     //update then draw scene
-                    if (SceneManager.IsSceneActive())
+                    if (SceneManager.IsSceneActive() && SceneManager.isReadyToDraw)
                     {
 
-                        //update the scene, once the update hook is called, the application will then draw
-                        SceneManager.UpdateScene();
-                        SceneManager.DrawScene();
-                    }
+                        if (TURBO_MODE && Program.GetTick() % 10 == 0)
+                            Buffer.Clear();
 
+                        if (!TURBO_MODE && Program.GetTick() % 2 == 0)
+                            Buffer.Clear();
+
+                        SceneManager.DrawScene();
+                        SceneManager.isReadyToDraw = false;
+                    }
 #if DEBUG
                     //send alive to console
                     if (Program.Tick % 1024 == 0)
@@ -187,25 +188,48 @@ namespace LydsTextAdventure
                     }
 
 #endif
-
                     //reset tick if we are over 8192
                     if (Program.Tick >= Program.MAX_TICK)
                     {
-
-                        Program.Clear();
                         Program.DebugLog("screen cleaned");
                         Program.Tick = 0;
                     }
-                    else
-                        Program.Tick++;
 
-                    //prepare the last loops buffer data
-                    Buffer.PrepareBuffer();
-                    //Draw it
-                    Buffer.DrawBuffer();
+                    if (Buffer.isReady)
+                    {
+                        Buffer.DrawBuffer();
+                        Buffer.isReady = false;
+                    }
+
+                    if (!TURBO_MODE)
+                        Thread.Sleep(1);
                 }
 
                 //shutdown if we escape the loop
+                Program.Shutdown();
+            });
+
+            //start secondary thread for our updates.
+            Task.Factory.StartNew(() =>
+            {
+
+                //game loop
+                while (!ProgramState.Equals(State.SHUTDOWN))
+                {
+
+                    //update then draw scene
+                    if (SceneManager.IsSceneActive() && !SceneManager.isReadyToDraw)
+                    {
+
+                        SceneManager.UpdateScene();
+                        //update the scene, once the update hook is called, the application will then draw
+                        Task.Run(SceneManager.ThreadedUpdateScene);
+                    }
+
+                    if (!Buffer.isReady && SceneManager.isReadyToDraw)
+                        Buffer.PrepareBuffer();
+                }
+
                 Program.Shutdown();
             });
 

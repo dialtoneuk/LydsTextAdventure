@@ -136,7 +136,10 @@ namespace LydsTextAdventure
                     continue;
 
                 if (entity.GetType() != typeof(Camera))
-                    if (Entity.IsMouseOver(ConsoleManager.GetMousePosition(), entity))
+                {
+
+                    int distance = entity.GetDistance(SceneManager.CurrentScene.player);
+                    if (Entity.IsMouseOver(ConsoleManager.GetMousePosition(), entity) && !(distance > InputManager.MOUSE_RANGE || distance == -1))
                     {
 
                         entity.isHovering = true;
@@ -144,6 +147,8 @@ namespace LydsTextAdventure
                     }
                     else
                         entity.isHovering = false;
+
+                }
 
                 if (!entity.isWaiting && !entity.isStatic && !entity.isMarkedForDeletion)
                 {
@@ -208,8 +213,8 @@ namespace LydsTextAdventure
             for (int i = 0; i < list.Count; i++)
             {
                 Entity entity = list[i];
-                if (entity.position.x > position.x - range && entity.position.x < position.x + range)
-                    if (entity.position.y > position.y - range && entity.position.y < position.y + range)
+                if (entity.position.x + entity.Width > position.x - range && entity.position.x < position.x + range)
+                    if (entity.position.y + entity.Height > position.y - range && entity.position.y < position.y + range)
                     {
 
                         if (solidsOnly && !entity.isSolid)
@@ -252,24 +257,27 @@ namespace LydsTextAdventure
         public static void CacheEntities()
         {
 
-            EntityManager.VisibleEntities.Clear();
-            EntityManager.AliveEntities.Clear();
+            List<Entity> visEntities = new List<Entity>();
+            List<Entity> aliveEntities = new List<Entity>();
 
             for (int i = 0; i < EntityCount; i++)
             {
 
                 if (!EntityManager.Entities.TryGetValue(i, out Entity entity))
                 {
-                    Program.DebugLog("failed to read entity at index [" + i + "]", "entity_manager");
+                    //Program.DebugLog("failed to read entity at index [" + i + "]", "entity_manager");
                     continue;
                 }
 
                 if (!entity.isDestroyed && !entity.isMarkedForDeletion)
-                    AliveEntities.Add(entity);
+                    aliveEntities.Add(entity);
 
                 if (entity.isVisible && !entity.isDestroyed && !entity.isMarkedForDeletion)
-                    VisibleEntities.Add(entity);
+                    visEntities.Add(entity);
             }
+
+            EntityManager.VisibleEntities = visEntities;
+            EntityManager.AliveEntities = visEntities;
         }
 
         public static List<Entity> GetAliveEntities(bool ignoreCache = false)

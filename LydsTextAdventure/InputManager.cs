@@ -9,6 +9,8 @@ namespace LydsTextAdventure
     public class InputManager
     {
 
+        public const int MOUSE_RANGE = 8;
+
         public Player Player
         {
             get;
@@ -45,7 +47,7 @@ namespace LydsTextAdventure
             return new Command[]
             {
                 new Command("down", () => {
-                    MovementManager.MoveEntity( this.Player, new Position(this.Player.position.x, this.Player.position.y + 1));
+                    MovementManager.MoveEntity( this.Player, new Position(this.Player.position.x, this.Player.position.y + 1));;
                 }, "s"),
                 new Command("up", () => {
                     MovementManager.MoveEntity( this.Player, new Position(this.Player.position.x, this.Player.position.y - 1));
@@ -91,12 +93,21 @@ namespace LydsTextAdventure
 
                     //must ignore cache and get the latest alive entities
                     List<Entity> list = EntityManager.GetVisibleEntities();
+
                     for (int i = 0; i < list.Count; i++)
                     {
                         Entity entity = list[i];
 
                         if (Entity.IsMouseOver(pos, entity))
                         {
+
+                            int distance = entity.GetDistance(SceneManager.CurrentScene.player);
+
+                            if(distance > MOUSE_RANGE  || distance == -1)
+                            {
+                                Program.DebugLog("Too far away");
+                                break;
+                            }
 
                             Program.HookManager.CallHook("PreClick", HookManager.Groups.Entity, entity);
                             entity.OnClick(this.Player);
@@ -113,20 +124,13 @@ namespace LydsTextAdventure
 
                     WorldChunks world = (WorldChunks)WorldManager.CurrentWorld;
 
-                    Tile tile = new TileWood();
+                    Tile tile = new TileWater();
                     Tile thatTile;
 
                     if(!world.TryGetTile(camera.cameraPosition.x + pos.x - 1, camera.cameraPosition.y + pos.y - 1, out thatTile))
                         return;
                     else
                     {
-
-                        if(thatTile.GetType() == tile.GetType())
-                            return;
-
-                        if(thatTile.isFluid)
-                            tile.isSolid = false;
-
                         world.SetTile(tile, camera.cameraPosition.x + pos.x - 1, camera.cameraPosition.y + pos.y - 1);
                     }
                 }, "r", ConsoleKey.R)

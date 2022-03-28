@@ -8,7 +8,7 @@ namespace LydsTextAdventure
         public EntityFallenTree()
         {
 
-            this.Name = "FallenTree";
+            this.Name = "Fallen Tree";
             this.rewards = new Type[]
             {
                   typeof(ItemStick),

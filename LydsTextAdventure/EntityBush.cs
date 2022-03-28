@@ -14,7 +14,7 @@
         {
 
             if (this.isHovering)
-                Surface.Write(x + 1, y, "[ Hovering! ]");
+                Surface.Write(x + 1, y, "[Q: Forage " + this.Name + "]");
         }
     }
 }

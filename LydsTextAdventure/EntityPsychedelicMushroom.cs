@@ -13,7 +13,7 @@
         {
 
             if (this.isHovering)
-                Surface.Write(x + 1, y, "[Q: Harvest Magic Mushroom ]");
+                Surface.Write(x + 1, y, "[Q: Pick Psychedelic Mushroom]");
         }
     }
 }

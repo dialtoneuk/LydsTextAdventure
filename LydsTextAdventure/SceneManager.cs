@@ -8,6 +8,7 @@ namespace LydsTextAdventure
 
         public static Scene CurrentScene;
         private static bool isReady = false;
+        public static bool isReadyToDraw = false;
 
         protected static List<Scene> Scenes = new List<Scene>();
 
@@ -77,13 +78,29 @@ namespace LydsTextAdventure
         public static void UpdateScene()
         {
 
+            isReadyToDraw = false;
+
             Program.HookManager.CallHook("PreUpdate", HookManager.Groups.Scene);
 
             if (SceneManager.CurrentScene != null)
                 SceneManager.CurrentScene.Update();
 
             Program.HookManager.CallHook("Update", HookManager.Groups.Scene);
+
+            isReadyToDraw = true;
         }
+
+        public static void ThreadedUpdateScene()
+        {
+
+            Program.HookManager.CallHook("PreThreadedUpdate", HookManager.Groups.Scene);
+
+            if (SceneManager.CurrentScene != null)
+                SceneManager.CurrentScene.ThreadedUpdate();
+
+            Program.HookManager.CallHook("ThreadedUpdate", HookManager.Groups.Scene);
+        }
+
 
         public static void DrawScene()
         {

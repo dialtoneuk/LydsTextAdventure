@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LydsTextAdventure
 {
     public class MovementManager
     {
+
+        public const int BASE_MOVE_COST = 5;
+        public const int COOLDOWN = 20; //10 ticks
+
+        private static int canMove;
 
         public static void MoveEntity(Entity entity, int x, int y, World world = null)
         {
@@ -14,10 +20,20 @@ namespace LydsTextAdventure
         public static void MoveEntity(Entity entity, Position position, World world = null)
         {
 
+            //movement cooldown
+            if (canMove != 0 && Program.GetTick() < canMove)
+            {
+                return;
+            }
+
             if (!MovementManager.CanMove(entity, position, world))
                 return;
 
+            if (entity.GetType() == typeof(Player))
+                ((Player)entity).stanima -= BASE_MOVE_COST;
+
             entity.position.SetPosition(position);
+            canMove = Program.GetTick() + COOLDOWN;
         }
 
         public static bool CanMove(Entity entity, Position position, World world = null)
@@ -28,6 +44,43 @@ namespace LydsTextAdventure
             else
                 world = entity.World;
 
+
+            if (!entity.isSolid)
+                return true;
+
+            if (SceneManager.CurrentScene.player.stanima - BASE_MOVE_COST <= 0)
+                return false;
+
+            List<Entity> entities = EntityManager.GetVisibleEntitiesAroundPosition(position);
+
+            foreach (Entity ent in entities)
+            {
+
+                if (ent.GetType().IsSubclassOf(typeof(Structure)))
+                {
+
+                    int actualX = ent.position.x - position.x;
+                    int actualY = ent.position.y - position.y;
+
+
+
+                    Structure structure = (Structure)ent;
+                    try
+                    {
+                        return !structure.GetTiles()[Math.Abs(actualX), Math.Abs(actualY)].isSolid;
+                    }
+                    catch
+                    {
+                        //poke the tile instead
+                    }
+                }
+
+                //solid entity in the way
+                //TODO: needs to factor in the entities height and width
+                if (ent.position.x == position.x && entity.position.y == position.y)
+                    return false;
+            }
+
             Tile tile = world.GetTile(position.x, position.y);
 
             if (tile == null)
@@ -36,19 +89,6 @@ namespace LydsTextAdventure
             if (tile.GetType() == typeof(TileWorldBorder))
                 return false;
 
-            if (!entity.isSolid)
-                return true;
-
-            List<Entity> entities = EntityManager.GetVisibleEntitiesAroundPosition(position);
-
-            foreach (Entity ent in entities)
-            {
-
-                //solid entity in the way
-                //TODO: needs to factor in the entities height and width
-                if (ent.position.x == position.x && entity.position.y == position.y)
-                    return false;
-            }
 
             return tile.isSolid == false;
         }

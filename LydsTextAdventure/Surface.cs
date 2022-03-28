@@ -52,12 +52,12 @@ namespace LydsTextAdventure
             char[] chars = str.ToCharArray();
             char[] dchars;
 
-            if (y > rectangle.Height + rectangle.StartY)
+            if (y > (rectangle.Height + rectangle.StartY) || y < rectangle.StartY)
                 return;
 
             Buffer.SetCursorPosition(x, y);
 
-            if (x + chars.Length > rectangle.Width + rectangle.StartX)
+            if (x + chars.Length > (rectangle.Width + rectangle.StartX))
             {
 
                 int a = (x + chars.Length) - (rectangle.Width);

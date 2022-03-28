@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LydsTextAdventure
 {
@@ -28,8 +29,8 @@ namespace LydsTextAdventure
 
         private TempBuffer[,] temporaryBuffer;
         private Camera.Perspective perspective;
-        private List<Entity> renderEntities;
-        private readonly List<Entity> renderedEntities = new List<Entity>();
+        public List<Entity> renderEntities;
+        public readonly List<Entity> renderedEntities = new List<Entity>();
 
         public Camera(Entity entity = null, Camera.Perspective perspective = Camera.Perspective.CENTER_ON_OWNER, Position origin = null)
         {
@@ -231,8 +232,9 @@ namespace LydsTextAdventure
                 }
             }
 
-            this.RenderEntityGroup(EntityManager.GetVisibleEntities());
-            this.renderEntities = EntityManager.GetVisibleEntities();
+            List<Entity> entities = EntityManager.GetVisibleEntities().OrderBy((entity) => entity.zIndex).Reverse().ToList();
+            this.RenderEntityGroup(entities);
+            this.renderEntities = entities;
         }
 
         private void RenderEntityGroup(List<Entity> entities)
@@ -251,15 +253,20 @@ namespace LydsTextAdventure
                 int x = entity.position.x - (this.cameraPosition.x);
                 int y = entity.position.y - (this.cameraPosition.y);
 
-                if (x < 0 || x >= this.Width)
+                if ((x < 0 || x >= this.Width) && !entity.isAlwaysOn)
                     continue;
 
-                if (y < 0 || y >= this.Height)
+                if ((y < 0 || y >= this.Height) && !entity.isAlwaysOn)
                     continue;
 
-                //draw entity texture + colour                        
-                this.temporaryBuffer[x, y].texture = entity.GetTexture().character;
-                this.temporaryBuffer[x, y].colour = entity.GetTexture().color;
+                if (entity.drawCameraBuffer)
+                {
+                    //draw entity texture + colour                        
+                    this.temporaryBuffer[x, y].texture = entity.GetTexture().character;
+                    this.temporaryBuffer[x, y].colour = entity.GetTexture().color;
+                }
+                else
+                    Surface.DrawText(x, y, entity.GetTexture().character.ToString(), this.GetViewRectangle(), entity.GetTexture().color, entity.buffer);
             }
         }
 
@@ -299,12 +306,12 @@ namespace LydsTextAdventure
                     int x = entity.position.x - (this.cameraPosition.x);
                     int y = entity.position.y - (this.cameraPosition.y);
 
-                    if (x < 0 || x >= this.Width)
+                    if ((x < 0 || x >= this.Width) && !entity.isAlwaysOn)
                     {
                         continue;
                     }
 
-                    if (y < 0 || y >= this.Height)
+                    if ((y < 0 || y >= this.Height) && !entity.isAlwaysOn)
                     {
                         continue;
                     }

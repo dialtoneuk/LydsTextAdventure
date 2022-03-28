@@ -21,6 +21,7 @@ namespace LydsTextAdventure
             return (this.x == x_ && this.y == y_);
         }
 
+
         public override bool Equals(object obj)
         {
 

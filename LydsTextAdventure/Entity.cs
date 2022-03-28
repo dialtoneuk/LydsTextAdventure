@@ -8,6 +8,10 @@
     /// </summary>
     public class Entity
     {
+
+        public int stanima;
+        public int maxStanima = 100;
+        public int stanimaRechargeRate = 8;
         /// <summary>
         /// Defines the MaxSpeed.
         /// </summary>
@@ -17,6 +21,10 @@
         /// Defines the MaxHealth.
         /// </summary>
         public const int MaxHealth = 5042;
+
+        public int zIndex = 5;
+
+        public bool drawCameraBuffer = true;
 
         /// <summary>
         /// Defines the position.
@@ -35,6 +43,8 @@
         {
             get; set;
         }
+
+        public Buffer.Types buffer = Buffer.Types.ENTITY_BUFFER;
 
         /// <summary>
         /// Defines the id.
@@ -130,8 +140,8 @@
 
             Position screenPosition = EntityManager.GetMainCamera().GetScreenPosition(entity);
 
-            if (position.x > screenPosition.x - Math.Max(0, entity.Width) && position.x < screenPosition.x + Math.Max(0, entity.Width))
-                if (position.y < screenPosition.y + Math.Max(0, entity.Height) && position.y > screenPosition.y - Math.Max(0, entity.Height))
+            if (position.x > screenPosition.x - Math.Max(1, entity.Width) && position.x < screenPosition.x + Math.Max(1, entity.Width))
+                if (position.y < screenPosition.y + Math.Max(1, entity.Height) && position.y > screenPosition.y - Math.Max(1, entity.Height))
                     return true;
 
             return false;
@@ -319,6 +329,18 @@
         {
 
             return this.Health;
+        }
+
+
+        public int GetDistance(Entity entity)
+        {
+
+            if (entity == null || this == null)
+                return -1;
+
+            int a = Math.Abs(entity.position.x - this.position.x);
+            int b = Math.Abs(entity.position.y - this.position.y);
+            return (int)Math.Sqrt((a * a) + (b * b));
         }
 
         /// <summary>
