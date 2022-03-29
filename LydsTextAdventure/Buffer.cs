@@ -68,13 +68,15 @@ namespace LydsTextAdventure
         public static void CreateHook()
         {
 
+            int lastDrawnFrames = Buffer.DrawnFrames;
             if (fpsHook != null)
                 throw new ApplicationException("fpsHook already initialized");
 
             //add a hook to basically update the FPS
             fpsHook = new Hook("ClockTick", HookManager.Groups.Global, (object[] obj) =>
             {
-                Buffer.FPS = Buffer.DrawnFrames;
+                Buffer.FPS = Buffer.DrawnFrames - lastDrawnFrames;
+                lastDrawnFrames = Buffer.DrawnFrames;
             });
         }
 
@@ -262,7 +264,6 @@ namespace LydsTextAdventure
             if (lastSecond != Program.Clock)
             {
                 lastSecond = Program.Clock;
-                DrawnFrames = 0;
             }
 
             //invalid

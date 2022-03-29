@@ -7,8 +7,6 @@ namespace LydsTextAdventure
 
         private PlayerInventory inventory = new PlayerInventory();
 
-
-
         public Player()
         {
 
@@ -29,19 +27,20 @@ namespace LydsTextAdventure
         public override void Update(int tick)
         {
 
-            if ((tick % Math.Max(1, 10 - this.stanimaRechargeRate) == 0) && this.stanima <= this.maxStanima)
-                this.stanima++;
+            Random rand = new Random();
+            if (this.stanima <= this.maxStanima)
+                this.stanima += rand.Next(this.stanimaRechargeRate / 2, this.stanimaRechargeRate);
 
-            this.Wait(10); //wait 10ms before doing it again;
+            if (this.stanima > this.maxStanima)
+                this.stanima = this.maxStanima;
+
+            this.Wait(100); //wait a bit;
         }
 
         public override void Draw(int x, int y, Camera camera)
         {
 
-            Surface.DrawText(x, y + 1, "hp: " + this.Health.ToString(), camera.GetViewRectangle());
-
 #if DEBUG
-
             System.ConsoleColor color = System.ConsoleColor.Green;
 
             if (Buffer.FPS <= 40)
@@ -49,17 +48,8 @@ namespace LydsTextAdventure
             else if (Buffer.FPS <= 20)
                 color = System.ConsoleColor.Red;
 
-            Surface.DrawText(x, y + 2, "fps: " + Buffer.FPS, camera.GetViewRectangle(), color);
+            Surface.DrawText(x, y - 2, Buffer.FPS.ToString(), camera.GetViewRectangle(), color);
 
-            color = System.ConsoleColor.Green;
-            if (this.stanima <= 50)
-                color = System.ConsoleColor.Yellow;
-            else if (this.stanima <= 30)
-                color = System.ConsoleColor.Red;
-            else if (this.stanima < 15)
-                color = System.ConsoleColor.DarkRed;
-
-            Surface.DrawText(x, y + 3, "stanima: " + this.stanima, camera.GetViewRectangle(), color);
 #endif
 
             base.Draw(x, y, camera);

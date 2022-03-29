@@ -6,7 +6,7 @@
         public TileVolcanicRock()
         {
 
-            this.isSolid = true;
+            this.isSolid = false;
             this.texture = new Texture('▒', System.ConsoleColor.DarkGray);
         }
     }

@@ -10,8 +10,8 @@
     {
 
         public int stanima;
-        public int maxStanima = 100;
-        public int stanimaRechargeRate = 8;
+        public int maxStanima = 200;
+        public int stanimaRechargeRate = 12;
         /// <summary>
         /// Defines the MaxSpeed.
         /// </summary>

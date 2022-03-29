@@ -12,10 +12,13 @@ namespace LydsTextAdventure
             get;
         }
 
-        public bool fresh = true;
+        public bool generateFoliage = false;
+
+        public Biome chunkBiome;
 
         public int chunkNutrients;
         public int chunkOre;
+        public bool needsUpdate = false;
         public int chunkDanger;
 
         public int chunkId
@@ -28,8 +31,8 @@ namespace LydsTextAdventure
 
         private bool ready = false;
 
-        public const int CHUNK_WIDTH = 31;
-        public const int CHUNK_HEIGHT = 31;
+        public const int CHUNK_WIDTH = 8;
+        public const int CHUNK_HEIGHT = 8;
 
         //the default tile we create chunks with
         public readonly Tile defaultTile = new TileGrass();
@@ -41,7 +44,10 @@ namespace LydsTextAdventure
             this.chunkY = chunkY;
             this.chunkId = chunkId;
             this.chunkData = new Dictionary<Tuple<int, int>, Tile>();
-            defaultTile.texture.color = biome.GetGrassColour();
+            this.chunkBiome = biome;
+
+            if (biome != null)
+                defaultTile.texture.color = biome.GetGrassColour();
 
             for (int x = 0; x < CHUNK_WIDTH; x++)
                 for (int y = 0; y < CHUNK_HEIGHT; y++)

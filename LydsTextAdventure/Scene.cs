@@ -136,8 +136,7 @@ namespace LydsTextAdventure
         {
 
             //cache alive and visible entities every 10th tick
-            if (Program.GetTick() % 10 == 0)
-                EntityManager.CacheEntities();
+            EntityManager.CacheEntities();
         }
 
         public virtual void Update()

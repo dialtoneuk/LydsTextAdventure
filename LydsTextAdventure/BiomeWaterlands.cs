@@ -9,72 +9,54 @@ namespace LydsTextAdventure
     {
 
 
-        public BiomeWaterlands()
+        public BiomeWaterlands(int seed) : base(seed)
         {
+            this.frequencies = new float[]
+            {
+                    0.075f, //lakeFrequency
+                    0.240f, //puddleFrequency    
+                    0.1f, //mountainFrequency    
+                    0.035f, //spareFrequency    
+            };
 
-            this.fractalGain = 0.25f;
-            this.WATER_LEVEL = 0.01f;
+            this.nutrientRate = 3;
+            this.minDistanceBetweenSeed = 10;
+            this.maxDistanceBetweenSeed = 30;
+            this.waterLevel = 0.05f;
+            this.deepWaterLevel = 0.1f;
+            this.puddleLevel = 0.025f;
+            this.stoneLevel = 0.5f;
+
             this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>
             {
                 {new Tuple<float,float>(-12, 0), new Type[]{
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityMushroom),
-                    typeof(EntityMushroom),
                     typeof(EntityBush),
-                    typeof(EntityBush),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
                 }},
                 {new Tuple<float,float>(0, 4), new Type[]{
                     typeof(EntityDeadTree),
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityMushroom),
-                    typeof(EntityMushroom),
                     typeof(EntityBush),
-                    typeof(EntityBush),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityDeadTree),
                     typeof(EntityFallenTree),
                 }},
                 {new Tuple<float,float>(4,8), new Type[]{
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityMushroom),
                     typeof(EntityMushroom),
                     typeof(EntityBush),
-                    typeof(EntityBush),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
                     typeof(EntityDeadTree),
                     typeof(EntityFallenTree),
                 }},
                 {new Tuple<float,float>(8, WorldChunks.MAX_NUTRIENTS), new Type[]{
-                    typeof(EntityPsychedelicMushroom),
-                    typeof(EntityPsychedelicMushroom),
                     typeof(EntityMushroom),
-                    typeof(EntityMushroom),
-                    typeof(EntityBush),
                     typeof(EntityBush),
                     typeof(EntityDeadTree),
                     typeof(EntityFallenTree),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
+                    typeof(EntityTree),
+                    typeof(EntityPineTree),
                 }}
             };
+
+            this.CreateNoiseControllers();
         }
 
-        public override bool GenerateMagma()
+        public override bool GenerateLava()
         {
 
             return false;
@@ -82,12 +64,17 @@ namespace LydsTextAdventure
 
         public override ConsoleColor GetWaterColour()
         {
-            return ConsoleColor.DarkBlue;
+            return ConsoleColor.Cyan;
+        }
+
+        public override ConsoleColor GetDeepWaterColour()
+        {
+            return ConsoleColor.Cyan;
         }
 
         public override ConsoleColor GetGrassColour()
         {
-            return ConsoleColor.DarkGray;
+            return ConsoleColor.Yellow;
         }
     }
 }

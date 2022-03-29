@@ -12,7 +12,11 @@ namespace LydsTextAdventure
         public int width;
         public int height;
 
-        public readonly int seed;
+        public int seed
+        {
+            get;
+            protected set;
+        }
 
         public bool isWaiting = false;
         public bool isDisabled = false;
@@ -23,17 +27,26 @@ namespace LydsTextAdventure
         public World(int width = 712, int height = 712)
         {
 
-            this.seed = new Random().Next(0, int.MaxValue);
             this.noise = new FastNoise(this.seed);
             this.world = new Tile[width, height];
 
             this.width = width;
             this.height = height;
 
-            this.noise.SetFrequency(0.005f);
+            if (this.seed == 0)
+                this.SetSeed();
 
             WorldManager.RegisterWorld(this);
             this.LoadEntities();
+        }
+
+        public void SetSeed(int seed = 0)
+        {
+
+            if (seed != 0)
+                this.seed = seed;
+
+            this.seed = new Random().Next(64, int.MaxValue);
         }
 
         public virtual Position GetInitialSpawnPoint()
@@ -130,8 +143,10 @@ namespace LydsTextAdventure
                     }
                     else
                     {
-                        result[x, y].texture = this.world[actualx, actualy].texture.character;
-                        result[x, y].colour = this.world[actualx, actualy].texture.color;
+
+                        Texture tex = this.world[actualx, actualy].GetTexture();
+                        result[x, y].texture = tex.character;
+                        result[x, y].colour = tex.color;
                     }
                 }
             }

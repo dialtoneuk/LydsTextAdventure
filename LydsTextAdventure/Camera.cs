@@ -202,7 +202,7 @@ namespace LydsTextAdventure
         public virtual void UpdateBuffer()
         {
 
-            if (this.World != null || this.World.IsDisabled())
+            if (this.World != null && !this.World.IsDisabled())
             {
 
                 TempBuffer[,] worldData = this.World.Draw(this.cameraPosition.x, this.cameraPosition.y, this.Width, this.Height);
@@ -232,9 +232,14 @@ namespace LydsTextAdventure
                 }
             }
 
-            List<Entity> entities = EntityManager.GetVisibleEntities().OrderBy((entity) => entity.zIndex).Reverse().ToList();
-            this.RenderEntityGroup(entities);
-            this.renderEntities = entities;
+            if (EntityManager.GetVisibleEntities() != null)
+            {
+                List<Entity> entities = EntityManager.GetVisibleEntities().OrderBy((entity) => entity.zIndex).Reverse().ToList();
+                this.RenderEntityGroup(entities);
+                this.renderEntities = entities;
+            }
+
+
         }
 
         private void RenderEntityGroup(List<Entity> entities)

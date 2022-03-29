@@ -15,39 +15,15 @@
             {
                 {new Tuple<float, float>(-12, 0), new Type[]{
                     typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityDeadTree),
-                    typeof(EntityFallenTree),
-                    typeof(EntityBush),
-                    typeof(EntityBush),
                 }},
                 {  new Tuple<float, float>(0, 4), new Type[]{
-                    typeof(EntityTree),
-                    typeof(EntityOakTree),
-                    typeof(EntityBush),
-                    typeof(EntityBush)
+                    typeof(EntityFallenTree),
                 }},
                 { new Tuple<float, float>(4, 8), new Type[]{
                     typeof(EntityTree),
-                    typeof(EntityOakTree),
-                    typeof(EntityAppleTree),
-                    typeof(EntityOakTree),
-                    typeof(EntityBush),
-                    typeof(EntityPineTree),
-                    typeof(EntityPineTree)
                 }},
                 { new Tuple<float, float>(8, WorldChunks.MAX_NUTRIENTS), new Type[]{
-                    typeof(EntityTree),
-                    typeof(EntityOakTree),
                     typeof(EntityAppleTree),
-                    typeof(EntityOakTree),
-                    typeof(EntityBush),
-                    typeof(EntityPineTree),
-                    typeof(EntityPineTree),
-                    typeof(EntityPineTree),
-                    typeof(EntityPineTree),
-                    typeof(EntityPineTree),
-                    typeof(EntityPineTree),
                 }}
             };
 
@@ -62,39 +38,39 @@
         public Random biomeRandom = new Random();
 
         /// <summary>
-        /// Defines the SEED_MAX_DISTANCE.
+        /// Defines the minDistanceBetweenSeed.
         /// </summary>
-        public const int SEED_MAX_DISTANCE = 60;
+        public int minDistanceBetweenSeed = 10;
 
         /// <summary>
-        /// Defines the SEED_MIN_DISTANCE.
+        /// Defines the maxDistanceBetweenSeed.
         /// </summary>
-        public const int SEED_MIN_DISTANCE = 4;
+        public int maxDistanceBetweenSeed = 20;
 
         /// <summary>
-        /// Defines the fractalGain.
+        /// Defines the waterLevel.
         /// </summary>
-        public float fractalGain = 1.0f;
+        public float waterLevel = 0.1f;
 
         /// <summary>
-        /// Defines the WATER_LEVEL.
+        /// Defines the puddleLevel.
         /// </summary>
-        public float WATER_LEVEL = 0.05f;
+        public float puddleLevel = -0.38f;
 
         /// <summary>
-        /// Defines the STONE_LEVEL.
+        /// Defines the stoneLevel.
         /// </summary>
-        public float STONE_LEVEL = 0.31f;
+        public float stoneLevel = 0.31f;
 
         /// <summary>
-        /// Defines the LAVA_LEVEL.
+        /// Defines the lavaLevel.
         /// </summary>
-        public float LAVA_LEVEL = 0.15f;
+        public float lavaLevel = 0.15f;
 
         /// <summary>
-        /// Defines the DEEP_WATER_LEVEL.
+        /// Defines the deepWaterLevel.
         /// </summary>
-        public float DEEP_WATER_LEVEL = 0.0005f;
+        public float deepWaterLevel = 0.05f;
 
         /// <summary>
         /// Defines the NoiseController.
@@ -105,16 +81,19 @@
             /// Defines the LAKES.
             /// </summary>
             LAKES,
-
             /// <summary>
             /// Defines the RIVERS.
             /// </summary>
-            RIVERS,
-
+            PUDDLES,
             /// <summary>
             /// Defines the MOUNTAINS.
             /// </summary>
-            MOUNTAINS
+            MOUNTAINS,
+
+            /// <summary>
+            /// Defines the LAVA.
+            /// </summary>
+            LAVA
         }
 
         /// <summary>
@@ -137,22 +116,37 @@
         /// </summary>
         public int lastDistance = 0;
 
-        public float[] frequencies = new float[]
-        {
-            0.015f, //lakeFrequency
-            0.015f, //riverFrequency    
-            0.015f, //mountainFrequency    
-            0.015f, //spareFrequency    
-        };
+        /// <summary>
+        /// Defines the randomSeedNumber.
+        /// </summary>
+        public int randomSeedNumber = 0;
 
+        /// <summary>
+        /// Defines the frequencies.
+        /// </summary>
+        public float[] frequencies;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Biome"/> class.
+        /// </summary>
+        /// <param name="randomSeedNumber">The randomSeedNumber<see cref="int"/>.</param>
+        public Biome(int randomSeedNumber = 0)
+        {
+
+            if (randomSeedNumber == 0)
+                this.randomSeedNumber = new Random().Next(1, 9999);
+        }
+
+        /// <summary>
+        /// Defines the noiseTypes.
+        /// </summary>
         public FastNoise.NoiseType[] noiseTypes = new FastNoise.NoiseType[]
         {
             FastNoise.NoiseType.Perlin,
+            FastNoise.NoiseType.Cellular,
             FastNoise.NoiseType.Perlin,
-            FastNoise.NoiseType.Perlin,
-            FastNoise.NoiseType.Perlin
+            FastNoise.NoiseType.ValueFractal
         };
-
 
         /// <summary>
         /// The CreateNoiseControllers.
@@ -161,27 +155,33 @@
         {
 
             Random rand = new Random();
-            this.noiseControllers = new List<FastNoise>();
+            noiseControllers = new List<FastNoise>();
             for (int i = 0; i < Enum.GetNames(typeof(NoiseController)).Length; i++)
             {
-                FastNoise noise = new FastNoise(rand.Next(1337, 1337 * 1337));
+                FastNoise noise = new FastNoise(randomSeedNumber);
                 noise.SetFrequency(frequencies[i]);
+                noise.SetFractalOctaves(12);
                 noise.SetNoiseType(noiseTypes[i]);
-                this.noiseControllers.Add(noise);
+                noiseControllers.Add(noise);
             }
         }
 
+        /// <summary>
+        /// The GetNoiseController.
+        /// </summary>
+        /// <param name="type">The type<see cref="NoiseController"/>.</param>
+        /// <returns>The <see cref="FastNoise"/>.</returns>
         public FastNoise GetNoiseController(NoiseController type)
         {
 
-            return this.noiseControllers[(int)type];
+            return noiseControllers[(int)type];
         }
 
         /// <summary>
         /// The GenerateMagma.
         /// </summary>
         /// <returns>The <see cref="bool"/>.</returns>
-        public virtual bool GenerateMagma()
+        public virtual bool GenerateLava()
         {
 
             return true;
@@ -208,6 +208,16 @@
         }
 
         /// <summary>
+        /// The GetDeepWaterColour.
+        /// </summary>
+        /// <returns>The <see cref="ConsoleColor"/>.</returns>
+        public virtual ConsoleColor GetDeepWaterColour()
+        {
+
+            return ConsoleColor.DarkBlue;
+        }
+
+        /// <summary>
         /// The CanSeed.
         /// </summary>
         /// <param name="nutrientRate">The nutrientRate<see cref="int"/>.</param>
@@ -229,7 +239,7 @@
                 if (value > 100 - chanceModifier)
                 {
                     canSeed = true;
-                    lastDistance = biomeRandom.Next(SEED_MIN_DISTANCE, SEED_MAX_DISTANCE);
+                    lastDistance = biomeRandom.Next(minDistanceBetweenSeed, maxDistanceBetweenSeed);
                 }
             }
 

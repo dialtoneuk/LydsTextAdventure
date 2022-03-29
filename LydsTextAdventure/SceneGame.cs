@@ -37,8 +37,7 @@ namespace LydsTextAdventure
 
             //link input manager
             inputManager.SetPlayer(this.player);
-
-            this.world = new WorldChunks(4, 4);
+            this.world = new WorldChunks(6, 6);
             this.world.GenerateWorld();
 
             for (int i = 0; i < 10; i++)
@@ -83,6 +82,8 @@ namespace LydsTextAdventure
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();
+            //update chuncks
+            this.world.UpdateChunksAroundPlayer(this.player, 8);
 
             //then do the base updates
             base.Update();
@@ -90,8 +91,8 @@ namespace LydsTextAdventure
 
         public override void ThreadedUpdate()
         {
-            this.world.CreateChunksAroundPlayer(this.player, 4);
-            this.world.UpdateChunk(this.world.chunks[new Tuple<int, int>((this.player.position.x / Chunk.CHUNK_WIDTH), (this.player.position.y / Chunk.CHUNK_HEIGHT))]);
+
+            this.world.CreateChunksAroundPlayer(this.player, 6);
             base.ThreadedUpdate();
         }
 
@@ -106,7 +107,7 @@ namespace LydsTextAdventure
             this.player.position.SetPosition(this.world.GetInitialSpawnPoint());
 
             //update spawn chunks
-            this.world.UpdateChunks();
+            this.world.UpdateChunksAroundPlayer(this.player, 6);
 
             base.Start();
         }

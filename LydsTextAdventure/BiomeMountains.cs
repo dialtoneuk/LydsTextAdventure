@@ -5,17 +5,17 @@ using System.Linq;
 namespace LydsTextAdventure
 {
 
-    public class BiomeMushrooms : Biome
+    public class BiomeMountains : Biome
     {
 
 
-        public BiomeMushrooms(int seed) : base(seed)
+        public BiomeMountains(int seed) : base(seed)
         {
             this.frequencies = new float[]
            {
-                0.0515f, //lakeFrequency
-                0.075f, //puddleFrequency    
-                0.045f, //mountainFrequency    
+                0.005f, //lakeFrequency
+                0.015f, //puddleFrequency    
+                0.125f, //mountainFrequency    
                 0.035f, //spareFrequency    
            };
 
@@ -23,17 +23,17 @@ namespace LydsTextAdventure
             {
                 FastNoise.NoiseType.SimplexFractal,
                 FastNoise.NoiseType.Perlin,
-                FastNoise.NoiseType.Perlin,
+                FastNoise.NoiseType.CubicFractal,
                 FastNoise.NoiseType.Perlin,
             };
 
             this.nutrientRate = 5;
             this.minDistanceBetweenSeed = 20;
             this.maxDistanceBetweenSeed = 50;
-            this.waterLevel = 0.205f;
-            this.deepWaterLevel = 0.40f;
-            this.puddleLevel = 0.175f;
-            this.stoneLevel = 0.6f;
+            this.waterLevel = 0.555f;
+            this.deepWaterLevel = 0.6f;
+            this.puddleLevel = 0.575f;
+            this.stoneLevel = 0.205f;
             this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>
             {
                 {new Tuple<float,float>(-12, 0), new Type[]{
@@ -90,7 +90,7 @@ namespace LydsTextAdventure
 
         public override ConsoleColor GetGrassColour()
         {
-            return ConsoleColor.Cyan;
+            return ConsoleColor.DarkGreen;
         }
     }
 }

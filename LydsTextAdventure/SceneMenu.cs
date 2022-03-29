@@ -6,9 +6,8 @@ namespace LydsTextAdventure
     {
 
         protected Camera camera;
-        protected Player player;
         protected InputManager inputManager = new InputManager();
-        protected WorldTitleScreen world;
+        protected World world;
 
         public SceneMenu(string name, List<Command> commands = null) : base(name, commands) { }
 
@@ -26,10 +25,6 @@ namespace LydsTextAdventure
             this.player = new Player();
             this.player.isVisible = false;
             this.inputManager.SetPlayer(this.player);
-
-            this.world = new WorldTitleScreen();
-            this.world.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);
-            this.world.GenerateWorld();
 
             this.camera = new Camera();
             this.camera.SetSize(Buffer.WindowWidth, Buffer.WindowHeight);

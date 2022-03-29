@@ -51,13 +51,13 @@
             {
 
                 string stub = "";
-                for (int i = 0; i < this.player.Health / 10; i++)
+                for (int i = 0; i < this.player.Health / 5; i++)
                     stub += "+";
 
                 this.health.SetText("Health [" + this.player.GetHealth().ToString() + "] " + stub);
 
                 stub = "";
-                for (int i = 0; i < this.player.stanima / 5; i++)
+                for (int i = 0; i < this.player.stanima / 10; i++)
                     stub += "-";
 
                 this.stanima.SetText("Stanima [" + this.player.stanima.ToString() + "] " + stub);
