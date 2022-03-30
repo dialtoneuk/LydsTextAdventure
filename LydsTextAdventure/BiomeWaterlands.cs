@@ -22,9 +22,9 @@ namespace LydsTextAdventure
             this.nutrientRate = 3;
             this.minDistanceBetweenSeed = 10;
             this.maxDistanceBetweenSeed = 30;
-            this.waterLevel = 0.05f;
-            this.deepWaterLevel = 0.1f;
-            this.puddleLevel = 0.025f;
+            this.waterLevel = 0.125f;
+            this.deepWaterLevel = 0.3f;
+            this.puddleLevel = 0.225f;
             this.stoneLevel = 0.5f;
 
             this.biomeFoliage = new Dictionary<Tuple<float, float>, Type[]>

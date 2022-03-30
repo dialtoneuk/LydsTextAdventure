@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LydsTextAdventure
 {
-    class OscMovement
+    public class OscMovement
     {
 
         public int angle = -180;

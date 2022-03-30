@@ -46,7 +46,7 @@ namespace LydsTextAdventure
 
             CommandManager.Clear();
             Console.Clear();
-            Buffer.Clear();
+            Buffer.Reset();
             WindowManager.ClearWindows();
             Buffer.CleanBuffer();
 
@@ -78,16 +78,12 @@ namespace LydsTextAdventure
         public static void UpdateScene()
         {
 
-            isReadyToDraw = false;
-
             Program.HookManager.CallHook("PreUpdate", HookManager.Groups.Scene);
 
             if (SceneManager.CurrentScene != null)
                 SceneManager.CurrentScene.Update();
 
             Program.HookManager.CallHook("Update", HookManager.Groups.Scene);
-
-            isReadyToDraw = true;
         }
 
         public static void ThreadedUpdateScene()
@@ -111,6 +107,8 @@ namespace LydsTextAdventure
                 SceneManager.CurrentScene.Draw();
 
             Program.HookManager.CallHook("Draw", HookManager.Groups.Scene);
+
+            SceneManager.isReadyToDraw = false;
         }
 
         public static void AddScene(Scene scene)

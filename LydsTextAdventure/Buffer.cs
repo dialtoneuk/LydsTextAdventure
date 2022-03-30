@@ -140,7 +140,7 @@ namespace LydsTextAdventure
             return new char[Buffer.Height];
         }
 
-        public static void Clear()
+        public static void Reset()
         {
 
             Buffer.entityBuffer = new char[Buffer.Width, Buffer.Height];
@@ -237,7 +237,7 @@ namespace LydsTextAdventure
         public static void CleanBuffer()
         {
 
-            Buffer.Clear();
+            Buffer.Reset();
 
             for (int y = 0; y < Buffer.Height; y++)
             {
@@ -277,14 +277,12 @@ namespace LydsTextAdventure
 
             for (int y = 0; y < Buffer.Height; y++)
             {
-
                 for (int x = 0; x < Buffer.Width; x++)
                 {
 
-
                     buffer[len].Attributes = (short)(0 + (int)Buffer.colourBuffer[x, y]);
                     int code = (int)Buffer.drawBuffer[x, y];
-                    buffer[len].Char.UnicodeChar = (ushort)Buffer.processBuffer[x, y];
+                    buffer[len].Char.UnicodeChar = (ushort)code;
                     len++;
                 }
             }

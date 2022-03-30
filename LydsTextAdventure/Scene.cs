@@ -137,16 +137,17 @@ namespace LydsTextAdventure
 
             //cache alive and visible entities every 10th tick
             EntityManager.CacheEntities();
+
         }
 
         public virtual void Update()
         {
-
-            //update worlds
-            WorldManager.UpdateWorlds();
             //update entites
             EntityManager.UpdateEntities();
             WindowManager.UpdateWindows();
+            //update worlds
+            WorldManager.UpdateWorlds();
+
         }
     }
 }

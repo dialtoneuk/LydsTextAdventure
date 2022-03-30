@@ -7,9 +7,6 @@ namespace LydsTextAdventure
     {
 
         public const int BASE_MOVE_COST = 35;
-        public const int COOLDOWN = 10; //10 ticks
-
-        private static int canMove;
 
         public static void MoveEntity(Entity entity, int x, int y, World world = null)
         {
@@ -20,21 +17,12 @@ namespace LydsTextAdventure
         public static void MoveEntity(Entity entity, Position position, World world = null)
         {
 
-
-
             if (!MovementManager.CanMove(entity, position, world))
                 return;
-
-            //movement cooldown
-            if (canMove != 0 && Program.GetTick() < canMove)
-                return;
-
-
-            if (entity.GetType() == typeof(Player))
-                ((Player)entity).stanima -= BASE_MOVE_COST;
+            else if (entity.GetType() == typeof(Player))
+                ((Player)entity).stanima = Math.Max(0, ((Player)entity).stanima - BASE_MOVE_COST);
 
             entity.position.SetPosition(position);
-            canMove = Program.GetTick() + COOLDOWN;
         }
 
         public static bool CanMove(Entity entity, Position position, World world = null)

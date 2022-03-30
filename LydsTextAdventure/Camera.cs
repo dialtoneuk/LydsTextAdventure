@@ -74,8 +74,11 @@ namespace LydsTextAdventure
 
                 List<Entity> ents = camera.renderedEntities;
 
-                foreach (Entity e in ents)
+                for (int i = 0; i < ents.Count; i++)
+                {
+                    Entity e = ents[i];
                     allRendered.Add(e);
+                }
             }
 
             List<Entity> list = EntityManager.GetAliveEntities();
@@ -100,6 +103,10 @@ namespace LydsTextAdventure
                 for (int i = 0; i < allRendered.Count; i++)
                 {
                     Entity comp = allRendered[i];
+
+                    if (comp == null)
+                        continue;
+
                     if (ent.id == comp.id)
                     {
                         ent.SetDisabled(false);

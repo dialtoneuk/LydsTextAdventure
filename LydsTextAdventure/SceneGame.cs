@@ -51,28 +51,30 @@ namespace LydsTextAdventure
 
             this.camera = new Camera(this.player, Camera.Perspective.CENTER_ON_OWNER);
             this.camera.SetMainCamera(true);
-            this.camera.SetSize((Buffer.WindowWidth - 48), 41);
+            this.camera.SetSize((Buffer.WindowWidth - 64), 41);
             this.camera.SetName("Main Camera");
             this.camera.position.x = 0;
             this.camera.position.y = 0;
 
+
             WindowPlayerStatistics stats = new WindowPlayerStatistics();
             stats.SetPlayer(this.player);
-            stats.SetPosition((Buffer.WindowWidth - 48), 0);
+            stats.SetPosition((Buffer.WindowWidth - 64), 0);
 
             WindowInventory inventory = new WindowInventory();
             inventory.SetPlayer(this.player);
-            inventory.SetPosition((Buffer.WindowWidth - 48), 9);
+            inventory.SetPosition((Buffer.WindowWidth - 64), 9);
             inventory.SetSize(40, 52);
 
             WindowConsole console = new WindowConsole();
-            console.SetSize((Buffer.WindowWidth - 48) / 2, 20);
+            console.SetSize((Buffer.WindowWidth - 64) / 2, 20);
             console.SetPosition(0, 41);
 
 
             WindowMap map = new WindowMap();
-            map.SetSize((Buffer.WindowWidth - 48) / 2, 20);
-            map.SetPosition((Buffer.WindowWidth - 48) / 2, 41);
+            map.SetSize((Buffer.WindowWidth - 64) / 2, 20);
+            map.SetPosition((Buffer.WindowWidth - 64) / 2, 41);
+
 
             base.Before();
         }
@@ -82,9 +84,6 @@ namespace LydsTextAdventure
 
             //render world and entities using this camera
             this.camera.UpdateBuffer();
-            //update chuncks
-            this.world.UpdateChunksAroundPlayer(this.player, 8);
-
             //then do the base updates
             base.Update();
         }
@@ -92,7 +91,10 @@ namespace LydsTextAdventure
         public override void ThreadedUpdate()
         {
 
+            //update chuncks
+            this.world.UpdateChunksAroundPlayer(this.player, 8);
             this.world.CreateChunksAroundPlayer(this.player, 6);
+
             base.ThreadedUpdate();
         }
 
@@ -108,6 +110,12 @@ namespace LydsTextAdventure
 
             //update spawn chunks
             this.world.UpdateChunksAroundPlayer(this.player, 6);
+
+            for (int i = 0; i < 10; i++)
+            {
+                EntityTest test = new EntityTest();
+                test.position.SetPosition(new Position(this.player.position.x, this.player.position.y + (i * 7)));
+            }
 
             base.Start();
         }

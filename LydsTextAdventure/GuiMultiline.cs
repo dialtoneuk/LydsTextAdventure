@@ -31,9 +31,21 @@ namespace LydsTextAdventure
 
             Rectangle rect = (window == null ? this.GetRectangle() : window.GetRectangle());
             int _y = 0;
-            foreach (string str in this.strings)
-                if (str != null && _y < this.Height)
-                    Surface.DrawText(x, y + _y++, str, rect);
+            for (int i = 0; i < strings.Count; i++)
+            {
+
+                try
+                {
+                    string str = this.strings[i];
+                    if (str != null && _y < this.Height)
+                        Surface.DrawText(x, y + _y++, str, rect);
+                }
+                catch
+                {
+                    Program.DebugLog("Error Drawing GUI Multiline");
+                }
+
+            }
 
             base.Draw(x, y, camera, window);
         }

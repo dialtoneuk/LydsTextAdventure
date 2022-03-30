@@ -138,14 +138,24 @@ namespace LydsTextAdventure
             }
         }
 
-        private static void GameLoop()
+        private static void StartBufferLoop()
         {
 
-            if (ProgramState == State.RUNNING)
-                throw new ApplicationException("state already running");
+            //start third thread for the main updates
+            Task.Factory.StartNew(() =>
+            {
 
-            //set state to running
-            ProgramState = State.RUNNING;
+                //game loop
+                while (!ProgramState.Equals(State.SHUTDOWN))
+                {
+
+
+                }
+            });
+        }
+
+        private static void StartThreadedUpdateLoop()
+        {
 
             //start secondary thread for our threaded updates.
             Task.Factory.StartNew(() =>
@@ -156,30 +166,23 @@ namespace LydsTextAdventure
                 {
 
                     //update then draw scene
-                    if (SceneManager.IsSceneActive() && !SceneManager.isReadyToDraw)
+                    if (SceneManager.IsSceneActive())
                         //update the scene, once the update hook is called, the application will then draw
                         SceneManager.ThreadedUpdateScene();
-
                 }
             });
+        }
 
-            //start third thread for the main updates
-            Task.Factory.StartNew(() =>
-            {
+        private static void GameLoop()
+        {
 
-                //game loop
-                while (!ProgramState.Equals(State.SHUTDOWN))
-                {
+            if (ProgramState == State.RUNNING)
+                throw new ApplicationException("state already running");
 
-                    //update then draw scene
-                    if (SceneManager.IsSceneActive() && !SceneManager.isReadyToDraw)
-                        SceneManager.UpdateScene();
+            //set state to running
+            ProgramState = State.RUNNING;
 
 
-                    if (!Buffer.isReady && SceneManager.isReadyToDraw)
-                        Buffer.PrepareBuffer();
-                }
-            });
 
             //start in a new thread
             Task.Factory.StartNew(() =>
@@ -196,30 +199,20 @@ namespace LydsTextAdventure
                     if (SceneManager.IsSceneActive() && SceneManager.isReadyToDraw)
                     {
 
-                        if (Program.Tick % 2 == 0)
-                            Buffer.Clear();
-
+                        Buffer.Reset();
+                        SceneManager.UpdateScene();
                         SceneManager.DrawScene();
-                        SceneManager.isReadyToDraw = false;
-                    }
-#if DEBUG
-                    //send alive to console
-                    if (Program.Tick % 1024 == 0)
-                        Program.DebugLog("check alive");
-
-                    //send console messages every 1 ticks as if its to fast it will throw exception
-                    if (Program.Tick % 1 == 0 && Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)
-                    {
-                        //increments the post position by one if it isww less than the stack position and sends that message to the console
-                        Program.DebugLogger.WriteLine(Program.DebugLogger.DebugLog[Program.DebugLogger.LastPosition++]);
                     }
 
-#endif
+
+                    if (!Buffer.isReady && !SceneManager.isReadyToDraw)
+                        Buffer.PrepareBuffer();
 
                     if (Buffer.isReady)
                     {
                         Buffer.DrawBuffer();
                         Buffer.isReady = false;
+                        SceneManager.isReadyToDraw = true;
                     }
 
 
@@ -227,14 +220,13 @@ namespace LydsTextAdventure
                         Program.Tick = 0;
 
                     Program.Tick++;
-
-                    if (!TURBO_MODE)
-                        Thread.Sleep(1);
                 }
 
                 //shutdown if we escape the loop
                 Program.Shutdown();
             });
+
+            Program.StartThreadedUpdateLoop(); //Start threaded (ai and stuff)
 
             //creates fps hook
             Buffer.CreateHook();
@@ -256,6 +248,16 @@ namespace LydsTextAdventure
 
                     //increment clock
                     Program.Clock++;
+
+                    //send console messages everyticks as if its to fast it will throw exception
+                    if (Program.DebugLogger.StackPosition > Program.DebugLogger.LastPosition)
+                    {
+                        //increments the post position by one if it isww less than the stack position and sends that message to the console
+                        Program.DebugLogger.WriteLine(Program.DebugLogger.DebugLog[Program.DebugLogger.LastPosition++]);
+                    }
+
+                    if (Program.Clock % 10 == 0)
+                        Program.DebugLog("check alive");
 
                     Program.StartClock();
                 });
