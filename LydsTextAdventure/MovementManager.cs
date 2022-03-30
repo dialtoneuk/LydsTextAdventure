@@ -7,6 +7,9 @@ namespace LydsTextAdventure
     {
 
         public const int BASE_MOVE_COST = 35;
+        public const int BASE_MOVE_DELAY = 1000000;
+
+        private static int canMoveOn = 0;
 
         public static void MoveEntity(Entity entity, int x, int y, World world = null)
         {
@@ -22,6 +25,7 @@ namespace LydsTextAdventure
             else if (entity.GetType() == typeof(Player))
                 ((Player)entity).stanima = Math.Max(0, ((Player)entity).stanima - BASE_MOVE_COST);
 
+            canMoveOn = Program.GetTick() + BASE_MOVE_DELAY;
             entity.position.SetPosition(position);
         }
 
@@ -33,9 +37,11 @@ namespace LydsTextAdventure
             else
                 world = entity.World;
 
-
             if (!entity.isSolid)
                 return true;
+
+            if (canMoveOn != 0 && canMoveOn < Program.GetTick())
+                return false;
 
             if (SceneManager.CurrentScene.player.stanima - BASE_MOVE_COST <= 0)
                 return false;
@@ -50,8 +56,6 @@ namespace LydsTextAdventure
 
                     int actualX = ent.position.x - position.x;
                     int actualY = ent.position.y - position.y;
-
-
 
                     Structure structure = (Structure)ent;
                     try

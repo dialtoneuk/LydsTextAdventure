@@ -396,8 +396,9 @@ namespace LydsTextAdventure
         private bool CheckType(Type type, Type[] types)
         {
             bool found = false;
-            foreach (Type t in types)
+            for (int i = 0; i < types.Length; i++)
             {
+                Type t = types[i];
                 if (t == type)
                     found = true;
             }
@@ -415,9 +416,9 @@ namespace LydsTextAdventure
         {
 
             bool found = false;
-            foreach (Type t in types)
+            for (int i = 0; i < types.Length; i++)
             {
-
+                Type t = types[i];
                 if (this.IsTileNear(realx, realy, width, t))
                     found = true;
             }

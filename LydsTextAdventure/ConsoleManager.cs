@@ -100,7 +100,6 @@ namespace LydsTextAdventure
             public int Bottom;      // y position of lower-right corner
         }
 
-
         //gets the correct x/y relative to the tile/char
         public static Position GetMousePosition(int fontWidth = 10, int fontSize = 16)
         {
@@ -113,7 +112,7 @@ namespace LydsTextAdventure
             Position console = ConsoleManager.GetConsolePosition();
             //cursors
             Position cursor = new Position(point.X, point.Y);
-            return new Position((int)Math.Round((decimal)((cursor.x - console.x) / fontWidth)), (int)Math.Round((decimal)((cursor.y - (console.y + 2)) / fontSize) - 1));
+            return new Position((int)Math.Floor((decimal)((cursor.x - console.x) / fontWidth)), (int)Math.Floor((decimal)((cursor.y - (console.y + 2)) / fontSize) - 1));
         }
 
         [DllImport("user32.dll")]

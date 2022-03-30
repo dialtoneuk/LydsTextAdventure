@@ -81,7 +81,6 @@ namespace LydsTextAdventure
 
         public override void Update()
         {
-
             //render world and entities using this camera
             this.camera.UpdateBuffer();
             //then do the base updates
@@ -92,8 +91,8 @@ namespace LydsTextAdventure
         {
 
             //update chuncks
-            this.world.UpdateChunksAroundPlayer(this.player, 8);
-            this.world.CreateChunksAroundPlayer(this.player, 6);
+            this.world.UpdateChunksAroundPlayer(this.player, 4);
+            this.world.CreateChunksAroundPlayer(this.player, 2);
 
             base.ThreadedUpdate();
         }
